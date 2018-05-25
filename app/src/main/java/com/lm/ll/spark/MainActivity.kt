@@ -5,8 +5,12 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.lm.ll.spark.util.Spider
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,8 +24,20 @@ class MainActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        val spider = Spider()
-        spider.scratch("https://site.6parker.com/chan1/index.php")
+        test()
+    }
+
+    fun test(){
+        val deferred1 = async(CommonPool) {
+            println("hello1")
+            val spider = Spider()
+            spider.scratch("https://site.6parker.com/chan1/index.php")
+        }
+
+        val deferred2 = async(UI) {
+            println("hello2")
+            deferred1.await()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
