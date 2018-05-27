@@ -1,6 +1,7 @@
 package com.lm.ll.spark.util
 
 import com.lm.ll.spark.db.News
+import kotlinx.coroutines.experimental.NonCancellable.children
 import org.jsoup.nodes.Document
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -14,17 +15,16 @@ import org.jsoup.select.Elements
  */
 class Spider {
     fun scratch(webUrl:String){
-        val mList: MutableList<News> = ArrayList()
+        val mList = ArrayList<News>()
         val doc: Document = Jsoup.connect(webUrl).get()
         val titleLinks: Elements = doc.select ("div#d_list")
         println("news's count: " + titleLinks.size)
         for (e: Element in titleLinks){
             val uls: Elements = e.getElementsByTag("ul")
             for (ul: Element in uls){
-                for (children: Element in ul.children()){
-                    val nodes = children.childNodes()
-                    for (node in nodes){
-
+                for (child: Element in ul.children()){
+                    for (node in child.childNodes()){
+                        parseContent(node.childNodes(),mList)
                     }
                 }
             }
@@ -44,9 +44,8 @@ class Spider {
     }
 
 
-    fun parseContent(e:Element, list: ArrayList<News>){
+    fun parseContent(nodes: List<Node>, list: ArrayList<News>){
         val news = News()
-        val nodes: List<Node> = e.childNodes()
         val link: Element = nodes[0] as Element
         news.url = link.attr("href")
         news.title = link.text()
@@ -55,7 +54,7 @@ class Spider {
         news.readCount = (nodes[4] as Element).text()
 
         if((nodes[5] as Element).childNodes().count() > 0){
-
+            parseContent((nodes[5] as Element).childNodes(), list)
         }
         list.add(news)
     }
