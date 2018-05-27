@@ -1,7 +1,11 @@
 package com.lm.ll.spark.util
 
+import com.lm.ll.spark.db.News
 import org.jsoup.nodes.Document
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.Node
+import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
 
 
@@ -10,20 +14,49 @@ import org.jsoup.select.Elements
  */
 class Spider {
     fun scratch(webUrl:String){
-//        val mList: MutableList<News> = ArrayList()
+        val mList: MutableList<News> = ArrayList()
         val doc: Document = Jsoup.connect(webUrl).get()
         val titleLinks: Elements = doc.select ("div#d_list")
         println("news's count: " + titleLinks.size)
-        for (e in titleLinks){
-            val title = e.select("a").text()
-            println("新闻标题：" + title)
-            val uri = e.select("a").attr("href")
-            println("新闻链接" +uri)
-//            val news = News()
-//            news.newsTitle = title
-//            news.newsUrl = uri
-//            mList.add(news)
+        for (e: Element in titleLinks){
+            val uls: Elements = e.getElementsByTag("ul")
+            for (ul: Element in uls){
+                for (children: Element in ul.children()){
+                    val nodes = children.childNodes()
+                    for (node in nodes){
+
+                    }
+                }
+            }
+
+//                val title = link.text()
+//                println("news's title：" + title)
+//                val uri = link.attr("href")
+//                println("news's uri: " +uri)
+//                val news = News()
+//                news.id = index++
+//                news.newsTitle = title
+//                news.newsUrl = uri
+//                mList.add(news)
+//            }
         }
-//        print(mList.size)
+        print(mList.size)
+    }
+
+
+    fun parseContent(e:Element, list: ArrayList<News>){
+        val news = News()
+        val nodes: List<Node> = e.childNodes()
+        val link: Element = nodes[0] as Element
+        news.url = link.attr("href")
+        news.title = link.text()
+        news.author = (nodes[1] as TextNode).text()
+        news.date = (nodes[2] as Element).text()
+        news.readCount = (nodes[4] as Element).text()
+
+        if((nodes[5] as Element).childNodes().count() > 0){
+
+        }
+        list.add(news)
     }
 }
