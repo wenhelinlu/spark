@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         val deferred1 = async(CommonPool) {
             println("hello1")
             val spider = Spider()
-            newsList = spider.scratch("https://site.6parker.com/chan1/index.php")
+            newsList = spider.scratch("https://www.cool18.com/bbs4/index.php")
         }
 
         val deferred2 = async(UI) {
