@@ -33,4 +33,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'org.jsoup:jsoup:1.11.3'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version" //注意：如果是Java工程则使用kotlinx-coroutines-core
+    implementation "org.jetbrains.anko:anko:$anko_version"
 }
