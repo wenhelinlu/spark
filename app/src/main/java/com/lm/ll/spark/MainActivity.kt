@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     val news = newsList!![position]
                     val intent = Intent(this@MainActivity, NewsDisplayActivity::class.java)
                     println("completeurl:${news.url}")
-                    intent.putExtra("news_url", news.url)
+//                    intent.putExtra("news_url", news.url)
                     startActivity(intent)
                 }
             })
