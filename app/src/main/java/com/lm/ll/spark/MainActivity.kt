@@ -16,6 +16,7 @@ import android.content.Intent
 import android.view.View
 
 import android.widget.AdapterView
+import android.widget.Button
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,46 +31,35 @@ class MainActivity : AppCompatActivity() {
 
 
         newsList = ArrayList<News>()
-        lv = findViewById(R.id.news_lv) as ListView
-        test()
-//        handler = @SuppressLint("HandlerLeak")
-//        object : Handler() {
-//            override fun handleMessage(msg: Message) {
-//                if (msg.what === 1) {
-//                    adapter = NewsAdapter(this@MainActivity, newsList!!)
-//                    lv!!.setAdapter(adapter)
-//                    lv!!.setOnItemClickListener(object : AdapterView.OnItemClickListener {
-//                        override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-//                            val news = newsList!![position]
-//                            val intent = Intent(this@MainActivity, NewsDisplayActivity::class.java)
-//                            intent.putExtra("news_url", news.url)
-//                            startActivity(intent)
-//                        }
-//                    })
-//                }
-//            }
-//        }
+        lv = findViewById(R.id.news_lv)
+
+        loadContent()
     }
 
-    fun test(){
+    /**
+     * @desc 加载文章列表
+     * @author ll
+     * @time 2018-05-29 19:40
+     */
+    private fun loadContent(){
         val deferred1 = async(CommonPool) {
             println("hello1")
             val spider = Spider()
-            newsList = spider.scratch("https://www.cool18.com/bbs4/index.php")
+            newsList = spider.scratchContent("https://www.cool18.com/bbs4/index.php")
         }
 
-        val deferred2 = async(UI) {
+        async(UI) {
             println("hello2")
             deferred1.await()
-
             adapter = NewsAdapter(this@MainActivity, newsList!!)
             lv!!.setAdapter(adapter)
             lv!!.setOnItemClickListener(object : AdapterView.OnItemClickListener {
                 override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                     val news = newsList!![position]
                     val intent = Intent(this@MainActivity, NewsDisplayActivity::class.java)
-                    println("completeurl:${news.url}")
-//                    intent.putExtra("news_url", news.url)
+                    println(" ------completeurl--------   ${news.url}")
+                    intent.putExtra("news", news)
+
                     startActivity(intent)
                 }
             })

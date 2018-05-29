@@ -4,11 +4,10 @@
     android:layout_height="match_parent">
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="hello"/>
-    <WebView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/web_view"></WebView>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:textSize="15sp"
+        android:textColor="#666666"
+        android:id="@+id/tv_text"/>
 
 </LinearLayout>
