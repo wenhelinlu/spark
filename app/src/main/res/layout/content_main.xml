@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cjj.MaterialRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/refresh"
+    android:layout_height="wrap_content"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:orientation="vertical"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
+
     <ListView
         android:id="@+id/news_lv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:divider="#dcdcdc"
-        android:dividerHeight="7dp">
+        android:dividerHeight="7dp"></ListView>
 
-    </ListView>
-</com.cjj.MaterialRefreshLayout>
+    <Button
+        android:id="@+id/btn_pre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="上一页"/>
+
+    <Button
+        android:id="@+id/btn_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="下一页"/>
+</LinearLayout>

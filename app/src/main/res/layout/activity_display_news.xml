@@ -7,6 +7,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/sl"
         android:scrollbars="vertical"
+        android:background="#000000"
         android:fillViewport="true">
         <TextView
             android:layout_width="match_parent"
@@ -16,9 +17,8 @@
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:textSize="18sp"
-            android:textColor="#666666"
+            android:background="#00ffffff"
+            android:textColor="#c9c1c1"
             android:id="@+id/tv_text"/>
     </ScrollView>
-
-
 </LinearLayout>

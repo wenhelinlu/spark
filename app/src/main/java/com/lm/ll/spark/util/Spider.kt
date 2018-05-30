@@ -1,5 +1,6 @@
 package com.lm.ll.spark.util
 
+import android.util.Log
 import com.lm.ll.spark.db.News
 import org.jsoup.nodes.Document
 import org.jsoup.Jsoup
@@ -20,6 +21,7 @@ class Spider {
      */
     fun scratchContent(webUrl:String): ArrayList<News>{
         val mList = ArrayList<News>()
+        Log.d("加载列表","$webUrl")
         val doc: Document = Jsoup.connect(webUrl).get()
         val titleLinks: Elements = doc.select ("div#d_list")
         println("news's count: " + titleLinks.size)

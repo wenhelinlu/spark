@@ -17,10 +17,6 @@ import android.view.View
 
 import android.widget.AdapterView
 import android.widget.Button
-import android.annotation.SuppressLint
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
-import android.app.Activity
-import com.cjj.MaterialRefreshLayout
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,13 +24,29 @@ class MainActivity : AppCompatActivity() {
     private var newsList:ArrayList<News>? = null
     private var adapter: NewsAdapter? = null
     private var lv: ListView? = null
+    private var btnPre: Button? = null
+    private var btnNext: Button? = null
+    private val URL: String = "https://www.cool18.com/bbs4/index.php?app=forum&act=cachepage&cp=tree"
+    private var currentPage: Int = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        btnPre = findViewById(R.id.btn_pre)
+        btnPre!!.setOnClickListener{
+            if(currentPage > 1) {
+                currentPage--
+                loadContent()
+            }
+        }
 
+        btnNext = findViewById(R.id.btn_next)
+        btnNext!!.setOnClickListener {
+            currentPage++
+            loadContent()
+        }
         newsList = ArrayList<News>()
         lv = findViewById(R.id.news_lv)
 
@@ -50,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         val deferred1 = async(CommonPool) {
             println("hello1")
             val spider = Spider()
-            newsList = spider.scratchContent("https://www.cool18.com/bbs4/index.php")
+            newsList = spider.scratchContent("$URL$currentPage")
         }
 
         async(UI) {
