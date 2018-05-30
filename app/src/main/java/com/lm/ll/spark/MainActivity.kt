@@ -17,6 +17,10 @@ import android.view.View
 
 import android.widget.AdapterView
 import android.widget.Button
+import android.annotation.SuppressLint
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener
+import android.app.Activity
+import com.cjj.MaterialRefreshLayout
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private var newsList:ArrayList<News>? = null
     private var adapter: NewsAdapter? = null
     private var lv: ListView? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
