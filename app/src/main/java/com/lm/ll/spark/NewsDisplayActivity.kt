@@ -1,18 +1,8 @@
 package com.lm.ll.spark
 
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
-import android.text.method.ScrollingMovementMethod
-import android.view.View
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.AdapterView
 import android.widget.TextView
-import com.lm.ll.spark.adapter.NewsAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.util.Spider
 import kotlinx.coroutines.experimental.CommonPool
@@ -35,20 +25,11 @@ class NewsDisplayActivity: AppCompatActivity() {
         setContentView(R.layout.activity_display_news)
 
         tv_text = findViewById(R.id.tv_text)
-        tv_text!!.setMovementMethod(ScrollingMovementMethod.getInstance())
+//        tv_text!!.setMovementMethod(ScrollingMovementMethod.getInstance())
 
         news = getIntent().getParcelableExtra("news")
 
         loadText()
-
-
-
-//        var webView = this.findViewById(R.id.web_view) as WebView
-//
-//        var client = WebViewClient()
-//        webView.setWebViewClient(client)
-//        webView.loadUrl(news!!.url)
-
     }
 
     /**
