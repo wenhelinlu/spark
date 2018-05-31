@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private var newsList:ArrayList<News>? = null
     private var adapter: NewsAdapter? = null
     private var recyclerView: RecyclerView? = null
-    private var layoutManager: RecyclerView.LayoutManager? = null
+
 
     private val URL: String = "https://www.cool18.com/bbs4/index.php?app=forum&act=cachepage&cp=tree"
     private var currentPage: Int = 1
@@ -30,9 +30,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        newsList = ArrayList<News>()
+        newsList = ArrayList()
 
-        layoutManager = LinearLayoutManager(this@MainActivity)
         recyclerView = findViewById(R.id.recyclerView)
 
         loadContent()
@@ -51,9 +50,9 @@ class MainActivity : AppCompatActivity() {
 
         async(UI) {
             deferred1.await()
-            adapter = NewsAdapter(newsList!!)
+            adapter = NewsAdapter(this@MainActivity, newsList!!)
+            recyclerView!!.layoutManager = LinearLayoutManager(this@MainActivity)
             recyclerView!!.adapter = adapter
-            recyclerView!!.layoutManager = layoutManager
 //            lv!!.setOnItemClickListener(object : AdapterView.OnItemClickListener {
 //                override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 //                    val news = newsList!![position]
