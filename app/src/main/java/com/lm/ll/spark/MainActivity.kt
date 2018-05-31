@@ -13,6 +13,7 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import android.content.Intent
+import android.util.Log
 import android.view.View
 
 import android.widget.AdapterView
@@ -60,13 +61,11 @@ class MainActivity : AppCompatActivity() {
      */
     private fun loadContent(){
         val deferred1 = async(CommonPool) {
-            println("hello1")
             val spider = Spider()
             newsList = spider.scratchContent("$URL$currentPage")
         }
 
         async(UI) {
-            println("hello2")
             deferred1.await()
             adapter = NewsAdapter(this@MainActivity, newsList!!)
             lv!!.setAdapter(adapter)
@@ -74,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                     val news = newsList!![position]
                     val intent = Intent(this@MainActivity, NewsDisplayActivity::class.java)
-                    println(" ------completeurl--------   ${news.url}")
+                    Log.d("itemurl","${news.url}")
                     intent.putExtra("news", news)
 
                     startActivity(intent)

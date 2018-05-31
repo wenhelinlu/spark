@@ -17,16 +17,14 @@ import kotlinx.coroutines.experimental.async
 class NewsDisplayActivity: AppCompatActivity() {
 
     private var news: News? = null
-    private var tv_text: TextView? = null
+    private var tvText: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_news)
 
-        tv_text = findViewById(R.id.tv_text)
-//        tv_text!!.setMovementMethod(ScrollingMovementMethod.getInstance())
-
+        tvText = findViewById(R.id.tv_text)
         news = getIntent().getParcelableExtra("news")
 
         loadText()
@@ -47,7 +45,7 @@ class NewsDisplayActivity: AppCompatActivity() {
         async(UI) {
             println("hello2")
             deferred1.await()
-            tv_text!!.text = news!!.text
+            tvText!!.text = news!!.text
         }
     }
 

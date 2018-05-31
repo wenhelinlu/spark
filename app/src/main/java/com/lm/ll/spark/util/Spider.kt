@@ -21,7 +21,7 @@ class Spider {
      */
     fun scratchContent(webUrl:String): ArrayList<News>{
         val mList = ArrayList<News>()
-        Log.d("加载列表","$webUrl")
+        Log.d("加载列表",webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
         val titleLinks: Elements = doc.select ("div#d_list")
         println("news's count: " + titleLinks.size)
@@ -49,9 +49,9 @@ class Spider {
             val childNodes = child.childNodes()
             val news = News()
             val link: Element = childNodes[0] as Element
-            var baseUri = child.baseUri()
-            var uri = link.attr("href").removePrefix("index.php")
-            news.url = "${baseUri}${uri}"
+            val baseUri = child.baseUri()
+            val uri = link.attr("href").removePrefix("index.php")
+            news.url = "$baseUri$uri"
             news.title = link.text()
             news.author = (childNodes[1] as TextNode).text()
             news.date = (childNodes[2] as Element).text()
