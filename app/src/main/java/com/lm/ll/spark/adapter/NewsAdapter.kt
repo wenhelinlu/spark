@@ -14,7 +14,7 @@ import com.lm.ll.spark.db.News
  * 作者：Created by ll on 2018-05-28 13:36.
  * 邮箱：wenhelinlu@gmail.com
  */
-class NewsAdapter(private val mContext: Context, private val newsList: List<News>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class NewsAdapter(private val mContext: Context, private val newsList: ArrayList<News>) : RecyclerView.Adapter<NewsAdapter.NewsListViewHolder>(){
 
     var context = mContext
     var list = newsList
@@ -25,17 +25,16 @@ class NewsAdapter(private val mContext: Context, private val newsList: List<News
     }
 
     override fun getItemCount(): Int {
-        return newsList.size
+        return list.size
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val viewHolder: NewsListViewHolder = holder as NewsListViewHolder
-        viewHolder.newsTitle.text = newsList[position].title
-        viewHolder.newsDesc.text = "${newsList[position].author}"
-        viewHolder.newsTime.text = newsList[position].date
+    override fun onBindViewHolder(holder: NewsListViewHolder, position: Int) {
+        holder.newsTitle.text = list[position].title
+        holder.newsDesc.text = "${list[position].author}"
+        holder.newsTime.text = list[position].date
     }
 
-    class NewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class NewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var newsTitle: TextView
         var newsDesc: TextView
         var newsTime: TextView
