@@ -14,8 +14,6 @@ import kotlinx.coroutines.experimental.async
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 
-import android.widget.Button
-
 
 class MainActivity : AppCompatActivity() {
 

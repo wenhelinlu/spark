@@ -1,13 +1,10 @@
 package com.lm.ll.spark.adapter
 
-import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ListAdapter
 import android.widget.TextView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.News
