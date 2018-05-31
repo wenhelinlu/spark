@@ -1,36 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingBottom="6dp"
+    android:id="@+id/news_item">
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
         android:id="@+id/news_title"
-        android:gravity="center_horizontal"
-        android:textColor="#000"
-        android:textSize="18sp"/>
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:id="@+id/news_desc"
-        android:layout_marginBottom="6dp"
-        android:layout_marginLeft="10dp"
-        android:gravity="center_horizontal"/>
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/grayLite"
+        app:layout_constraintTop_toBottomOf="@id/news_title"
+        app:layout_constraintLeft_toLeftOf="parent"/>
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/news_time"
-        android:layout_marginBottom="6dp"
-        android:textSize="10sp"
-        android:textColor="#708090"
-        android:gravity="center_horizontal"
-        android:layout_marginRight="30dp"/>
-</LinearLayout>
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="4dp"
+        android:textSize="12sp"
+        android:textColor="@color/grayLite"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/news_desc"/>
+</android.support.constraint.ConstraintLayout>
