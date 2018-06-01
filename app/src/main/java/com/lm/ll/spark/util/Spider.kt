@@ -53,9 +53,9 @@ class Spider {
             val uri = link.attr("href").removePrefix("index.php")
             news.url = "$baseUri$uri"
             news.title = link.text()
-            news.author = (childNodes[1] as TextNode).text()
+            news.author = (childNodes[1] as TextNode).text().substringAfter('-')
             news.date = (childNodes[2] as Element).text()
-            news.readCount = (childNodes[4] as Element).text()
+            news.readCount = (childNodes[4] as Element).text().trimStart('(').trimEnd(')')
             list.add(news)
         }
     }

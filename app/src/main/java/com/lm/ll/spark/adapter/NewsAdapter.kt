@@ -31,12 +31,14 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
         holder.newsTitle.text = list[position].title
         holder.newsDesc.text = "${list[position].author}"
         holder.newsTime.text = list[position].date
+        holder.newsReadcount.text = list[position].readCount
     }
 
     inner class NewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var newsTitle: TextView = itemView.findViewById(R.id.news_title)
         var newsDesc: TextView = itemView.findViewById(R.id.news_desc)
         var newsTime: TextView = itemView.findViewById(R.id.news_time)
+        var newsReadcount: TextView = itemView.findViewById(R.id.news_readcount)
     }
 
 }
