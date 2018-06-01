@@ -13,13 +13,15 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import com.lm.ll.spark.decoration.NewsItemDecoration
 
 
 class MainActivity : AppCompatActivity() {
 
-    private var newsList:ArrayList<News>? = null
+    private var newsList:ArrayList<News> = ArrayList()
     private var adapter: NewsAdapter? = null
     private var recyclerView: RecyclerView? = null
+    private var linearLayoutManager: LinearLayoutManager? = null
 
 
     private val URL: String = "https://www.cool18.com/bbs4/index.php?app=forum&act=cachepage&cp=tree"
@@ -30,9 +32,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        newsList = ArrayList()
-
+        linearLayoutManager = LinearLayoutManager(this@MainActivity)
         recyclerView = findViewById(R.id.recyclerView)
+        recyclerView!!.addItemDecoration(NewsItemDecoration(2))
+        recyclerView!!.layoutManager =linearLayoutManager
 
         loadContent()
     }
@@ -50,8 +53,8 @@ class MainActivity : AppCompatActivity() {
 
         async(UI) {
             deferred1.await()
-            adapter = NewsAdapter(this@MainActivity, newsList!!)
-            recyclerView!!.layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = NewsAdapter(this@MainActivity, newsList)
+
             recyclerView!!.adapter = adapter
 //            lv!!.setOnItemClickListener(object : AdapterView.OnItemClickListener {
 //                override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
