@@ -7,6 +7,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
+import java.util.*
 
 
 /**
@@ -60,7 +61,7 @@ class Spider {
             var wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
             news.textLength = "${(wordCount!!.toLong())/2}字" //字数
             news.author = "作者:$author"
-            news.date = (childNodes[2] as Element).text()
+            news.date = (childNodes[2] as Element).text() //日期
 
             val readCount = Regex(pattern).findAll((childNodes[4] as Element).text()).toList().flatMap(MatchResult::groupValues).firstOrNull()
             news.readCount = "阅读${readCount}次"

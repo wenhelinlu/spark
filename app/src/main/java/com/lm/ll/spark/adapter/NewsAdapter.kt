@@ -29,16 +29,18 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
 
     override fun onBindViewHolder(holder: NewsAdapter.NewsListViewHolder, position: Int) {
         holder.newsTitle.text = list[position].title
-        holder.newsDesc.text = "${list[position].author}"
-        holder.newsTime.text = list[position].date
-        holder.newsReadcount.text = list[position].readCount
+        holder.newsAuthor.text = "${list[position].author}"
+        holder.newsDate.text = list[position].date
+        holder.newsTextLength.text = list[position].textLength
+        holder.newsReadCount.text = list[position].readCount
     }
 
     inner class NewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var newsTitle: TextView = itemView.findViewById(R.id.news_title)
-        var newsDesc: TextView = itemView.findViewById(R.id.news_author)
-        var newsTime: TextView = itemView.findViewById(R.id.news_date)
-        var newsReadcount: TextView = itemView.findViewById(R.id.news_readcount)
+        var newsAuthor: TextView = itemView.findViewById(R.id.news_author)
+        var newsDate: TextView = itemView.findViewById(R.id.news_date)
+        var newsTextLength: TextView = itemView.findViewById(R.id.news_textLength)
+        var newsReadCount: TextView = itemView.findViewById(R.id.news_readCount)
     }
 
 }
