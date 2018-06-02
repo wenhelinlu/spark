@@ -26,13 +26,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/news_desc"
+        android:id="@+id/news_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="news_desc"
+        android:text="news_author"
         android:textSize="13dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,16 +40,16 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/news_time"
+        android:id="@+id/news_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="72dp"
         android:layout_marginTop="8dp"
-        android:text="news_time"
+        android:text="news_date"
         android:textSize="13dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/news_desc"
+        app:layout_constraintStart_toEndOf="@+id/news_author"
         app:layout_constraintTop_toBottomOf="@+id/news_title"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -65,7 +65,7 @@
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/news_time"
+        app:layout_constraintStart_toEndOf="@+id/news_date"
         app:layout_constraintTop_toBottomOf="@+id/news_title"
         app:layout_constraintVertical_bias="0.0" />
 

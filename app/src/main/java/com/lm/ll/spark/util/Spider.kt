@@ -42,6 +42,8 @@ class Spider {
      * @time 2018-05-28 10:01
      */
     private fun parseContent(ul: Element, list: ArrayList<News>){
+        val pattern = "[0-9]+" //匹配数字
+
         for(child in ul.childNodes()){
             if(child.childNodes() == null || child.childNodeSize() != 7){
                 continue
@@ -53,9 +55,15 @@ class Spider {
             val uri = link.attr("href").removePrefix("index.php")
             news.url = "$baseUri$uri"
             news.title = link.text()
-            news.author = (childNodes[1] as TextNode).text().substringAfter('-')
+            val authorStr = (childNodes[1] as TextNode).text()
+            val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
+            var wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
+            news.textLength = "${(wordCount!!.toLong())/2}字" //字数
+            news.author = "作者:$author"
             news.date = (childNodes[2] as Element).text()
-            news.readCount = (childNodes[4] as Element).text().trimStart('(').trimEnd(')')
+
+            val readCount = Regex(pattern).findAll((childNodes[4] as Element).text()).toList().flatMap(MatchResult::groupValues).firstOrNull()
+            news.readCount = "阅读${readCount}次"
             list.add(news)
         }
     }

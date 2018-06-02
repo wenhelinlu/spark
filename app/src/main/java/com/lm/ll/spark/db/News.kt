@@ -13,12 +13,14 @@ data class News(
         var url: String? = null, //url链接
         var author: String? = null, //作者
         var date: String? = null, //日期
+        var textLength: String? = null, //文章字数
         var readCount: String? = null, //阅读数
         var text: String? = null //文章正文
 ):Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -32,6 +34,7 @@ data class News(
         dest.writeString(url)
         dest.writeString(author)
         dest.writeString(date)
+        dest.writeString(textLength)
         dest.writeString(readCount)
         dest.writeString(text)
     }

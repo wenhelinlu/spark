@@ -36,8 +36,8 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
 
     inner class NewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var newsTitle: TextView = itemView.findViewById(R.id.news_title)
-        var newsDesc: TextView = itemView.findViewById(R.id.news_desc)
-        var newsTime: TextView = itemView.findViewById(R.id.news_time)
+        var newsDesc: TextView = itemView.findViewById(R.id.news_author)
+        var newsTime: TextView = itemView.findViewById(R.id.news_date)
         var newsReadcount: TextView = itemView.findViewById(R.id.news_readcount)
     }
 
