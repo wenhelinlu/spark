@@ -54,18 +54,7 @@ class MainActivity : AppCompatActivity() {
         async(UI) {
             deferred1.await()
             adapter = NewsAdapter(this@MainActivity, newsList)
-
             recyclerView!!.adapter = adapter
-//            lv!!.setOnItemClickListener(object : AdapterView.OnItemClickListener {
-//                override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-//                    val news = newsList!![position]
-//                    val intent = Intent(this@MainActivity, NewsDisplayActivity::class.java)
-//                    Log.d("itemurl","${news.url}")
-//                    intent.putExtra("news", news)
-//
-//                    startActivity(intent)
-//                }
-//            })
         }
     }
 

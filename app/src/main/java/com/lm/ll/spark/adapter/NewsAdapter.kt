@@ -1,11 +1,17 @@
 package com.lm.ll.spark.adapter
 
 import android.content.Context
+import android.content.Intent
+import android.support.constraint.ConstraintLayout
+import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import com.lm.ll.spark.NewsDisplayActivity
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.News
 
@@ -15,8 +21,8 @@ import com.lm.ll.spark.db.News
  */
 class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.Adapter<NewsAdapter.NewsListViewHolder>(){
 
-    var context = mContext
-    var list = newsList
+    private var context = mContext
+    private var list = newsList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.NewsListViewHolder {
         val view: View = LayoutInflater.from(context).inflate(R.layout.news_item,parent,false)
@@ -33,9 +39,18 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
         holder.newsDate.text = list[position].date
         holder.newsTextLength.text = list[position].textLength
         holder.newsReadCount.text = list[position].readCount
+
+        holder.newsItem.setOnClickListener {
+                    val news = list[position]
+                    val intent = Intent(context, NewsDisplayActivity::class.java)
+                    intent.putExtra("news", news)
+                    context.startActivity(intent)
+        }
+
     }
 
     inner class NewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var newsItem: ConstraintLayout = itemView.findViewById(R.id.news_item)
         var newsTitle: TextView = itemView.findViewById(R.id.news_title)
         var newsAuthor: TextView = itemView.findViewById(R.id.news_author)
         var newsDate: TextView = itemView.findViewById(R.id.news_date)
