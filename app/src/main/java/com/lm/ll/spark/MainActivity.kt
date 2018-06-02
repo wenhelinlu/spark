@@ -14,8 +14,8 @@ import kotlinx.coroutines.experimental.async
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.widget.Toast
 import com.lm.ll.spark.decoration.NewsItemDecoration
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +36,10 @@ class MainActivity : AppCompatActivity() {
 
         val toolbar:Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        toolbar.setNavigationIcon(R.drawable.ic_menu)
+        toolbar.setNavigationOnClickListener {
+            Toast.makeText(this@MainActivity,"Hello",Toast.LENGTH_SHORT).show()
+        }
 
 
         linearLayoutManager = LinearLayoutManager(this@MainActivity)
@@ -76,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
+            R.id.action_search -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
