@@ -36,11 +36,6 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-//            var layoutParam = window.attributes
-//            layoutParam.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or  layoutParam.flags)
-//        }
-
         val toolbar:Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_menu)
@@ -48,7 +43,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             Toast.makeText(this@MainActivity,"Hello",Toast.LENGTH_SHORT).show()
         }
 
-        swipeRefresh.setColorSchemeResources(R.color.colorAccent)
+        swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark)
         swipeRefresh.setDistanceToTriggerSync(300)
 
         swipeRefresh.setOnRefreshListener({
@@ -70,14 +65,30 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         val deferred1 = async(CommonPool) {
             val spider = Spider()
             var list = spider.scratchContent("$URL$currentPage")
+
+            /**
+             *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
+             *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
+             *  这个位置之前的数据添加到已有集合中             *
+             */
+
             if (newsList.count() > 0) {
-                newsList.addAll(list)
+                var firstNews = list.findLast { x -> x.url == newsList[0].url }
+                if (firstNews != null) {
+                    var firstIndex = list.indexOf(firstNews)
+                    if (firstIndex > 0) {
+                        var latest = list.take(firstIndex)
+
+                        newsList.addAll(latest)
+                    }
+                }
             } else {
                 newsList = list
             }
         }
 
         async(UI) {
+            swipeRefresh.isRefreshing = true
             deferred1.await()
             adapter = NewsAdapter(this@MainActivity, newsList)
             this@MainActivity.recyclerView.adapter = adapter
