@@ -10,3 +10,5 @@
 .externalNativeBuild
 /.idea/caches/build_file_checksums.ser
 app/libs/
+/.idea/assetWizardSettings.xml
+.idea/assetWizardSettings.xml

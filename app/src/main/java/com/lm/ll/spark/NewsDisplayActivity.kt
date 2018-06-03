@@ -1,7 +1,10 @@
 package com.lm.ll.spark
 
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ScrollView
 import android.widget.TextView
 import com.lm.ll.spark.db.News
@@ -9,13 +12,6 @@ import com.lm.ll.spark.util.Spider
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import android.support.constraint.ConstraintLayout
-import android.view.View
-import android.view.animation.AnimationUtils
-import android.view.animation.Animation
-import android.R.attr.scrollY
-
-
 
 
 /**
