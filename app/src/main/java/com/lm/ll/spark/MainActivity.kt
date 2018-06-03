@@ -1,6 +1,8 @@
 package com.lm.ll.spark
 
+import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -14,15 +16,19 @@ import kotlinx.coroutines.experimental.async
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.view.View
 import android.widget.Toast
 import com.lm.ll.spark.decoration.NewsItemDecoration
+import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+    override fun onRefresh() {
+        this.swipeRefresh.isRefreshing = false
+    }
 
     private var newsList:ArrayList<News> = ArrayList()
     private var adapter: NewsAdapter? = null
-    private var recyclerView: RecyclerView? = null
     private var linearLayoutManager: LinearLayoutManager? = null
 
 
@@ -43,11 +49,15 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this@MainActivity,"Hello",Toast.LENGTH_SHORT).show()
         }
 
+        swipeRefresh.setColorSchemeColors(Color.rgb(47,223,189))
+        swipeRefresh.setOnRefreshListener(this)
 
-        linearLayoutManager = LinearLayoutManager(this@MainActivity)
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView!!.addItemDecoration(NewsItemDecoration(2))
-        recyclerView!!.layoutManager =linearLayoutManager
+        this.recyclerView.addItemDecoration(NewsItemDecoration(2))
+        this.recyclerView.layoutManager =LinearLayoutManager(this@MainActivity)
+
+        this.recyclerView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+//            Toast.makeText(this@MainActivity,"scrolled", Toast.LENGTH_SHORT).show()
+        }
 
         loadContent()
     }
@@ -66,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         async(UI) {
             deferred1.await()
             adapter = NewsAdapter(this@MainActivity, newsList)
-            recyclerView!!.adapter = adapter
+            this@MainActivity.recyclerView.adapter = adapter
         }
     }
 

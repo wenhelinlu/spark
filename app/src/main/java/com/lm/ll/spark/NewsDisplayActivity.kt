@@ -11,6 +11,11 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import android.support.constraint.ConstraintLayout
 import android.view.View
+import android.view.animation.AnimationUtils
+import android.view.animation.Animation
+import android.R.attr.scrollY
+
+
 
 
 /**
@@ -34,8 +39,19 @@ class NewsDisplayActivity: AppCompatActivity() {
         tvText = findViewById(R.id.tv_text)
         news = intent.getParcelableExtra("news")
 
-        tvText!!.setOnClickListener {
-            showBottomToolbar()
+//        tvText!!.setOnClickListener {
+//            showBottomToolbar()
+//        }
+        scrollviewText!!.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (scrollY - oldScrollY > 0) {
+                toolbarBottomText!!.visibility = View.GONE
+                val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_to_down)
+                toolbarBottomText!!.startAnimation(animation)
+            } else if (oldScrollY - scrollY > 0) {
+                toolbarBottomText!!.visibility = View.VISIBLE
+                val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_from_down)
+                toolbarBottomText!!.startAnimation(animation)
+            }
         }
 
         loadText()
