@@ -26,7 +26,9 @@ class MainActivity : AppCompatActivity() {
     private var linearLayoutManager: LinearLayoutManager? = null
 
 
-    private val URL: String = "https://www.cool18.com/bbs4/index.php?app=forum&act=cachepage&cp=tree"
+//    private val URL: String = "https://www.cool18.com/bbs4/index.php?app=forum&act=cachepage&cp=tree" //禁忌书屋
+    private val URL: String = "https://site.6parker.com/chan1/index.php?app=forum&act=cachepage&cp=tree" //史海钩沉
+
     private var currentPage: Int = 1
 
 

@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<android.support.constraint.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/sl"
-    android:scrollbars="vertical"
-    android:background="#000000"
-    android:fillViewport="true"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <android.support.constraint.ConstraintLayout
+    android:background="#000000">
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
+        android:layout_height="match_parent"
+        android:id="@+id/scrollview_text"
+        android:scrollbars="vertical"
+        android:background="@color/transparent"
+        android:fillViewport="true">
         <TextView
             android:id="@+id/tv_text"
             android:layout_width="match_parent"
@@ -27,9 +29,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
+    </ScrollView>
         <include
             android:id="@+id/toolbar_bottom_text"
+            android:visibility="invisible"
             layout="@layout/bottom_toolbar_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -38,5 +41,5 @@
             app:layout_constraintStart_toStartOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
-    </ScrollView>
+
 

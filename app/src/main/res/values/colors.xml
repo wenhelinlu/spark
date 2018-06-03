@@ -8,4 +8,5 @@
     <color name="grayLite">#DDDDDD</color>
     <color name="grayHeavy">#666666</color>
     <color name="transparent">#00000000</color>
+    <color name="grayListBlur">#20DDDDDD</color>
 </resources>

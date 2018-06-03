@@ -21,7 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewsDisplayActivity" />
+        <activity
+            android:name=".NewsDisplayActivity"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>
