@@ -116,6 +116,8 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             this@MainActivity.recyclerView.adapter = adapter
             this@MainActivity.recyclerView.adapter.notifyDataSetChanged()
 
+//            Log.d("LL","totalItemCount = ${this@MainActivity.recyclerView.layoutManager.itemCount}, childItemCount = ${this@MainActivity.recyclerView.childCount}")
+            
             if (isRefresh) {
                 this@MainActivity.recyclerView.layoutManager.scrollToPosition(currentPos - 1)
             }
