@@ -39,19 +39,15 @@ class NewsDisplayActivity: AppCompatActivity() {
         tvText = findViewById(R.id.tv_text)
         news = intent.getParcelableExtra("news")
 
-//        tvText!!.setOnClickListener {
-//            showBottomToolbar()
-//        }
-        scrollviewText!!.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+        //显示或隐藏底栏
+        scrollviewText!!.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            var isShow = true
             if (scrollY - oldScrollY > 0) {
-                toolbarBottomText!!.visibility = View.GONE
-                val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_to_down)
-                toolbarBottomText!!.startAnimation(animation)
+                isShow = false
             } else if (oldScrollY - scrollY > 0) {
-                toolbarBottomText!!.visibility = View.VISIBLE
-                val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_from_down)
-                toolbarBottomText!!.startAnimation(animation)
+                isShow = true
             }
+            showBottomToolbar(isShow)
         }
 
         loadText()
@@ -75,18 +71,19 @@ class NewsDisplayActivity: AppCompatActivity() {
     }
 
     /**
-     * @desc 点击正文内容时显示或隐藏底栏
+     * @desc 滑动正文内容时显示或隐藏底栏
      * @author ll
      * @time 2018-06-03 08:14
      */
-    private fun showBottomToolbar(){
-        async(UI) {
-            if(toolbarBottomText!!.visibility == View.VISIBLE){
-                toolbarBottomText!!.visibility = View.INVISIBLE
-            }
-            else{
-                toolbarBottomText!!.visibility = View.VISIBLE
-            }
+    private fun showBottomToolbar(isShow: Boolean){
+        if (isShow) {
+            toolbarBottomText!!.visibility = View.GONE
+            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_to_down)
+            toolbarBottomText!!.startAnimation(animation)
+        } else {
+            toolbarBottomText!!.visibility = View.VISIBLE
+            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_from_down)
+            toolbarBottomText!!.startAnimation(animation)
         }
     }
 }
