@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         val deferred1 = async(CommonPool) {
             val spider = Spider()
             var list = spider.scratchContent("$URL$currentPage")
-            if (newsList != null && newsList.count() > 0) {
+            if (newsList.count() > 0) {
                 newsList.addAll(list)
             } else {
                 newsList = list
