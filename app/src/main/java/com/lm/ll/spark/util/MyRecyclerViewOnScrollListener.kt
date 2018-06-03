@@ -2,7 +2,6 @@ package com.lm.ll.spark.util
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 
 abstract class MyRecyclerViewOnScrollListener(linearLayoutManager: LinearLayoutManager) : RecyclerView.OnScrollListener() {
     private var linearLayoutManager: LinearLayoutManager = linearLayoutManager
@@ -60,11 +59,11 @@ abstract class MyRecyclerViewOnScrollListener(linearLayoutManager: LinearLayoutM
             }
         }
 
-        Log.d("LL", "visibleItemCount: $visibleItemCount, firstVisibleItemPosition: $firstVisibleItemPosition, totalItemCount: $totalItemCount")
+//        Log.d("LL", "visibleItemCount: $visibleItemCount, firstVisibleItemPosition: $firstVisibleItemPosition, totalItemCount: $totalItemCount")
         //如果没有正在加载中，并且当前屏幕上可见item的总数 + 屏幕上可见第一条item位置 >= 目前加载出来的数据总数，表示已经滑到底部
         if (!isLoadingMore && totalItemCount > 0 && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
             isLoadingMore = true
-            Log.d("LL", "visibleItemCount load more data")
+//            Log.d("LL", "visibleItemCount load more data")
             loadMoreData()
         }
     }
