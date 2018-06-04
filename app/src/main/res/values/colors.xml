@@ -7,6 +7,9 @@
     <color name="white">#FFFFFF</color>
     <color name="grayLite">#DDDDDD</color>
     <color name="grayHeavy">#666666</color>
+    <color name="grayDark">#424242</color>
     <color name="transparent">#00000000</color>
     <color name="grayListBlur">#20DDDDDD</color>
+    <color name="blueGrey">#607d8b</color>
+    <color name="blueGreyHeavy">#37474f</color>
 </resources>

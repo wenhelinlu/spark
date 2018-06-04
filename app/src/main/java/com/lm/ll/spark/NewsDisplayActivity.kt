@@ -10,7 +10,6 @@ import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.NewsItemDecoration
 import com.lm.ll.spark.util.Spider
 import kotlinx.android.synthetic.main.activity_display_news.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -43,6 +42,7 @@ class NewsDisplayActivity: AppCompatActivity() {
 
         this.recyclerViewComment.addItemDecoration(NewsItemDecoration(2))
         this.recyclerViewComment.layoutManager = linearLayoutManager
+        this.recyclerViewComment.isNestedScrollingEnabled = false
 
         //显示或隐藏底栏
         scrollviewText.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
@@ -59,7 +59,7 @@ class NewsDisplayActivity: AppCompatActivity() {
     }
 
     /**
-     * @desc 加载文章列表
+     * @desc 加载文章正文和评论
      * @author ll
      * @time 2018-05-29 19:40
      */
@@ -76,8 +76,8 @@ class NewsDisplayActivity: AppCompatActivity() {
             tvText.text = news!!.text
 
             commentsAdapter = NewsAdapter(this@NewsDisplayActivity, comments)
-            this@NewsDisplayActivity.recyclerView.adapter = commentsAdapter
-            this@NewsDisplayActivity.recyclerView.adapter.notifyDataSetChanged()
+            this@NewsDisplayActivity.recyclerViewComment.adapter = commentsAdapter
+            this@NewsDisplayActivity.recyclerViewComment.adapter.notifyDataSetChanged()
         }
     }
 

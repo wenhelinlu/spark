@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             Toast.makeText(this@MainActivity,"Hello",Toast.LENGTH_SHORT).show()
         }
 
-        swipeRefresh.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark)
+        swipeRefresh.setColorSchemeResources(R.color.blueGrey)
         swipeRefresh.setDistanceToTriggerSync(300)
 
         swipeRefresh.setOnRefreshListener({
