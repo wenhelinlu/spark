@@ -11,6 +11,8 @@ import android.widget.Toast
 import com.lm.ll.spark.adapter.NewsAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.NewsItemDecoration
+import com.lm.ll.spark.util.CURRENT_BASE_URL
+import com.lm.ll.spark.util.MIN_ROWS
 import com.lm.ll.spark.util.MyRecyclerViewOnScrollListener
 import com.lm.ll.spark.util.Spider
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,9 +28,6 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     private var newsList:ArrayList<News> = ArrayList()
     private var adapter: NewsAdapter? = null
-
-    private val URL: String = "https://www.cool18.com/bbs4/index.php?app=forum&act=cachepage&cp=tree" //禁忌书屋
-//    private val URL: String = "https://site.6parker.com/chan1/index.php?app=forum&act=cachepage&cp=tree" //史海钩沉
 
     private var currentPage: Int = 1
 
@@ -48,7 +47,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         swipeRefresh.setDistanceToTriggerSync(300)
 
         swipeRefresh.setOnRefreshListener({
-            loadContent(true)
+            loadContent()
         })
 
 
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         recyclerView.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
             override fun loadMoreData() {
                 currentPage++
-                loadContent()
+                loadContent(true)
             }
         })
 
@@ -72,30 +71,32 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
      * @desc 加载文章列表
      * @author ll
      * @time 2018-05-29 19:40
+     * @param isLoadMore 是否是加载更多操作
      */
-    private fun loadContent(isRefresh: Boolean = false) {
+    private fun loadContent(isLoadMore: Boolean = false) {
 
         val currentPos: Int = newsList.size
 
-        val deferred1 = async(CommonPool) {
+        val loadList = async(CommonPool) {
             val spider = Spider()
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
-            val pageIndex = if (isRefresh) 1 else currentPage
-            var list = spider.scratchContent("$URL$pageIndex")
+            val pageIndex = if (isLoadMore) currentPage else 1
+            val list = spider.scratchContent("$CURRENT_BASE_URL$pageIndex")
 
-            /**
-             *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
-             *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
-             *  这个位置之前的数据添加到已有集合中             *
-             */
-            if (isRefresh) {
+            if (isLoadMore) {
+                newsList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
+            } else {
+                /**
+                 *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
+                 *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
+                 *  这个位置之前的数据添加到已有集合中
+                 */
                 if (newsList.count() > 0) {
-                    var firstNews = list.findLast { x -> x.url == newsList[0].url }
+                    val firstNews = list.findLast { x -> x.url == newsList[0].url }
                     if (firstNews != null) {
-                        var firstIndex = list.indexOf(firstNews)
+                        val firstIndex = list.indexOf(firstNews)
                         if (firstIndex > 0) {
-                            var latest = list.take(firstIndex)
-
+                            val latest = list.take(firstIndex)
                             newsList.addAll(latest)
                         } else {
                         }
@@ -103,22 +104,26 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                     }
                 } else {
                     newsList = list
+                    //如果此时获取的集合数据不超过预定值，则继续加载数据
+                    while (newsList.size < MIN_ROWS){
+                        currentPage++
+                        val tmpList = spider.scratchContent("$CURRENT_BASE_URL$currentPage")
+                        newsList.addAll(tmpList)
+                    }
                 }
-            } else {
-                newsList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
             }
         }
 
         async(UI) {
             swipeRefresh.isRefreshing = true
-            deferred1.await()
+            loadList.await()
             adapter = NewsAdapter(this@MainActivity, newsList)
             this@MainActivity.recyclerView.adapter = adapter
             this@MainActivity.recyclerView.adapter.notifyDataSetChanged()
 
 //            Log.d("LL","totalItemCount = ${this@MainActivity.recyclerView.layoutManager.itemCount}, childItemCount = ${this@MainActivity.recyclerView.childCount}")
             
-            if (isRefresh) {
+            if (isLoadMore) {
                 this@MainActivity.recyclerView.layoutManager.scrollToPosition(currentPos - 1)
             }
 
