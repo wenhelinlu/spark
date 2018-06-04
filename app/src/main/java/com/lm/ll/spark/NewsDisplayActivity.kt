@@ -7,7 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.lm.ll.spark.adapter.NewsAdapter
 import com.lm.ll.spark.db.News
-import com.lm.ll.spark.decoration.NewsItemDecoration
+import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.lm.ll.spark.util.Spider
 import kotlinx.android.synthetic.main.activity_display_news.*
 import kotlinx.coroutines.experimental.CommonPool
@@ -40,7 +40,7 @@ class NewsDisplayActivity: AppCompatActivity() {
 
         val linearLayoutManager = LinearLayoutManager(this@NewsDisplayActivity)
 
-        this.recyclerViewComment.addItemDecoration(NewsItemDecoration(2))
+        this.recyclerViewComment.addItemDecoration(DashlineItemDecoration())
         this.recyclerViewComment.layoutManager = linearLayoutManager
         this.recyclerViewComment.isNestedScrollingEnabled = false
 
