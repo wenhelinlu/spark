@@ -26,6 +26,7 @@
             android:background="@color/transparent"
             android:textColor="@color/grayLite"
             android:textSize="18sp"
+            android:textIsSelectable="true"
             app:layout_constraintBottom_toTopOf="@+id/toolbar_bottom_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
