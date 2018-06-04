@@ -10,12 +10,12 @@
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scrollview_text"
+        android:id="@+id/scrollviewText"
         android:scrollbars="vertical"
         android:background="@color/transparent"
         android:fillViewport="true">
         <TextView
-            android:id="@+id/tv_text"
+            android:id="@+id/tvText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -33,7 +33,7 @@
             app:layout_constraintTop_toTopOf="parent" />
     </ScrollView>
         <include
-            android:id="@+id/toolbar_bottom_text"
+            android:id="@+id/toolbarottomBText"
             android:visibility="invisible"
             layout="@layout/bottom_toolbar_text"
             android:layout_width="0dp"

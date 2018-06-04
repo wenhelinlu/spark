@@ -4,10 +4,9 @@ import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.ScrollView
-import android.widget.TextView
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.util.Spider
+import kotlinx.android.synthetic.main.activity_display_news.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -20,8 +19,6 @@ import kotlinx.coroutines.experimental.async
 class NewsDisplayActivity: AppCompatActivity() {
 
     private var news: News? = null
-    private var tvText: TextView? = null
-    private var scrollviewText: ScrollView? = null
     private var toolbarBottomText:ConstraintLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,12 +27,10 @@ class NewsDisplayActivity: AppCompatActivity() {
         setContentView(R.layout.activity_display_news)
 
         toolbarBottomText = findViewById(R.id.toolbar_bottom_text)
-        scrollviewText = findViewById(R.id.scrollview_text)
-        tvText = findViewById(R.id.tv_text)
         news = intent.getParcelableExtra("news")
 
         //显示或隐藏底栏
-        scrollviewText!!.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+        scrollviewText.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             var isShow = true
             if (scrollY - oldScrollY > 0) {
                 isShow = false
@@ -61,7 +56,7 @@ class NewsDisplayActivity: AppCompatActivity() {
 
         async(UI) {
             deferred1.await()
-            tvText!!.text = news!!.text
+            tvText.text = news!!.text
         }
     }
 
