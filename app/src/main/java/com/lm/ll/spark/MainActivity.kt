@@ -23,12 +23,15 @@ import kotlinx.coroutines.experimental.async
 
 class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
-        this.swipeRefresh.isRefreshing = false
+        this.swipeRefreshTitles.isRefreshing = false
     }
 
+    //文章列表数据源
     private var newsList:ArrayList<News> = ArrayList()
+    //文章列表adapter
     private var adapter: NewsAdapter? = null
 
+    //当前加载的页数
     private var currentPage: Int = 1
 
 
@@ -43,21 +46,21 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             Toast.makeText(this@MainActivity,"Hello",Toast.LENGTH_SHORT).show()
         }
 
-        swipeRefresh.setColorSchemeResources(R.color.blueGrey)
-        swipeRefresh.setDistanceToTriggerSync(300)
+        swipeRefreshTitles.setColorSchemeResources(R.color.blueGrey)
+        swipeRefreshTitles.setDistanceToTriggerSync(400)
 
-        swipeRefresh.setOnRefreshListener({
+        swipeRefreshTitles.setOnRefreshListener({
             loadContent()
         })
 
 
         val linearLayoutManager = LinearLayoutManager(this@MainActivity)
 
-        this.recyclerView.addItemDecoration(NewsItemDecoration(2))
-        this.recyclerView.layoutManager = linearLayoutManager
+        this.recyclerViewTitles.addItemDecoration(NewsItemDecoration(2))
+        this.recyclerViewTitles.layoutManager = linearLayoutManager
 
         //上拉加载更多
-        recyclerView.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
+        recyclerViewTitles.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
             override fun loadMoreData() {
                 currentPage++
                 loadContent(true)
@@ -115,20 +118,18 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         }
 
         async(UI) {
-            swipeRefresh.isRefreshing = true
+            swipeRefreshTitles.isRefreshing = true
             deferredLoad.await()
             adapter = NewsAdapter(this@MainActivity, newsList)
-            this@MainActivity.recyclerView.adapter = adapter
-            this@MainActivity.recyclerView.adapter.notifyDataSetChanged()
+            this@MainActivity.recyclerViewTitles.adapter = adapter
+            this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
 
-//            Log.d("LL","totalItemCount = ${this@MainActivity.recyclerView.layoutManager.itemCount}, childItemCount = ${this@MainActivity.recyclerView.childCount}")
-            
             if (isLoadMore) {
-                this@MainActivity.recyclerView.layoutManager.scrollToPosition(currentPos - 1)
+                this@MainActivity.recyclerViewTitles.layoutManager.scrollToPosition(currentPos - 1)
             }
 
             //停止刷新
-            swipeRefresh.isRefreshing = false
+            swipeRefreshTitles.isRefreshing = false
         }
     }
 
