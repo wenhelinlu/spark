@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.ScrollView
 import android.widget.TextView
 import com.lm.ll.spark.db.News
@@ -73,13 +72,13 @@ class NewsDisplayActivity: AppCompatActivity() {
      */
     private fun showBottomToolbar(isShow: Boolean){
         if (isShow) {
-            toolbarBottomText!!.visibility = View.GONE
-            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_to_down)
-            toolbarBottomText!!.startAnimation(animation)
-        } else {
             toolbarBottomText!!.visibility = View.VISIBLE
-            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_from_down)
-            toolbarBottomText!!.startAnimation(animation)
+//            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_from_down)
+//            toolbarBottomText!!.startAnimation(animation)
+        } else {
+            toolbarBottomText!!.visibility = View.GONE
+//            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_to_down)
+//            toolbarBottomText!!.startAnimation(animation)
         }
     }
 }
