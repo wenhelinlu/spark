@@ -2,18 +2,22 @@ package com.lm.ll.spark.util
 
 import android.util.Log
 import com.lm.ll.spark.db.News
+import kotlinx.coroutines.experimental.newSingleThreadContext
 import org.jsoup.nodes.Document
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
  * Created by ll on 2018-05-24 19:29.
  */
 class Spider {
+
+    private val pattern = "[0-9]+" //匹配数字
 
     /**
      * @desc 抓取文章列表
@@ -25,7 +29,6 @@ class Spider {
         Log.d("加载列表",webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
         val titleLinks: Elements = doc.select ("div#d_list")
-        println("news's count: " + titleLinks.size)
         for (e: Element in titleLinks){
             val uls: Elements = e.getElementsByTag("ul")
             for (ul: Element in uls){
@@ -33,18 +36,15 @@ class Spider {
             }
         }
 
-        print(mList.size)
         return mList
     }
 
     /**
-     * @desc 解析抓取到的正文内容，生成标题链接
+     * @desc 解析抓取到的正文内容，生成标题列表
      * @author ll
      * @time 2018-05-28 10:01
      */
     private fun parseContent(ul: Element, list: ArrayList<News>){
-        val pattern = "[0-9]+" //匹配数字
-
         for(child in ul.childNodes()){
             if(child.childNodes() == null || child.childNodeSize() != 7){
                 continue
@@ -58,7 +58,7 @@ class Spider {
             news.title = link.text()
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
-            var wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
+            val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
             news.textLength = "${(wordCount!!.toLong())/2}字" //字数
             news.author = "作者:$author"
             news.date = (childNodes[2] as Element).text() //日期
@@ -86,9 +86,47 @@ class Spider {
     fun scratchText(news: News): News{
         val doc: Document = Jsoup.connect(news.url).get()
         val body: Elements = doc.getElementsByTag("pre")
-        val comments: Elements = doc.getElementsByTag("ul")
         news.text = parseText(body[0])
 
         return news
+    }
+
+
+    /**
+     * @desc 抓取正文的评论
+     * @author ll
+     * @time 2018-06-04 15:06
+     */
+    fun scratchComments(news:News):ArrayList<News>{
+        val commentList = ArrayList<News>()
+        val doc: Document = Jsoup.connect(news.url).get()
+        val comments: Elements = doc.getElementsByTag("ul")
+        parseComments(comments[0], commentList)
+        return commentList
+    }
+
+    /**
+     * @desc 解析文章首层评论
+     * @author ll
+     * @time 2018-06-04 16:34
+     */
+    private fun parseComments(ul: Element, list: ArrayList<News>){
+        for(child in ul.childNodes()){
+            val childNodes = child.childNodes()
+            val news = News()
+            val link: Element = childNodes[0] as Element
+            val baseUri = child.baseUri().substring(0,28)
+            val uri = link.attr("href")
+            news.url = "$baseUri$uri"
+            news.title = link.text()
+            val authorStr = (childNodes[1] as TextNode).text()
+            val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
+            val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
+            news.textLength = "${(wordCount!!.toLong())/2}字" //字数
+            news.author = "作者:$author"
+            news.date = (childNodes[2] as Element).text() //日期
+
+            list.add(news)
+        }
     }
 }

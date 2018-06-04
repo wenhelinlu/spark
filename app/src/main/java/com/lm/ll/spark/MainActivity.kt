@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
         val currentPos: Int = newsList.size
 
-        val loadList = async(CommonPool) {
+        val deferredLoad = async(CommonPool) {
             val spider = Spider()
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
             val pageIndex = if (isLoadMore) currentPage else 1
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
         async(UI) {
             swipeRefresh.isRefreshing = true
-            loadList.await()
+            deferredLoad.await()
             adapter = NewsAdapter(this@MainActivity, newsList)
             this@MainActivity.recyclerView.adapter = adapter
             this@MainActivity.recyclerView.adapter.notifyDataSetChanged()
