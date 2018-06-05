@@ -74,10 +74,12 @@ class NewsDisplayActivity: AppCompatActivity() {
             deferredLoad.await()
 
             tvText.text = news!!.text
+            //在正文加载完成后再显示评论区提示
+            tvDivider.text = this@NewsDisplayActivity.getString(R.string.comment_remark)
 
             commentsAdapter = NewsAdapter(this@NewsDisplayActivity, comments)
-            this@NewsDisplayActivity.recyclerViewComment.adapter = commentsAdapter
-            this@NewsDisplayActivity.recyclerViewComment.adapter.notifyDataSetChanged()
+            recyclerViewComment.adapter = commentsAdapter
+            recyclerViewComment.adapter.notifyDataSetChanged()
         }
     }
 
