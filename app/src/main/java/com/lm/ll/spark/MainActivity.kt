@@ -6,9 +6,9 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import com.lm.ll.spark.adapter.NewsAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.NewsItemDecoration
@@ -41,7 +41,11 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         setSupportActionBar(toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_menu)
         toolbar.setNavigationOnClickListener {
-            Toast.makeText(this@MainActivity,"Hello",Toast.LENGTH_SHORT).show()
+            if (dl_layout.isDrawerOpen(Gravity.START)) {
+                dl_layout.closeDrawer(Gravity.START)
+            } else {
+                dl_layout.openDrawer(Gravity.START)
+            }
         }
 
         swipeRefreshTitles.setColorSchemeResources(R.color.blueGrey)
