@@ -5,6 +5,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
 import com.lm.ll.spark.adapter.NewsAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.DashlineItemDecoration
@@ -28,7 +29,7 @@ class NewsDisplayActivity: AppCompatActivity() {
     //底部工具栏
     private var toolbarBottomText:ConstraintLayout? = null
     //评论adapter
-    private var commentsAdapter: NewsAdapter? = null
+    private var commentsAdapter: CommentRecyclerViewAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -78,7 +79,7 @@ class NewsDisplayActivity: AppCompatActivity() {
             //在正文加载完成后再显示评论区提示
             tvCommentRemark.text = this@NewsDisplayActivity.getString(R.string.comment_remark)
 
-            commentsAdapter = NewsAdapter(this@NewsDisplayActivity, comments)
+            commentsAdapter = CommentRecyclerViewAdapter(this@NewsDisplayActivity, comments)
             recyclerViewComment.adapter = commentsAdapter
             recyclerViewComment.adapter.notifyDataSetChanged()
         }

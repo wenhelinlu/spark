@@ -21,11 +21,12 @@ import com.lm.ll.spark.db.News
  */
 class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.Adapter<NewsAdapter.NewsListViewHolder>(){
 
-    private var context = mContext
-    private var list = newsList
+    private val context = mContext
+    private val list = newsList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.NewsListViewHolder {
-        val view: View = LayoutInflater.from(context).inflate(R.layout.news_item,parent,false)
+        val view = LayoutInflater.from(context).inflate(R.layout.news_item,parent,false)
+
         return NewsListViewHolder(view)
     }
 
@@ -35,6 +36,7 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
 
     override fun onBindViewHolder(holder: NewsAdapter.NewsListViewHolder, position: Int) {
         holder.newsTitle.text = list[position].title
+
         holder.newsAuthor.text = "${list[position].author}"
         holder.newsDate.text = list[position].date
         holder.newsTextLength.text = list[position].textLength
@@ -57,5 +59,4 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
         var newsTextLength: TextView = itemView.findViewById(R.id.news_textLength)
         var newsReadCount: TextView = itemView.findViewById(R.id.news_readCount)
     }
-
 }

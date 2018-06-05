@@ -11,5 +11,6 @@
     <color name="transparent">#00000000</color>
     <color name="grayLiteBlur">#20DDDDDD</color>
     <color name="blueGrey">#607d8b</color>
-    <color name="blueGreyHeavy">#37474f</color>
+    <color name="blueGreyLite">#90a4ae</color>
+    <color name="blueGreyHeavy">#78909c</color>
 </resources>
