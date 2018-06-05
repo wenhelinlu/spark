@@ -1,27 +1,27 @@
 package com.lm.ll.spark
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import com.lm.ll.spark.adapter.NewsAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.NewsItemDecoration
 import com.lm.ll.spark.util.*
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.elitenews_list.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 
-
-class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+/**
+ * 作者：Created by ll on 2018-06-05 18:37.
+ * 邮箱：wenhelinlu@gmail.com
+ */
+class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
-        this.swipeRefreshTitles.isRefreshing = false
+        this.swipeRefreshEliteList.isRefreshing = false
     }
 
     //文章列表数据源
@@ -35,30 +35,23 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.elitenews_list)
 
-        val toolbar:Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_menu)
-        toolbar.setNavigationOnClickListener {
-            Toast.makeText(this@MainActivity,"Hello",Toast.LENGTH_SHORT).show()
-        }
+        swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
+        swipeRefreshEliteList.setDistanceToTriggerSync(400)
 
-        swipeRefreshTitles.setColorSchemeResources(R.color.blueGrey)
-        swipeRefreshTitles.setDistanceToTriggerSync(400)
-
-        swipeRefreshTitles.setOnRefreshListener({
+        swipeRefreshEliteList.setOnRefreshListener({
             loadContent()
         })
 
 
-        val linearLayoutManager = LinearLayoutManager(this@MainActivity)
+        val linearLayoutManager = LinearLayoutManager(this@EliteNewsListActivity)
 
-        this.recyclerViewTitles.addItemDecoration(NewsItemDecoration(2))
-        this.recyclerViewTitles.layoutManager = linearLayoutManager
+        this.recyclerViewEliteList.addItemDecoration(NewsItemDecoration(2))
+        this.recyclerViewEliteList.layoutManager = linearLayoutManager
 
         //上拉加载更多
-        recyclerViewTitles.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
+        recyclerViewEliteList.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
             override fun loadMoreData() {
                 currentPage++
                 loadContent(true)
@@ -82,7 +75,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             val spider = Spider()
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
             val pageIndex = if (isLoadMore) currentPage else 1
-            val list = spider.scratchContent("$BASE_URL$CURRENT_BASE_URL$pageIndex")
+            val list = spider.scratchEliteNewsList("$BASE_URL$CURRENT_ELITEAREA_BASE_URL$pageIndex")
 
             if (isLoadMore) {
                 newsList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
@@ -108,7 +101,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
                     while (newsList.size < MIN_ROWS){
                         currentPage++
-                        val tmpList = spider.scratchContent("$BASE_URL$CURRENT_BASE_URL$currentPage")
+                        val tmpList = spider.scratchEliteNewsList("$BASE_URL$CURRENT_ELITEAREA_BASE_URL$currentPage")
                         newsList.addAll(tmpList)
                     }
                 }
@@ -116,18 +109,18 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         }
 
         async(UI) {
-            swipeRefreshTitles.isRefreshing = true
+            swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
-            adapter = NewsAdapter(this@MainActivity, newsList)
-            this@MainActivity.recyclerViewTitles.adapter = adapter
-            this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+            adapter = NewsAdapter(this@EliteNewsListActivity, newsList)
+            this@EliteNewsListActivity.recyclerViewEliteList.adapter = adapter
+            this@EliteNewsListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
 
             if (isLoadMore) {
-                this@MainActivity.recyclerViewTitles.layoutManager.scrollToPosition(currentPos - 1)
+                this@EliteNewsListActivity.recyclerViewEliteList.layoutManager.scrollToPosition(currentPos - 1)
             }
 
             //停止刷新
-            swipeRefreshTitles.isRefreshing = false
+            swipeRefreshEliteList.isRefreshing = false
         }
     }
 
@@ -144,11 +137,6 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         return when (item.itemId) {
             R.id.action_settings -> true
             R.id.action_search -> true
-            R.id.action_eliteArea -> {
-                val intent = Intent(this@MainActivity, EliteNewsListActivity::class.java)
-                this@MainActivity.startActivity(intent)
-                return true
-            }
             else -> super.onOptionsItemSelected(item)
         }
     }

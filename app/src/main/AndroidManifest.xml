@@ -24,6 +24,9 @@
         <activity
             android:name=".NewsDisplayActivity"
             android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".EliteNewsListActivity"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

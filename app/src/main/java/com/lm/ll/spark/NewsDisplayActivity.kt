@@ -67,8 +67,9 @@ class NewsDisplayActivity: AppCompatActivity() {
     private fun loadText(){
         val deferredLoad = async(CommonPool) {
             val spider = Spider()
-            news = spider.scratchText(news!!)
-            comments = spider.scratchComments(news!!)
+            news = spider.scratchText(news!!, comments) //正文中可能也包含链接（比如精华区）
+            comments.reverse() //因为在精华区中，章节链接是倒序显示，所以将其翻转
+            comments.addAll(spider.scratchComments(news!!))
         }
 
         async(UI) {

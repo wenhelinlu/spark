@@ -26,7 +26,7 @@ class Spider {
      */
     fun scratchContent(webUrl:String): ArrayList<News>{
         val mList = ArrayList<News>()
-        Log.d("加载列表",webUrl)
+//        Log.d("加载列表",webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
         val titleLinks: Elements = doc.select ("div#d_list")
         for (e: Element in titleLinks){
@@ -52,9 +52,8 @@ class Spider {
             val childNodes = child.childNodes()
             val news = News()
             val link: Element = childNodes[0] as Element
-            val baseUri = child.baseUri()
-            val uri = link.attr("href").removePrefix("index.php")
-            news.url = "$baseUri$uri"
+            val uri = link.attr("href")
+            news.url = "$BASE_URL$uri"
             news.title = link.text()
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
@@ -83,10 +82,19 @@ class Spider {
      * @author ll
      * @time 2018-05-29 18:46
      */
-    fun scratchText(news: News): News{
+    fun scratchText(news: News, commentList: ArrayList<News>): News{
         val doc: Document = Jsoup.connect(news.url).get()
         val body: Elements = doc.getElementsByTag("pre")
         news.text = parseText(body[0])
+
+        val links: Elements = body[0].getElementsByTag("a")
+        for (link in links){
+            val comment = News()
+            comment.url = "$BASE_URL${link.attr("href")}"
+            comment.title = link.text()
+            comment.author = ""
+            commentList.add(comment)
+        }
 
         return news
     }
@@ -115,9 +123,8 @@ class Spider {
             val childNodes = child.childNodes()
             val news = News()
             val link: Element = childNodes[0] as Element
-            val baseUri = child.baseUri().substring(0,28)
             val uri = link.attr("href")
-            news.url = "$baseUri$uri"
+            news.url = "$BASE_URL$uri"
             news.title = link.text()
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
@@ -128,5 +135,33 @@ class Spider {
 
             list.add(news)
         }
+    }
+
+    /**
+     * @desc 抓取精华区文章列表
+     * @author ll
+     * @time 2018-06-05 19:39
+     */
+    fun scratchEliteNewsList(webUrl:String): ArrayList<News>{
+        val mList = ArrayList<News>()
+//        Log.d("加载列表",webUrl)
+        val doc: Document = Jsoup.connect(webUrl).get()
+        val children: Elements = doc.select ("ul#thread_list")
+        for (e: Element in children){
+            for (child in e.childNodes()){
+                if(child.childNodeSize() ==0){
+                    continue
+                }
+                val news = News()
+                val link: Element = child.childNodes()[0] as Element
+                val uri = link.attr("href")
+                news.url = "$BASE_URL$uri"
+                news.title = link.text()
+                news.author = ""
+
+                mList.add(news)
+            }
+        }
+        return mList
     }
 }
