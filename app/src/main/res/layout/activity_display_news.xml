@@ -40,7 +40,8 @@
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/white"/>
+                android:layout_marginTop="24dp"
+                android:background="@color/grayLite"/>
 
             <TextView
                 android:id="@+id/tvCommentRemark"
@@ -61,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="12dp"
                 android:background="@color/transparent"
                 android:clipToPadding="true" />
         </LinearLayout>
