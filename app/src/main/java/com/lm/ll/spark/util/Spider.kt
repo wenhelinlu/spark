@@ -1,15 +1,11 @@
 package com.lm.ll.spark.util
 
-import android.util.Log
 import com.lm.ll.spark.db.News
-import kotlinx.coroutines.experimental.newSingleThreadContext
-import org.jsoup.nodes.Document
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 /**
@@ -90,7 +86,7 @@ class Spider {
         val links: Elements = body[0].getElementsByTag("a")
         for (link in links){
             val comment = News()
-            comment.url = "$BASE_URL${link.attr("href")}"
+            comment.url = link.attr("href")
             comment.title = link.text()
             comment.author = ""
             commentList.add(comment)
