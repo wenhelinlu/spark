@@ -33,6 +33,7 @@
                 android:background="@color/transparent"
                 android:textColor="@color/grayLite"
                 android:textSize="18sp"
+                android:lineSpacingMultiplier="1.2"
                 android:textIsSelectable="true" />
 
             <View
