@@ -6,7 +6,7 @@
     <string name="title_activity_main">SPark</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_title">留园阅读</string>
     <string name="nav_header_subtitle">wenhelinlu@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
 </resources>
