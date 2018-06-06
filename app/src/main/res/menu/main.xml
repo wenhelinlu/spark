@@ -1,7 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.lm.ll.spark.MainActivity1">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
@@ -11,11 +10,10 @@
         android:id="@+id/action_eliteArea"
         android:orderInCategory="200"
         android:title="@string/action_eliteArea"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_search"
         android:title="Search"
         android:icon="@drawable/ic_menu_search"
-        app:showAsAction="always"/>
-
+        app:showAsAction="always" />
 </menu>

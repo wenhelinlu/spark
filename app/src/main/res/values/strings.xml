@@ -3,4 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="comment_remark">所有跟帖（点击后会在本应用中打开）</string>
     <string name="action_eliteArea">精华区</string>
+    <string name="title_activity_main">SPark</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">wenhelinlu@gmail.com</string>
+    <string name="nav_header_desc">Navigation header</string>
 </resources>

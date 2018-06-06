@@ -2,11 +2,14 @@ package com.lm.ll.spark
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
+import android.support.v4.view.GravityCompat
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import com.lm.ll.spark.adapter.NewsAdapter
@@ -14,12 +17,14 @@ import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.NewsItemDecoration
 import com.lm.ll.spark.util.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
 
-class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
         this.swipeRefreshTitles.isRefreshing = false
     }
@@ -32,32 +37,37 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     //当前加载的页数
     private var currentPage: Int = 1
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val toolbar:Toolbar = findViewById(R.id.toolbar)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_menu)
-        toolbar.setNavigationOnClickListener {
-            if (dl_layout.isDrawerOpen(Gravity.START)) {
-                dl_layout.closeDrawer(Gravity.START)
-            } else {
-                dl_layout.openDrawer(Gravity.START)
-            }
+
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
         }
 
-        swipeRefreshTitles.setColorSchemeResources(R.color.blueGrey)
-        swipeRefreshTitles.setDistanceToTriggerSync(400)
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
 
+        nav_view.setNavigationItemSelectedListener(this)
+
+        //下拉刷新进度条颜色
+        swipeRefreshTitles.setColorSchemeResources(R.color.blueGrey)
+        //触发刷新的下拉距离
+        swipeRefreshTitles.setDistanceToTriggerSync(400)
+        //下拉刷新监听
         swipeRefreshTitles.setOnRefreshListener({
             loadContent()
         })
 
 
+        //recyclerview设置
         val linearLayoutManager = LinearLayoutManager(this@MainActivity)
-
         this.recyclerViewTitles.addItemDecoration(NewsItemDecoration(2))
         this.recyclerViewTitles.layoutManager = linearLayoutManager
 
@@ -71,6 +81,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
         loadContent()
     }
+
 
     /**
      * @desc 加载文章列表
@@ -126,6 +137,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
             this@MainActivity.recyclerViewTitles.adapter = adapter
             this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
 
+            //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
             if (isLoadMore) {
                 this@MainActivity.recyclerViewTitles.layoutManager.scrollToPosition(currentPos - 1)
             }
@@ -135,9 +147,18 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         }
     }
 
+
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.main, menu)
         return true
     }
 
@@ -145,15 +166,42 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            R.id.action_search -> true
+        when (item.itemId) {
+            R.id.action_settings -> return true
+            R.id.action_search -> return true
             R.id.action_eliteArea -> {
                 val intent = Intent(this@MainActivity, EliteNewsListActivity::class.java)
                 this@MainActivity.startActivity(intent)
                 return true
             }
-            else -> super.onOptionsItemSelected(item)
+            else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Handle navigation view item clicks here.
+        when (item.itemId) {
+            R.id.nav_camera -> {
+
+            }
+            R.id.nav_gallery -> {
+
+            }
+            R.id.nav_slideshow -> {
+
+            }
+            R.id.nav_manage -> {
+
+            }
+            R.id.nav_share -> {
+
+            }
+            R.id.nav_send -> {
+
+            }
+        }
+
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
     }
 }

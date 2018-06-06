@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -17,7 +16,7 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_favorite" />
+        app:srcCompat="@drawable/ic_menu_favorite" />
 
     <ImageView
         android:id="@+id/iv_download"
@@ -27,7 +26,7 @@
         app:layout_constraintStart_toEndOf="@+id/iv_favorite"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:srcCompat="@drawable/ic_download" />
+        app:srcCompat="@drawable/ic_menu_download" />
 
     <ImageView
         android:id="@+id/iv_share"
@@ -37,7 +36,7 @@
         app:layout_constraintStart_toEndOf="@+id/iv_download"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:srcCompat="@drawable/ic_share" />
+        app:srcCompat="@drawable/ic_menu_share" />
 
     <ImageView
         android:id="@+id/iv_openinbrowser"
@@ -48,5 +47,5 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/iv_share"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_open_in_browser" />
+        app:srcCompat="@drawable/ic_menu_openinbrowser" />
 </android.support.constraint.ConstraintLayout>
