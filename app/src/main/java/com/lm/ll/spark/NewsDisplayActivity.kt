@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
-import com.lm.ll.spark.adapter.NewsAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.lm.ll.spark.util.Spider
@@ -38,6 +37,8 @@ class NewsDisplayActivity: AppCompatActivity() {
 
         toolbarBottomText = findViewById(R.id.toolbar_bottom_text)
         news = intent.getParcelableExtra("news")
+
+        supportActionBar!!.title = news!!.title
 
         val linearLayoutManager = LinearLayoutManager(this@NewsDisplayActivity)
 

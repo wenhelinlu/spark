@@ -37,6 +37,8 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
         super.onCreate(savedInstanceState)
         setContentView(R.layout.elitenews_list)
 
+        supportActionBar!!.title = "精华区"
+
         swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
         swipeRefreshEliteList.setDistanceToTriggerSync(400)
 
