@@ -1,7 +1,6 @@
 package com.lm.ll.spark
 
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -22,23 +21,23 @@ import kotlinx.coroutines.experimental.async
 class NewsDisplayActivity: AppCompatActivity() {
 
     //接收从文章列表传过来的被点击的文章Model
-    private var news: News? = null
+    private lateinit var news: News
     //此文章下的首层评论
     private var comments: ArrayList<News> = ArrayList()
-    //底部工具栏
-    private var toolbarBottomText:ConstraintLayout? = null
     //评论adapter
-    private var commentsAdapter: CommentRecyclerViewAdapter? = null
+    private lateinit var commentsAdapter: CommentRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_news)
 
-        toolbarBottomText = findViewById(R.id.toolbar_bottom_text)
         news = intent.getParcelableExtra("news")
 
-        supportActionBar!!.title = news!!.title
+        //跟?结合使用， let函数可以在对象不为 null 的时候执行函数内的代码，从而避免了空指针异常的出现。
+        supportActionBar?.let {
+            it.title = news.title
+        }
 
         val linearLayoutManager = LinearLayoutManager(this@NewsDisplayActivity)
 
@@ -76,7 +75,7 @@ class NewsDisplayActivity: AppCompatActivity() {
         async(UI) {
             deferredLoad.await()
 
-            tvText.text = news!!.text
+            tvText.text = news.text
             viewDivider.visibility = View.VISIBLE
             //在正文加载完成后再显示评论区提示
             tvCommentRemark.text = this@NewsDisplayActivity.getString(R.string.comment_remark)
@@ -94,11 +93,11 @@ class NewsDisplayActivity: AppCompatActivity() {
      */
     private fun showBottomToolbar(isShow: Boolean){
         if (isShow) {
-            toolbarBottomText!!.visibility = View.VISIBLE
+            toolbar_bottom_text.visibility = View.VISIBLE
 //            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_from_down)
 //            toolbarBottomText!!.startAnimation(animation)
         } else {
-            toolbarBottomText!!.visibility = View.GONE
+            toolbar_bottom_text.visibility = View.GONE
 //            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_to_down)
 //            toolbarBottomText!!.startAnimation(animation)
         }

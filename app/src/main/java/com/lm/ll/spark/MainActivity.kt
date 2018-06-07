@@ -1,7 +1,6 @@
 package com.lm.ll.spark
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -35,7 +34,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     //文章列表数据源
     private var newsList:ArrayList<News> = ArrayList()
     //文章列表adapter
-    private var adapter: NewsAdapter? = null
+    private lateinit var adapter: NewsAdapter
 
     //当前加载的页数
     private var currentPage: Int = 1
@@ -44,16 +43,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val layoutParams = window.attributes
-            layoutParams.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or layoutParams.flags
-        }
+        val layoutParams = window.attributes
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or layoutParams.flags
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//        fab.setOnClickListener { view ->
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show()
+//        }
+
+        //若函数参数对应的函数只有一个参数，在使用时，可以省略参数定义，直接使用“it”代替参数
+        fab.setOnClickListener {
+            Snackbar.make(it, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
 
