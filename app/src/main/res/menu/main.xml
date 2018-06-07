@@ -8,12 +8,17 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_eliteArea"
-        android:orderInCategory="200"
+        android:orderInCategory="110"
         android:title="@string/action_eliteArea"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_favorited"
+        android:orderInCategory="110"
+        android:title="@string/action_favouited"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_search"
-        android:title="Search"
+        android:title="@string/action_search"
         android:icon="@drawable/ic_menu_search"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

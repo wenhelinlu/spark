@@ -36,7 +36,7 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
 
         Realm.init(this)
 
-        supportActionBar!!.title = "我的收藏"
+        supportActionBar!!.title = this.getString(R.string.action_favouited)
 
         swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
         swipeRefreshEliteList.setDistanceToTriggerSync(400)
@@ -74,7 +74,7 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.main, menu)
         return true
     }
 

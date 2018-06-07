@@ -9,4 +9,6 @@
     <string name="nav_header_title">留园阅读</string>
     <string name="nav_header_subtitle">wenhelinlu@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="action_search">Search</string>
+    <string name="action_favouited">我的收藏</string>
 </resources>

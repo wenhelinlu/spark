@@ -1,9 +1,12 @@
 package com.lm.ll.spark
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.ScrollView
 import android.widget.Toast
 import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
 import com.lm.ll.spark.db.News
@@ -81,6 +84,28 @@ class NewsDisplayActivity: AppCompatActivity() {
             Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show()
         }
 
+        //滚动到最顶端
+        iv_scrollUp.setOnClickListener {
+            scrollviewText.post {
+                scrollviewText.fullScroll(ScrollView.FOCUS_UP)
+            }
+        }
+
+        //滚动到最底端
+        iv_scrollDown.setOnClickListener {
+            scrollviewText.post {
+                scrollviewText.fullScroll(ScrollView.FOCUS_DOWN)
+            }
+        }
+
+        //在浏览器中打开
+        iv_openInBrowser.setOnClickListener {
+            val intent = Intent()
+            intent.action = "android.intent.action.VIEW"
+            intent.data = Uri.parse(news.url)
+            startActivity(intent)
+        }
+
         val linearLayoutManager = LinearLayoutManager(this@NewsDisplayActivity)
         //评论列表添加点线分隔线
         this.recyclerViewComment.addItemDecoration(DashlineItemDecoration())
@@ -116,7 +141,7 @@ class NewsDisplayActivity: AppCompatActivity() {
         async(UI) {
 
             //如果正文有内容，则说明是从本地读取的，不需要再从网上抓取
-            if (news.text != null && news.text.toString().isNotEmpty()) {
+            if (news.text == null || news.text.toString().isEmpty()) {
                 deferredLoad.await()
             }
 

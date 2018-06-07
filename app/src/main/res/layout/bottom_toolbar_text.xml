@@ -11,7 +11,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginStart="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/iv_download"
+        app:layout_constraintEnd_toStartOf="@+id/iv_scrollUp"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,33 +19,33 @@
         app:srcCompat="@drawable/ic_menu_favorite" />
 
     <ImageView
-        android:id="@+id/iv_download"
+        android:id="@+id/iv_scrollUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/iv_share"
+        app:layout_constraintEnd_toStartOf="@+id/iv_scrollDown"
         app:layout_constraintStart_toEndOf="@+id/iv_favorite"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:srcCompat="@drawable/ic_menu_download" />
+        app:srcCompat="@drawable/ic_menu_up" />
 
     <ImageView
-        android:id="@+id/iv_share"
+        android:id="@+id/iv_scrollDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/iv_openinbrowser"
-        app:layout_constraintStart_toEndOf="@+id/iv_download"
+        app:layout_constraintEnd_toStartOf="@+id/iv_openInBrowser"
+        app:layout_constraintStart_toEndOf="@+id/iv_scrollUp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:srcCompat="@drawable/ic_menu_share" />
+        app:srcCompat="@drawable/ic_menu_down" />
 
     <ImageView
-        android:id="@+id/iv_openinbrowser"
+        android:id="@+id/iv_openInBrowser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/iv_share"
+        app:layout_constraintStart_toEndOf="@+id/iv_scrollDown"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_menu_openinbrowser" />
 </android.support.constraint.ConstraintLayout>
