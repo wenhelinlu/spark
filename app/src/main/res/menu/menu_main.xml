@@ -13,6 +13,11 @@
         android:title="@string/action_eliteArea"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/action_favorited"
+        android:orderInCategory="300"
+        android:title="我的收藏"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_search"
         android:title="Search"
         android:icon="@drawable/ic_menu_search"

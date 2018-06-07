@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
+import java.util.*
 
 
 /**
@@ -49,6 +50,7 @@ class Spider {
             val news = News()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
+            news.id = UUID.randomUUID().toString()
             news.url = "$BASE_URL$uri"
             news.title = link.text()
             val authorStr = (childNodes[1] as TextNode).text()
@@ -77,15 +79,20 @@ class Spider {
      * @desc 抓取文章正文
      * @author ll
      * @time 2018-05-29 18:46
+     * @param news 待抓取正文的文章链接
+     * @param commentList 存储正文中其他章节链接的列表
+     * @return 包含正文的文章链接
      */
     fun scratchText(news: News, commentList: ArrayList<News>): News{
         val doc: Document = Jsoup.connect(news.url).get()
         val body: Elements = doc.getElementsByTag("pre")
         news.text = parseText(body[0])
 
+        //抓取文章正文中可能包含的其他章节链接
         val links: Elements = body[0].getElementsByTag("a")
         for (link in links){
             val comment = News()
+            comment.id = UUID.randomUUID().toString()
             comment.url = link.attr("href")
             comment.title = link.text()
             comment.author = ""
@@ -120,6 +127,7 @@ class Spider {
             val news = News()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
+            news.id = UUID.randomUUID().toString()
             news.url = "$BASE_URL$uri"
             news.title = link.text()
             val authorStr = (childNodes[1] as TextNode).text()
@@ -151,6 +159,7 @@ class Spider {
                 val news = News()
                 val link: Element = child.childNodes()[0] as Element
                 val uri = link.attr("href")
+                news.id = UUID.randomUUID().toString()
                 news.url = "$BASE_URL$uri"
                 news.title = link.text()
                 news.author = ""

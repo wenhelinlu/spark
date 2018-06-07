@@ -53,9 +53,9 @@ dependencies {
 }
 
 noArg{
-    annotation("com/lm/ll/spark/annotation/Poko")
+    annotation("com.lm.ll.spark.annotation.Poko")
 }
 
 allOpen{
-    annotation("com/lm/ll/spark/annotation/Poko")
+    annotation("com.lm.ll.spark.annotation.Poko")
 }

@@ -177,15 +177,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            R.id.action_search -> return true
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            R.id.action_search -> true
             R.id.action_eliteArea -> {
                 val intent = Intent(this@MainActivity, EliteNewsListActivity::class.java)
                 this@MainActivity.startActivity(intent)
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            R.id.action_favorited -> {
+                val intent = Intent(this@MainActivity, FavoritedNewsListActivity::class.java)
+                this@MainActivity.startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -193,7 +198,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_camera -> {
-
+                val intent = Intent(this@MainActivity, FavoritedNewsListActivity::class.java)
+                this@MainActivity.startActivity(intent)
             }
             R.id.nav_gallery -> {
 

@@ -25,6 +25,9 @@
         <activity
             android:name=".EliteNewsListActivity"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".FavoritedNewsListActivity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

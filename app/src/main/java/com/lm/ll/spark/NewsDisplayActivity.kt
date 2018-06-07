@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.Toast
 import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.lm.ll.spark.util.DETAIL_INTENT_KEY
 import com.lm.ll.spark.util.Spider
+import com.vicpin.krealmextensions.save
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_display_news.*
+import kotlinx.android.synthetic.main.bottom_toolbar_text.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -33,17 +37,52 @@ class NewsDisplayActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_news)
 
+        Realm.init(this)
+
+        initData()
+
+        initView()
+
+        loadText()
+    }
+
+    /**
+     * @desc 初始化数据
+     * @author ll
+     * @time 2018-06-07 16:33
+     */
+    private fun initData() {
         //从列表中传来的点击的标题
-        news = intent.getParcelableExtra(DETAIL_INTENT_KEY)
+        news = this.intent.getParcelableExtra(DETAIL_INTENT_KEY)
+    }
+
+    /**
+     * @desc 初始化视图
+     * @author ll
+     * @time 2018-06-07 16:34
+     */
+    private fun initView() {
 
         //跟?结合使用， let函数可以在对象不为 null 的时候执行函数内的代码，从而避免了空指针异常的出现。
-        supportActionBar?.let {
+        this.supportActionBar?.let {
             it.title = news.title
         }
 
-        val linearLayoutManager = LinearLayoutManager(this@NewsDisplayActivity)
+        //收藏图标点击事件
+        iv_favorite.setOnClickListener {
 
-        //添加点线分隔线
+            //收藏或取消收藏
+            if (news.isFavorited == 1) {
+                news.isFavorited = 0
+            } else {
+                news.isFavorited = 1
+            }
+            news.save()
+            Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show()
+        }
+
+        val linearLayoutManager = LinearLayoutManager(this@NewsDisplayActivity)
+        //评论列表添加点线分隔线
         this.recyclerViewComment.addItemDecoration(DashlineItemDecoration())
         this.recyclerViewComment.layoutManager = linearLayoutManager
         this.recyclerViewComment.isNestedScrollingEnabled = false
@@ -59,7 +98,6 @@ class NewsDisplayActivity: AppCompatActivity() {
             showBottomToolbar(isShow)
         }
 
-        loadText()
     }
 
     /**
@@ -76,7 +114,11 @@ class NewsDisplayActivity: AppCompatActivity() {
         }
 
         async(UI) {
-            deferredLoad.await()
+
+            //如果正文有内容，则说明是从本地读取的，不需要再从网上抓取
+            if (news.text != null && news.text.toString().isNotEmpty()) {
+                deferredLoad.await()
+            }
 
             tvText.text = news.text
             viewDivider.visibility = View.VISIBLE
