@@ -3,17 +3,15 @@ package com.lm.ll.spark.adapter
 import android.content.Context
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
-import android.support.v4.content.ContextCompat.startActivity
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import com.lm.ll.spark.NewsDisplayActivity
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.News
+import com.lm.ll.spark.util.DETAIL_INTENT_KEY
 
 /**
  * 作者：Created by ll on 2018-05-28 13:36.
@@ -45,7 +43,7 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
         holder.newsItem.setOnClickListener {
                     val news = list[position]
                     val intent = Intent(context, NewsDisplayActivity::class.java)
-                    intent.putExtra("news", news)
+            intent.putExtra(DETAIL_INTENT_KEY, news)
                     context.startActivity(intent)
         }
 

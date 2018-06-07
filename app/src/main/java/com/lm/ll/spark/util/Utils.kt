@@ -14,13 +14,16 @@ fun String.toDate(format: String = "yyyy-MM-dd") :String{
 }
 
 //文章列表初次加载时最小行数
-const val MIN_ROWS: Int = 15
+const val MIN_ROWS = 15
 
 //禁忌书屋基地址
-const val BASE_URL: String = "https://www.cool18.com/bbs4/"
+const val BASE_URL = "https://www.cool18.com/bbs4/"
 //当前列表数据源URL地址（未附加页数）
-const val CURRENT_BASE_URL: String = "index.php?app=forum&act=cachepage&cp=tree" //禁忌书屋
+const val CURRENT_BASE_URL = "index.php?app=forum&act=cachepage&cp=tree" //禁忌书屋
 //    private val URL: String = "https://site.6parker.com/chan1/index.php?app=forum&act=cachepage&cp=tree" //史海钩沉
 
 //禁忌书屋精华区数据源URL地址（未附加页数）
-const val CURRENT_ELITEAREA_BASE_URL: String = "index.php?app=forum&act=gold&p="
+const val CURRENT_ELITEAREA_BASE_URL = "index.php?app=forum&act=gold&p="
+
+//正文接收的intent传递内容的key
+const val DETAIL_INTENT_KEY = "news"

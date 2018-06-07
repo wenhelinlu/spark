@@ -7,6 +7,7 @@ import android.view.View
 import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.DashlineItemDecoration
+import com.lm.ll.spark.util.DETAIL_INTENT_KEY
 import com.lm.ll.spark.util.Spider
 import kotlinx.android.synthetic.main.activity_display_news.*
 import kotlinx.coroutines.experimental.CommonPool
@@ -32,7 +33,8 @@ class NewsDisplayActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_news)
 
-        news = intent.getParcelableExtra("news")
+        //从列表中传来的点击的标题
+        news = intent.getParcelableExtra(DETAIL_INTENT_KEY)
 
         //跟?结合使用， let函数可以在对象不为 null 的时候执行函数内的代码，从而避免了空指针异常的出现。
         supportActionBar?.let {
@@ -41,6 +43,7 @@ class NewsDisplayActivity: AppCompatActivity() {
 
         val linearLayoutManager = LinearLayoutManager(this@NewsDisplayActivity)
 
+        //添加点线分隔线
         this.recyclerViewComment.addItemDecoration(DashlineItemDecoration())
         this.recyclerViewComment.layoutManager = linearLayoutManager
         this.recyclerViewComment.isNestedScrollingEnabled = false
@@ -67,9 +70,9 @@ class NewsDisplayActivity: AppCompatActivity() {
     private fun loadText(){
         val deferredLoad = async(CommonPool) {
             val spider = Spider()
-            news = spider.scratchText(news!!, comments) //正文中可能也包含链接（比如精华区）
+            news = spider.scratchText(news, comments) //正文中可能也包含链接（比如精华区）
             comments.reverse() //因为在精华区中，章节链接是倒序显示，所以将其翻转
-            comments.addAll(spider.scratchComments(news!!))
+            comments.addAll(spider.scratchComments(news))
         }
 
         async(UI) {
@@ -92,15 +95,17 @@ class NewsDisplayActivity: AppCompatActivity() {
      * @time 2018-06-03 08:14
      */
     private fun showBottomToolbar(isShow: Boolean){
-        if (isShow) {
-            toolbar_bottom_text.visibility = View.VISIBLE
+//        if (isShow) {
+//            toolbar_bottom_text.visibility = View.VISIBLE
 //            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_from_down)
 //            toolbarBottomText!!.startAnimation(animation)
-        } else {
-            toolbar_bottom_text.visibility = View.GONE
+//        } else {
+//            toolbar_bottom_text.visibility = View.GONE
 //            val animation = AnimationUtils.loadAnimation(this@NewsDisplayActivity, R.anim.fab_jump_to_down)
 //            toolbarBottomText!!.startAnimation(animation)
-        }
+//        }
+
+        toolbar_bottom_text.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 }
 
