@@ -147,6 +147,14 @@ class NewsDisplayActivity: AppCompatActivity() {
 
             tvText.text = news.text
             viewDivider.visibility = View.VISIBLE
+
+            //根据文章收藏状态显示不同的图标
+            if (news.isFavorited == 1) {
+                iv_favorite.setImageResource(R.drawable.ic_menu_favorited)
+            } else {
+                iv_favorite.setImageResource(R.drawable.ic_menu_favorite)
+            }
+
             //在正文加载完成后再显示评论区提示
             tvCommentRemark.text = this@NewsDisplayActivity.getString(R.string.comment_remark)
 
