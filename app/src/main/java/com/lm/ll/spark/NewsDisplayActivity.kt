@@ -85,7 +85,7 @@ class NewsDisplayActivity: AppCompatActivity() {
                 news.save() //将数据插入表中
             }
 
-            iv_favorite.setImageResource(if (news.isFavorited == 1) R.drawable.ic_menu_favorited else R.drawable.ic_menu_favorite)
+            iv_favorite.setImageResource(if (news.isFavorited == 1) R.drawable.ic_menu_favorited else R.drawable.ic_menu_unfavorite)
             Toast.makeText(this, if (news.isFavorited == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
         }
 
@@ -164,7 +164,7 @@ class NewsDisplayActivity: AppCompatActivity() {
             if (news.isFavorited == 1) {
                 iv_favorite.setImageResource(R.drawable.ic_menu_favorited)
             } else {
-                iv_favorite.setImageResource(R.drawable.ic_menu_favorite)
+                iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
             }
 
             //在正文加载完成后再显示评论区提示
