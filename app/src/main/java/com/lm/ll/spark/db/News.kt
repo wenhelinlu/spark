@@ -3,10 +3,10 @@ package com.lm.ll.spark.db
 import android.os.Parcel
 import android.os.Parcelable
 import com.lm.ll.spark.annotation.Poko
-import com.lm.ll.spark.util.toDate
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
-import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 /**
@@ -21,7 +21,7 @@ data class News(
         var textLength: String? = null, //文章字数
         var readCount: String? = null, //阅读数
         var text: String? = null, //文章正文
-        var insertTime: String? = LocalDate.now().toString().toDate("yyyy-MM-dd hh:mm:ss"), //文章收藏入库时间
+        var insertTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), //文章收藏入库时间
         var isFavorited: Int = 0  //是否被收藏, 1表示已收藏，0表示未收藏
 ) : Parcelable, RealmObject() {
 
