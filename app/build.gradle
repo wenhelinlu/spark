@@ -46,7 +46,6 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
 
     implementation "com.github.vicpinm:krealmextensions:2.2.0"
-
     //For Single and Flowable queries:
     implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'

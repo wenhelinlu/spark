@@ -1,5 +1,6 @@
 package com.lm.ll.spark.util
 
+import android.util.Log
 import com.lm.ll.spark.db.News
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -23,7 +24,7 @@ class Spider {
      */
     fun scratchContent(webUrl:String): ArrayList<News>{
         val mList = ArrayList<News>()
-//        Log.d("加载列表",webUrl)
+        Log.d("加载列表", webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
         val titleLinks: Elements = doc.select ("div#d_list")
         for (e: Element in titleLinks){
@@ -50,7 +51,6 @@ class Spider {
             val news = News()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
-            news.id = UUID.randomUUID().toString()
             news.url = "$BASE_URL$uri"
             news.title = link.text()
             val authorStr = (childNodes[1] as TextNode).text()
@@ -92,7 +92,6 @@ class Spider {
         val links: Elements = body[0].getElementsByTag("a")
         for (link in links){
             val comment = News()
-            comment.id = UUID.randomUUID().toString()
             comment.url = link.attr("href")
             comment.title = link.text()
             comment.author = ""
@@ -127,7 +126,6 @@ class Spider {
             val news = News()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
-            news.id = UUID.randomUUID().toString()
             news.url = "$BASE_URL$uri"
             news.title = link.text()
             val authorStr = (childNodes[1] as TextNode).text()
@@ -159,7 +157,6 @@ class Spider {
                 val news = News()
                 val link: Element = child.childNodes()[0] as Element
                 val uri = link.attr("href")
-                news.id = UUID.randomUUID().toString()
                 news.url = "$BASE_URL$uri"
                 news.title = link.text()
                 news.author = ""

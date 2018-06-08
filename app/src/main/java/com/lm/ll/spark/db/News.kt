@@ -3,8 +3,10 @@ package com.lm.ll.spark.db
 import android.os.Parcel
 import android.os.Parcelable
 import com.lm.ll.spark.annotation.Poko
+import com.lm.ll.spark.util.toDate
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
+import java.time.LocalDate
 
 
 /**
@@ -12,14 +14,14 @@ import io.realm.annotations.PrimaryKey
  */
 @Poko
 data class News(
-        @PrimaryKey var id: String? = null, //id
+        @PrimaryKey var url: String? = null, //url链接
         var title: String? = null, //标题
-        var url: String? = null, //url链接
         var author: String? = null, //作者
-        var date: String? = null, //日期
+        var date: String? = null, //文章发表日期
         var textLength: String? = null, //文章字数
         var readCount: String? = null, //阅读数
         var text: String? = null, //文章正文
+        var insertTime: String? = LocalDate.now().toString().toDate("yyyy-MM-dd hh:mm:ss"), //文章收藏入库时间
         var isFavorited: Int = 0  //是否被收藏, 1表示已收藏，0表示未收藏
 ) : Parcelable, RealmObject() {
 
@@ -35,14 +37,14 @@ data class News(
             parcel.readInt())
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeString(id)
-        dest.writeString(title)
         dest.writeString(url)
+        dest.writeString(title)
         dest.writeString(author)
         dest.writeString(date)
         dest.writeString(textLength)
         dest.writeString(readCount)
         dest.writeString(text)
+        dest.writeString(insertTime)
         dest.writeInt(isFavorited)
     }
 

@@ -13,6 +13,8 @@ import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.lm.ll.spark.util.DETAIL_INTENT_KEY
 import com.lm.ll.spark.util.Spider
+import com.vicpin.krealmextensions.delete
+import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_display_news.*
@@ -77,11 +79,14 @@ class NewsDisplayActivity: AppCompatActivity() {
             //收藏或取消收藏
             if (news.isFavorited == 1) {
                 news.isFavorited = 0
+                News().delete { equalTo("url", news.url) } //从数据库中删除此条数据
             } else {
                 news.isFavorited = 1
+                news.save() //将数据插入表中
             }
-            news.save()
-            Toast.makeText(this, "收藏成功", Toast.LENGTH_SHORT).show()
+
+            iv_favorite.setImageResource(if (news.isFavorited == 1) R.drawable.ic_menu_favorited else R.drawable.ic_menu_favorite)
+            Toast.makeText(this, if (news.isFavorited == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
         }
 
         //滚动到最顶端
@@ -122,7 +127,6 @@ class NewsDisplayActivity: AppCompatActivity() {
             }
             showBottomToolbar(isShow)
         }
-
     }
 
     /**
@@ -143,6 +147,14 @@ class NewsDisplayActivity: AppCompatActivity() {
             //如果正文有内容，则说明是从本地读取的，不需要再从网上抓取
             if (news.text == null || news.text.toString().isEmpty()) {
                 deferredLoad.await()
+                //如果是从主页打开的链接，则查询此条数据在数据库中是否存在
+                val find = query<News> {
+                    equalTo("url", news.url)
+                }.firstOrNull()
+                //如果存在，说明此文章已被收藏并存入数据库中
+                if (find != null) {
+                    news.isFavorited = 1
+                }
             }
 
             tvText.text = news.text

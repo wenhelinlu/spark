@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -68,9 +69,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         //下拉刷新进度条颜色
-        swipeRefreshTitles.setColorSchemeResources(R.color.blueGrey)
+        swipeRefreshTitles.setColorSchemeResources(R.color.colorPrimary)
         //触发刷新的下拉距离
-        swipeRefreshTitles.setDistanceToTriggerSync(400)
+        swipeRefreshTitles.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
         //下拉刷新监听
         swipeRefreshTitles.setOnRefreshListener({
             loadContent()
@@ -110,6 +111,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val pageIndex = if (isLoadMore) currentPage else 1
             val list = spider.scratchContent("$BASE_URL$CURRENT_BASE_URL$pageIndex")
 
+            Log.d("首次列表size", list.size.toString())
+
             if (isLoadMore) {
                 newsList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
             } else {
@@ -144,6 +147,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         async(UI) {
             swipeRefreshTitles.isRefreshing = true
             deferredLoad.await()
+            Log.d("列表size", newsList.size.toString())
             adapter = NewsAdapter(this@MainActivity, newsList)
             this@MainActivity.recyclerViewTitles.adapter = adapter
             this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()

@@ -9,8 +9,9 @@ import android.view.MenuItem
 import com.lm.ll.spark.adapter.NewsAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.NewsItemDecoration
-import com.vicpin.krealmextensions.queryAll
+import com.vicpin.krealmextensions.querySorted
 import io.realm.Realm
+import io.realm.Sort
 import kotlinx.android.synthetic.main.elitenews_list.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
@@ -38,8 +39,8 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
 
         supportActionBar!!.title = this.getString(R.string.action_favouited)
 
-        swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
-        swipeRefreshEliteList.setDistanceToTriggerSync(400)
+//        swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
+//        swipeRefreshEliteList.setDistanceToTriggerSync(400)
 
         val linearLayoutManager = LinearLayoutManager(this@FavoritedNewsListActivity)
 
@@ -56,8 +57,8 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
      */
     private fun loadContent() {
         val deferredLoad = async(CommonPool) {
-            val list = queryAll<News>()
-            newsList = list.toMutableList() as ArrayList<News>
+            //按插入时间降序排列
+            newsList = News().querySorted("insertTime", Sort.DESCENDING) as ArrayList<News>
         }
 
         async(UI) {
