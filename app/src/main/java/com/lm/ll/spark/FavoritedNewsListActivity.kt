@@ -35,6 +35,7 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
         super.onCreate(savedInstanceState)
         setContentView(R.layout.elitenews_list)
 
+
         Realm.init(this)
 
         supportActionBar!!.title = this.getString(R.string.action_favouited)
@@ -75,7 +76,7 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(R.menu.myfavorite, menu)
         return true
     }
 
@@ -84,7 +85,9 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_sort -> {
+                return true
+            }
             R.id.action_search -> true
             else -> super.onOptionsItemSelected(item)
         }

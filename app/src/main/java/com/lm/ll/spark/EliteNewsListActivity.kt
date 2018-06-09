@@ -139,6 +139,7 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
         return when (item.itemId) {
             R.id.action_settings -> true
             R.id.action_search -> true
+            R.id.action_sort -> false
             else -> super.onOptionsItemSelected(item)
         }
     }
