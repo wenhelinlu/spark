@@ -72,7 +72,6 @@
 
         <include
             android:id="@+id/toolbar_bottom_text"
-            android:visibility="invisible"
             layout="@layout/bottom_toolbar_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

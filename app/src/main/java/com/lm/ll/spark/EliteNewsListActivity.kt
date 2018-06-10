@@ -1,12 +1,13 @@
 package com.lm.ll.spark
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import com.lm.ll.spark.adapter.NewsAdapter
+import com.lm.ll.spark.adapter.SimpleNewsAdapter
 import com.lm.ll.spark.db.News
 import com.lm.ll.spark.decoration.NewsItemDecoration
 import com.lm.ll.spark.util.*
@@ -27,7 +28,7 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
     //文章列表数据源
     private var newsList:ArrayList<News> = ArrayList()
     //文章列表adapter
-    private var adapter: NewsAdapter? = null
+    private var adapter: SimpleNewsAdapter? = null
 
     //当前加载的页数
     private var currentPage: Int = 1
@@ -113,7 +114,8 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
         async(UI) {
             swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
-            adapter = NewsAdapter(this@EliteNewsListActivity, newsList)
+            val intent = Intent(this@EliteNewsListActivity, NewsDisplayActivity::class.java)
+            adapter = SimpleNewsAdapter(this@EliteNewsListActivity, intent, newsList)
             this@EliteNewsListActivity.recyclerViewEliteList.adapter = adapter
             this@EliteNewsListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
 
