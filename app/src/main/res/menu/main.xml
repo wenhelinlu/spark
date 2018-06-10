@@ -2,21 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_eliteArea"
-        android:orderInCategory="110"
-        android:title="@string/action_eliteArea"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_favorited"
-        android:orderInCategory="110"
-        android:title="@string/action_favouited"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_search"
         android:title="@string/action_search"
         android:icon="@drawable/ic_menu_search"

@@ -137,7 +137,6 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
             R.id.action_search -> true
             R.id.action_sort -> false
             else -> super.onOptionsItemSelected(item)

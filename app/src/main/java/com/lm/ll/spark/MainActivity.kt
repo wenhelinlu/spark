@@ -182,18 +182,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
             R.id.action_search -> true
-            R.id.action_eliteArea -> {
-                val intent = Intent(this@MainActivity, EliteNewsListActivity::class.java)
-                this@MainActivity.startActivity(intent)
-                true
-            }
-            R.id.action_favorited -> {
-                val intent = Intent(this@MainActivity, FavoritedNewsListActivity::class.java)
-                this@MainActivity.startActivity(intent)
-                true
-            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -201,24 +190,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
+            R.id.nav_favorite -> {
                 val intent = Intent(this@MainActivity, FavoritedNewsListActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
-
+            R.id.nav_elite -> {
+                val intent = Intent(this@MainActivity, EliteNewsListActivity::class.java)
+                this@MainActivity.startActivity(intent)
             }
         }
 
@@ -226,3 +204,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 }
+
+//TODO: 首页显示论坛列表
+//TODO：实现夜间模式
+//TODO：增加启动Splash
+
