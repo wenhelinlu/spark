@@ -85,7 +85,19 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_sort -> {
+            R.id.action_sort_author -> {
+                newsList.sortBy { x -> x.author }
+                this.recyclerViewEliteList.adapter.notifyDataSetChanged()
+                return true
+            }
+            R.id.action_sort_title -> {
+                newsList.sortBy { x -> x.title }
+                this.recyclerViewEliteList.adapter.notifyDataSetChanged()
+                return true
+            }
+            R.id.action_sort_insertDate -> {
+                newsList.sortBy { x -> x.insertTime }
+                this.recyclerViewEliteList.adapter.notifyDataSetChanged()
                 return true
             }
             R.id.action_search -> true
