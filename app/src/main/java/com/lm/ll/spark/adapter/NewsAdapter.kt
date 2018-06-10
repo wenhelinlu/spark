@@ -21,6 +21,8 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
 
     private val context = mContext
     private val list = newsList
+    //列表数据源备份（用于搜索）
+    private val listBackup = ArrayList(newsList)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsAdapter.NewsListViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.news_item,parent,false)
@@ -47,6 +49,17 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
                     context.startActivity(intent)
         }
 
+    }
+
+    fun filter(text: String) {
+        list.clear()
+
+        if (text.isNullOrEmpty()) {
+            list.addAll(listBackup)
+        } else {
+            list.addAll(listBackup.filter { x -> (x.title!!.contains(text, true) || x.author!!.contains(text, true)) } as ArrayList<News>)
+        }
+        notifyDataSetChanged()
     }
 
     inner class NewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import com.lm.ll.spark.adapter.NewsAdapter
@@ -35,13 +36,9 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
         super.onCreate(savedInstanceState)
         setContentView(R.layout.elitenews_list)
 
-
         Realm.init(this)
 
         supportActionBar!!.title = this.getString(R.string.action_favouited)
-
-//        swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
-//        swipeRefreshEliteList.setDistanceToTriggerSync(400)
 
         val linearLayoutManager = LinearLayoutManager(this@FavoritedNewsListActivity)
 
@@ -77,6 +74,20 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.myfavorite, menu)
+        
+        val searchView = menu.findItem(R.id.action_search_favorite).actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                (this@FavoritedNewsListActivity.recyclerViewEliteList.adapter as NewsAdapter).filter(query)
+                return true
+            }
+
+            override fun onQueryTextChange(s: String): Boolean {
+                (this@FavoritedNewsListActivity.recyclerViewEliteList.adapter as NewsAdapter).filter(s)
+                return true
+            }
+        })
+
         return true
     }
 
@@ -100,7 +111,6 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
                 this.recyclerViewEliteList.adapter.notifyDataSetChanged()
                 return true
             }
-            R.id.action_search -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
