@@ -51,6 +51,11 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
 
     }
 
+    /**
+     * @desc 实现筛选功能
+     * @author ll
+     * @time 2018-06-10 17:06
+     */
     fun filter(text: String) {
         list.clear()
 
