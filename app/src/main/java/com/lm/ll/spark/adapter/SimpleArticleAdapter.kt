@@ -10,7 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.DETAIL_INTENT_KEY
+import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 
 /**
  * 说明：此Adapter用于精华区、论坛列表等只显示title的Recyclerview
@@ -41,11 +41,11 @@ class SimpleArticleAdapter(mContext: Context, intent: Intent, articleList: Array
         holder.articleItem.setOnClickListener {
             val article = list[position]
             //防止参数重复添加
-            if (targetIntent.hasExtra(DETAIL_INTENT_KEY)) {
-                targetIntent.removeExtra(DETAIL_INTENT_KEY)
+            if (targetIntent.hasExtra(ARTICLE_TEXT_INTENT_KEY)) {
+                targetIntent.removeExtra(ARTICLE_TEXT_INTENT_KEY)
             }
 
-            targetIntent.putExtra(DETAIL_INTENT_KEY, article)
+            targetIntent.putExtra(ARTICLE_TEXT_INTENT_KEY, article)
             context.startActivity(targetIntent)
         }
 

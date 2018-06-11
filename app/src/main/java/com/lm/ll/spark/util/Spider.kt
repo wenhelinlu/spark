@@ -17,6 +17,18 @@ class Spider {
 
     private val pattern = "[0-9]+" //匹配数字
 
+
+    /**
+     * @desc 获取jsoup的Document实例
+     * @author ll
+     * @time 2018-06-11 19:40
+     * @param url 网络地址
+     */
+    private fun getDocument(url: String): Document {
+        return Jsoup.connect(url).userAgent(USER_AGENT).get()
+    }
+
+
     /**
      * @desc 抓取文章列表
      * @author ll
@@ -25,7 +37,7 @@ class Spider {
     fun scratchArticleList(webUrl: String): ArrayList<Article> {
         val mList = ArrayList<Article>()
         Log.d("加载列表", webUrl)
-        val doc: Document = Jsoup.connect(webUrl).get()
+        val doc = getDocument(webUrl)
         val titleLinks: Elements = doc.select ("div#d_list")
         for (e: Element in titleLinks){
             val uls: Elements = e.getElementsByTag("ul")
@@ -84,7 +96,7 @@ class Spider {
      * @return 包含正文的文章链接
      */
     fun scratchText(article: Article, commentList: ArrayList<Article>): Article {
-        val doc: Document = Jsoup.connect(article.url).get()
+        val doc = getDocument(article.url!!)
         val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
         article.text = parseText(body[0])
 
@@ -147,7 +159,7 @@ class Spider {
     fun scratchEliteArticleList(webUrl: String): ArrayList<Article> {
         val mList = ArrayList<Article>()
 //        Log.d("加载列表",webUrl)
-        val doc: Document = Jsoup.connect(webUrl).get()
+        val doc = getDocument(webUrl)
         val children: Elements = doc.select ("ul#thread_list")
         for (e: Element in children){
             for (child in e.childNodes()){
@@ -175,7 +187,7 @@ class Spider {
     fun scratchClassicEroticaArticleList(webUrl: String): ArrayList<Article> {
         val mList = ArrayList<Article>()
 //        Log.d("加载列表",webUrl)
-        val doc: Document = Jsoup.connect(webUrl).get()
+        val doc = getDocument(webUrl)
         val children: Elements = doc.getElementsByClass("dc_bar")
 
         val element = children[1].childNodes()[1]
@@ -192,5 +204,24 @@ class Spider {
         }
 
         return mList
+    }
+
+    /**
+     * @desc 抓取经典书库的文章正文
+     * @author ll
+     * @time 2018-06-11 19:53
+     */
+    fun scratchClassicEroticaArticleText(article: Article): Article {
+        val doc = getDocument(article.url!!)
+        val elements = doc.getElementsByTag("p")
+        val stringBuilder = StringBuilder()
+        for (e in elements) {
+            if (e.childNodeSize() == 2) {
+                stringBuilder.appendln((e.childNodes()[0] as TextNode).text())
+            }
+        }
+        article.text = stringBuilder.toString()
+
+        return article
     }
 }

@@ -11,7 +11,8 @@ import android.widget.Toast
 import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
-import com.lm.ll.spark.util.DETAIL_INTENT_KEY
+import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
+import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
 import com.lm.ll.spark.util.Spider
 import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
@@ -30,6 +31,8 @@ import kotlinx.coroutines.experimental.async
  */
 class ArticleDisplayActivity : AppCompatActivity() {
 
+    //是否是经典情色书库中文章的正文（需要单独解析）
+    private var isClassic = false
     //接收从文章列表传过来的被点击的文章Model
     private lateinit var article: Article
     //此文章下的首层评论
@@ -58,7 +61,12 @@ class ArticleDisplayActivity : AppCompatActivity() {
      */
     private fun initData() {
         //从列表中传来的点击的标题
-        article = this.intent.getParcelableExtra(DETAIL_INTENT_KEY)
+        article = this.intent.getParcelableExtra(ARTICLE_TEXT_INTENT_KEY)
+
+        //文章来源（普通还是经典书库中的）
+        if (this.intent.hasExtra(IS_CLASSIC_ARTICLE)) {
+            isClassic = this.intent.getBooleanExtra(IS_CLASSIC_ARTICLE, false)
+        }
     }
 
     /**
@@ -137,9 +145,13 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private fun loadText(){
         val deferredLoad = async(CommonPool) {
             val spider = Spider()
-            article = spider.scratchText(article, comments) //正文中可能也包含链接（比如精华区）
-            comments.reverse() //因为在精华区中，章节链接是倒序显示，所以将其翻转
-            comments.addAll(spider.scratchComments(article))
+            if (isClassic) {
+                article = spider.scratchClassicEroticaArticleText(article)
+            } else {
+                article = spider.scratchText(article, comments) //正文中可能也包含链接（比如精华区）
+                comments.reverse() //因为在精华区中，章节链接是倒序显示，所以将其翻转
+                comments.addAll(spider.scratchComments(article))
+            }
         }
 
         async(UI) {

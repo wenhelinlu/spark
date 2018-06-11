@@ -10,10 +10,7 @@ import android.view.MenuItem
 import com.lm.ll.spark.adapter.SimpleArticleAdapter
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.NewsItemDecoration
-import com.lm.ll.spark.util.BASE_URL
-import com.lm.ll.spark.util.MIN_ROWS
-import com.lm.ll.spark.util.MyRecyclerViewOnScrollListener
-import com.lm.ll.spark.util.Spider
+import com.lm.ll.spark.util.*
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
@@ -122,6 +119,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
             swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
             val intent = Intent(this@ClassicEroticaArticleListActivity, ArticleDisplayActivity::class.java)
+            intent.putExtra(IS_CLASSIC_ARTICLE, true)
             adapter = SimpleArticleAdapter(this@ClassicEroticaArticleListActivity, intent, articleList)
             this@ClassicEroticaArticleListActivity.recyclerViewEliteList.adapter = adapter
             this@ClassicEroticaArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()

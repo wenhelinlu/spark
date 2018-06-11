@@ -11,7 +11,7 @@ import android.widget.TextView
 import com.lm.ll.spark.ArticleDisplayActivity
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.DETAIL_INTENT_KEY
+import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 
 /**
  * 作者：Created by ll on 2018-05-28 13:36.
@@ -43,10 +43,10 @@ class ArticleAdapter(mContext: Context, articleList: ArrayList<Article>) : Recyc
         holder.articleReadCount.text = list[position].readCount
 
         holder.articleItem.setOnClickListener {
-                    val news = list[position]
+            val article = list[position]
             val intent = Intent(context, ArticleDisplayActivity::class.java)
-            intent.putExtra(DETAIL_INTENT_KEY, news)
-                    context.startActivity(intent)
+            intent.putExtra(ARTICLE_TEXT_INTENT_KEY, article)
+            context.startActivity(intent)
         }
 
     }
