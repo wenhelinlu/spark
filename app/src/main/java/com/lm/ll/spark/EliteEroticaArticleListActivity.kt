@@ -39,7 +39,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
         super.onCreate(savedInstanceState)
         setContentView(R.layout.elite_erotica_article_list)
 
-        supportActionBar!!.title = "精华区"
+        supportActionBar!!.title = getString(R.string.action_eliteArea)
 
         swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
         swipeRefreshEliteList.setDistanceToTriggerSync(400)
