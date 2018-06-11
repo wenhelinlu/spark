@@ -85,7 +85,7 @@ class Spider {
      */
     fun scratchText(news: News, commentList: ArrayList<News>): News{
         val doc: Document = Jsoup.connect(news.url).get()
-        val body: Elements = doc.getElementsByTag("pre")
+        val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
         news.text = parseText(body[0])   //TODO 繁体转简体
 
         //抓取文章正文中可能包含的其他章节链接
