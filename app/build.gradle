@@ -53,6 +53,10 @@ dependencies {
     //For Single and Flowable queries:
     implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+
+    //HanLP库
+    implementation 'com.hankcs:hanlp:portable-1.6.4'
 }
 
 noArg{

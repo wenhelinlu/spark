@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val spider = Spider()
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
             val pageIndex = if (isLoadMore) currentPage else 1
-            val list = spider.scratchContent("$BASE_URL$CURRENT_BASE_URL$pageIndex")
+            val list = spider.scratchNewsList("$BASE_URL$CURRENT_BASE_URL$pageIndex")
 
             Log.d("首次列表size", list.size.toString())
 
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
                     while (newsList.size < MIN_ROWS){
                         currentPage++
-                        val tmpList = spider.scratchContent("$BASE_URL$CURRENT_BASE_URL$currentPage")
+                        val tmpList = spider.scratchNewsList("$BASE_URL$CURRENT_BASE_URL$currentPage")
                         newsList.addAll(tmpList)
                     }
                 }

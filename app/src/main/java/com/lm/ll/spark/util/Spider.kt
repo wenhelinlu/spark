@@ -1,6 +1,7 @@
 package com.lm.ll.spark.util
 
 import android.util.Log
+import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.db.News
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -22,7 +23,7 @@ class Spider {
      * @author ll
      * @time 2018-05-29 18:35
      */
-    fun scratchContent(webUrl:String): ArrayList<News>{
+    fun scratchNewsList(webUrl: String): ArrayList<News> {
         val mList = ArrayList<News>()
         Log.d("加载列表", webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
@@ -30,7 +31,7 @@ class Spider {
         for (e: Element in titleLinks){
             val uls: Elements = e.getElementsByTag("ul")
             for (ul: Element in uls){
-                parseContent(ul,mList)
+                parseNewsList(ul, mList)
             }
         }
 
@@ -38,11 +39,11 @@ class Spider {
     }
 
     /**
-     * @desc 解析抓取到的正文内容，生成标题列表
+     * @desc 解析抓取到的网页内容，生成标题列表
      * @author ll
      * @time 2018-05-28 10:01
      */
-    private fun parseContent(ul: Element, list: ArrayList<News>){
+    private fun parseNewsList(ul: Element, list: ArrayList<News>) {
         for(child in ul.childNodes()){
             if(child.childNodes() == null || child.childNodeSize() != 7){
                 continue
@@ -52,7 +53,7 @@ class Spider {
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
             news.url = "$BASE_URL$uri"
-            news.title = link.text()
+            news.title = HanLP.convertToSimplifiedChinese(link.text()) //标题也将繁体转为简体
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
             val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
@@ -72,7 +73,7 @@ class Spider {
      * @time 2018-05-29 18:44
      */
     private fun parseText(e: Element): String{
-        return e.text()
+        return HanLP.convertToSimplifiedChinese(e.text())    //繁体转简体
     }
 
     /**
@@ -86,14 +87,14 @@ class Spider {
     fun scratchText(news: News, commentList: ArrayList<News>): News{
         val doc: Document = Jsoup.connect(news.url).get()
         val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
-        news.text = parseText(body[0])   //TODO 繁体转简体
+        news.text = parseText(body[0])
 
         //抓取文章正文中可能包含的其他章节链接
         val links: Elements = body[0].getElementsByTag("a")
         for (link in links){
             val comment = News()
             comment.url = link.attr("href")
-            comment.title = link.text()
+            comment.title = HanLP.convertToSimplifiedChinese(link.text())
             comment.author = ""
             commentList.add(comment)
         }
@@ -127,7 +128,7 @@ class Spider {
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
             news.url = "$BASE_URL$uri"
-            news.title = link.text()
+            news.title = HanLP.convertToSimplifiedChinese(link.text())
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
             val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
@@ -158,7 +159,7 @@ class Spider {
                 val link: Element = child.childNodes()[0] as Element
                 val uri = link.attr("href")
                 news.url = "$BASE_URL$uri"
-                news.title = link.text().trimStart('.')
+                news.title = HanLP.convertToSimplifiedChinese(link.text().trimStart('.'))
                 news.author = ""
 
                 mList.add(news)
