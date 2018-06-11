@@ -59,7 +59,7 @@ class NewsAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.A
     fun filter(text: String) {
         list.clear()
 
-        if (text.isNullOrEmpty()) {
+        if (text.isEmpty()) {
             list.addAll(listBackup)
         } else {
             list.addAll(listBackup.filter { x -> (x.title!!.contains(text, true) || x.author!!.contains(text, true)) } as ArrayList<News>)

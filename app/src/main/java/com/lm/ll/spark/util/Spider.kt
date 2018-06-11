@@ -158,7 +158,7 @@ class Spider {
                 val link: Element = child.childNodes()[0] as Element
                 val uri = link.attr("href")
                 news.url = "$BASE_URL$uri"
-                news.title = link.text()
+                news.title = link.text().trimStart('.')
                 news.author = ""
 
                 mList.add(news)

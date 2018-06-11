@@ -59,7 +59,7 @@ class SimpleNewsAdapter(mContext: Context, intent: Intent, newsList: ArrayList<N
     fun filter(text: String) {
         list.clear()
 
-        if (text.isNullOrEmpty()) {
+        if (text.isEmpty()) {
             list.addAll(listBackup)
         } else {
             list.addAll(listBackup.filter { x -> x.title!!.contains(text, true) } as ArrayList<News>)

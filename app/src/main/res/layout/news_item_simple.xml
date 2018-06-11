@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:id="@+id/news_item_simple"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black">
 
-    <ImageView
-        android:id="@+id/iv_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="12dp"
-        app:srcCompat="@drawable/ic_menu_unfavorite" />
     <TextView
         android:id="@+id/news_title"
         android:layout_width="wrap_content"
