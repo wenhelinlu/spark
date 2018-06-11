@@ -13,7 +13,8 @@ import com.lm.ll.spark.db.News
 import com.lm.ll.spark.util.DETAIL_INTENT_KEY
 
 /**
- * 作者：Created by ll on 2018-05-28 13:36.
+ * 说明：此Adapter用于精华区、论坛列表等只显示title的Recyclerview
+ * 作者：Created by ll on 2018-06-10 22:06.
  * 邮箱：wenhelinlu@gmail.com
  */
 class SimpleNewsAdapter(mContext: Context, intent: Intent, newsList: ArrayList<News>) : RecyclerView.Adapter<SimpleNewsAdapter.SimpleNewsListViewHolder>() {
@@ -39,7 +40,11 @@ class SimpleNewsAdapter(mContext: Context, intent: Intent, newsList: ArrayList<N
 
         holder.newsItem.setOnClickListener {
             val news = list[position]
-            //TODO 防止参数重复添加
+            //防止参数重复添加
+            if (targetIntent.hasExtra(DETAIL_INTENT_KEY)) {
+                targetIntent.removeExtra(DETAIL_INTENT_KEY)
+            }
+
             targetIntent.putExtra(DETAIL_INTENT_KEY, news)
             context.startActivity(targetIntent)
         }

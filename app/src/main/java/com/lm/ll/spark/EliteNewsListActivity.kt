@@ -47,7 +47,6 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
             loadContent()
         })
 
-
         val linearLayoutManager = LinearLayoutManager(this@EliteNewsListActivity)
 
         this.recyclerViewEliteList.addItemDecoration(NewsItemDecoration(2))
