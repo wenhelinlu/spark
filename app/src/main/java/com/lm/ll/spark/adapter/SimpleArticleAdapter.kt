@@ -39,13 +39,13 @@ class SimpleArticleAdapter(mContext: Context, intent: Intent, articleList: Array
         holder.articleTitle.text = list[position].title
 
         holder.articleItem.setOnClickListener {
-            val news = list[position]
+            val article = list[position]
             //防止参数重复添加
             if (targetIntent.hasExtra(DETAIL_INTENT_KEY)) {
                 targetIntent.removeExtra(DETAIL_INTENT_KEY)
             }
 
-            targetIntent.putExtra(DETAIL_INTENT_KEY, news)
+            targetIntent.putExtra(DETAIL_INTENT_KEY, article)
             context.startActivity(targetIntent)
         }
 

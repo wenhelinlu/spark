@@ -8,7 +8,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
-import java.util.*
 
 
 /**
@@ -23,7 +22,7 @@ class Spider {
      * @author ll
      * @time 2018-05-29 18:35
      */
-    fun scratchNewsList(webUrl: String): ArrayList<Article> {
+    fun scratchArticleList(webUrl: String): ArrayList<Article> {
         val mList = ArrayList<Article>()
         Log.d("加载列表", webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
@@ -31,7 +30,7 @@ class Spider {
         for (e: Element in titleLinks){
             val uls: Elements = e.getElementsByTag("ul")
             for (ul: Element in uls){
-                parseNewsList(ul, mList)
+                parseArticleList(ul, mList)
             }
         }
 
@@ -43,27 +42,27 @@ class Spider {
      * @author ll
      * @time 2018-05-28 10:01
      */
-    private fun parseNewsList(ul: Element, list: ArrayList<Article>) {
+    private fun parseArticleList(ul: Element, list: ArrayList<Article>) {
         for(child in ul.childNodes()){
             if(child.childNodes() == null || child.childNodeSize() != 7){
                 continue
             }
             val childNodes = child.childNodes()
-            val news = Article()
+            val article = Article()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
-            news.url = "$BASE_URL$uri"
-            news.title = HanLP.convertToSimplifiedChinese(link.text()) //标题也将繁体转为简体
+            article.url = "$BASE_URL$uri"
+            article.title = HanLP.convertToSimplifiedChinese(link.text()) //标题也将繁体转为简体
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
             val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
-            news.textLength = "${(wordCount!!.toLong())/2}字" //字数
-            news.author = "作者:$author"
-            news.date = (childNodes[2] as Element).text() //日期
+            article.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
+            article.author = "作者:$author"
+            article.date = (childNodes[2] as Element).text() //日期
 
             val readCount = Regex(pattern).findAll((childNodes[4] as Element).text()).toList().flatMap(MatchResult::groupValues).firstOrNull()
-            news.readCount = "阅读${readCount}次"
-            list.add(news)
+            article.readCount = "阅读${readCount}次"
+            list.add(article)
         }
     }
 
@@ -124,19 +123,19 @@ class Spider {
     private fun parseComments(ul: Element, list: ArrayList<Article>) {
         for(child in ul.childNodes()){
             val childNodes = child.childNodes()
-            val news = Article()
+            val article = Article()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
-            news.url = "$BASE_URL$uri"
-            news.title = HanLP.convertToSimplifiedChinese(link.text())
+            article.url = "$BASE_URL$uri"
+            article.title = HanLP.convertToSimplifiedChinese(link.text())
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
             val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
-            news.textLength = "${(wordCount!!.toLong())/2}字" //字数
-            news.author = "作者:$author"
-            news.date = (childNodes[2] as Element).text() //日期
+            article.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
+            article.author = "作者:$author"
+            article.date = (childNodes[2] as Element).text() //日期
 
-            list.add(news)
+            list.add(article)
         }
     }
 
@@ -145,7 +144,7 @@ class Spider {
      * @author ll
      * @time 2018-06-05 19:39
      */
-    fun scratchEliteNewsList(webUrl: String): ArrayList<Article> {
+    fun scratchEliteArticleList(webUrl: String): ArrayList<Article> {
         val mList = ArrayList<Article>()
 //        Log.d("加载列表",webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
@@ -155,16 +154,43 @@ class Spider {
                 if(child.childNodeSize() ==0){
                     continue
                 }
-                val news = Article()
+                val article = Article()
                 val link: Element = child.childNodes()[0] as Element
                 val uri = link.attr("href")
-                news.url = "$BASE_URL$uri"
-                news.title = HanLP.convertToSimplifiedChinese(link.text().trimStart('.'))
-                news.author = ""
+                article.url = "$BASE_URL$uri"
+                article.title = HanLP.convertToSimplifiedChinese(link.text().trimStart('.'))
+                article.author = ""
 
-                mList.add(news)
+                mList.add(article)
             }
         }
+        return mList
+    }
+
+    /**
+     * @desc 抓取禁忌书屋经典书库文章列表
+     * @author ll
+     * @time 2018-06-11 17:11
+     */
+    fun scratchClassicEroticaArticleList(webUrl: String): ArrayList<Article> {
+        val mList = ArrayList<Article>()
+//        Log.d("加载列表",webUrl)
+        val doc: Document = Jsoup.connect(webUrl).get()
+        val children: Elements = doc.getElementsByClass("dc_bar")
+
+        val element = children[1].childNodes()[1]
+        for (node in element.childNodes()) {
+            val efficientNode = node.childNodes()[1]
+            val link = efficientNode.childNodes()[1].childNodes()[0] as Element
+
+            val article = Article()
+            article.url = "${efficientNode.baseUri().substringBefore("md")}${link.attr("href")}"
+            article.title = HanLP.convertToSimplifiedChinese(link.text())
+            article.author = ""
+
+            mList.add(article)
+        }
+
         return mList
     }
 }
