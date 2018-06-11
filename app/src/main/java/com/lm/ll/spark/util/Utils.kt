@@ -26,7 +26,7 @@ const val CURRENT_BASE_URL = "index.php?app=forum&act=cachepage&cp=tree" //禁�
 const val CURRENT_ELITEAREA_BASE_URL = "index.php?app=forum&act=gold&p="
 
 //正文接收的intent传递内容的key
-const val DETAIL_INTENT_KEY = "news"
+const val DETAIL_INTENT_KEY = "article"
 
 //下拉刷新操作触发距离
 const val PULL_REFRESH_DISTANCE = 400

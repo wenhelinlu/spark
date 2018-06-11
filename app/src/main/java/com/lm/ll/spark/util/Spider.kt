@@ -2,7 +2,7 @@ package com.lm.ll.spark.util
 
 import android.util.Log
 import com.hankcs.hanlp.HanLP
-import com.lm.ll.spark.db.News
+import com.lm.ll.spark.db.Article
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -23,8 +23,8 @@ class Spider {
      * @author ll
      * @time 2018-05-29 18:35
      */
-    fun scratchNewsList(webUrl: String): ArrayList<News> {
-        val mList = ArrayList<News>()
+    fun scratchNewsList(webUrl: String): ArrayList<Article> {
+        val mList = ArrayList<Article>()
         Log.d("加载列表", webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
         val titleLinks: Elements = doc.select ("div#d_list")
@@ -43,13 +43,13 @@ class Spider {
      * @author ll
      * @time 2018-05-28 10:01
      */
-    private fun parseNewsList(ul: Element, list: ArrayList<News>) {
+    private fun parseNewsList(ul: Element, list: ArrayList<Article>) {
         for(child in ul.childNodes()){
             if(child.childNodes() == null || child.childNodeSize() != 7){
                 continue
             }
             val childNodes = child.childNodes()
-            val news = News()
+            val news = Article()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
             news.url = "$BASE_URL$uri"
@@ -80,26 +80,26 @@ class Spider {
      * @desc 抓取文章正文
      * @author ll
      * @time 2018-05-29 18:46
-     * @param news 待抓取正文的文章链接
+     * @param article 待抓取正文的文章链接
      * @param commentList 存储正文中其他章节链接的列表
      * @return 包含正文的文章链接
      */
-    fun scratchText(news: News, commentList: ArrayList<News>): News{
-        val doc: Document = Jsoup.connect(news.url).get()
+    fun scratchText(article: Article, commentList: ArrayList<Article>): Article {
+        val doc: Document = Jsoup.connect(article.url).get()
         val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
-        news.text = parseText(body[0])
+        article.text = parseText(body[0])
 
         //抓取文章正文中可能包含的其他章节链接
         val links: Elements = body[0].getElementsByTag("a")
         for (link in links){
-            val comment = News()
+            val comment = Article()
             comment.url = link.attr("href")
             comment.title = HanLP.convertToSimplifiedChinese(link.text())
             comment.author = ""
             commentList.add(comment)
         }
 
-        return news
+        return article
     }
 
 
@@ -108,9 +108,9 @@ class Spider {
      * @author ll
      * @time 2018-06-04 15:06
      */
-    fun scratchComments(news:News):ArrayList<News>{
-        val commentList = ArrayList<News>()
-        val doc: Document = Jsoup.connect(news.url).get()
+    fun scratchComments(article: Article): ArrayList<Article> {
+        val commentList = ArrayList<Article>()
+        val doc: Document = Jsoup.connect(article.url).get()
         val comments: Elements = doc.getElementsByTag("ul")
         parseComments(comments[0], commentList)
         return commentList
@@ -121,10 +121,10 @@ class Spider {
      * @author ll
      * @time 2018-06-04 16:34
      */
-    private fun parseComments(ul: Element, list: ArrayList<News>){
+    private fun parseComments(ul: Element, list: ArrayList<Article>) {
         for(child in ul.childNodes()){
             val childNodes = child.childNodes()
-            val news = News()
+            val news = Article()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
             news.url = "$BASE_URL$uri"
@@ -145,8 +145,8 @@ class Spider {
      * @author ll
      * @time 2018-06-05 19:39
      */
-    fun scratchEliteNewsList(webUrl:String): ArrayList<News>{
-        val mList = ArrayList<News>()
+    fun scratchEliteNewsList(webUrl: String): ArrayList<Article> {
+        val mList = ArrayList<Article>()
 //        Log.d("加载列表",webUrl)
         val doc: Document = Jsoup.connect(webUrl).get()
         val children: Elements = doc.select ("ul#thread_list")
@@ -155,7 +155,7 @@ class Spider {
                 if(child.childNodeSize() ==0){
                     continue
                 }
-                val news = News()
+                val news = Article()
                 val link: Element = child.childNodes()[0] as Element
                 val uri = link.attr("href")
                 news.url = "$BASE_URL$uri"

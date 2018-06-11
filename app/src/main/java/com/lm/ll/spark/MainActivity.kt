@@ -14,8 +14,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
-import com.lm.ll.spark.adapter.NewsAdapter
-import com.lm.ll.spark.db.News
+import com.lm.ll.spark.adapter.ArticleAdapter
+import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.NewsItemDecoration
 import com.lm.ll.spark.util.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -33,9 +33,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     //文章列表数据源
-    private var newsList:ArrayList<News> = ArrayList()
+    private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
-    private lateinit var adapter: NewsAdapter
+    private lateinit var adapter: ArticleAdapter
 
     //当前加载的页数
     private var currentPage: Int = 1
@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private fun loadContent(isLoadMore: Boolean = false) {
 
-        val currentPos: Int = newsList.size
+        val currentPos: Int = articleList.size
 
         val deferredLoad = async(CommonPool) {
             val spider = Spider()
@@ -114,31 +114,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Log.d("首次列表size", list.size.toString())
 
             if (isLoadMore) {
-                newsList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
+                articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
             } else {
                 /**
                  *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
                  *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
                  *  这个位置之前的数据添加到已有集合中
                  */
-                if (newsList.count() > 0) {
-                    val firstNews = list.findLast { x -> x.url == newsList[0].url }
+                if (articleList.count() > 0) {
+                    val firstNews = list.findLast { x -> x.url == articleList[0].url }
                     if (firstNews != null) {
                         val firstIndex = list.indexOf(firstNews)
                         if (firstIndex > 0) {
                             val latest = list.take(firstIndex)
-                            newsList.addAll(latest)
+                            articleList.addAll(latest)
                         } else {
                         }
                     } else {
                     }
                 } else {
-                    newsList = list
+                    articleList = list
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
-                    while (newsList.size < MIN_ROWS){
+                    while (articleList.size < MIN_ROWS) {
                         currentPage++
                         val tmpList = spider.scratchNewsList("$BASE_URL$CURRENT_BASE_URL$currentPage")
-                        newsList.addAll(tmpList)
+                        articleList.addAll(tmpList)
                     }
                 }
             }
@@ -147,8 +147,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         async(UI) {
             swipeRefreshTitles.isRefreshing = true
             deferredLoad.await()
-            Log.d("列表size", newsList.size.toString())
-            adapter = NewsAdapter(this@MainActivity, newsList)
+            Log.d("列表size", articleList.size.toString())
+            adapter = ArticleAdapter(this@MainActivity, articleList)
             this@MainActivity.recyclerViewTitles.adapter = adapter
             this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
 
@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(intent)
             }
             R.id.nav_elite -> {
-                val intent = Intent(this@MainActivity, EliteNewsListActivity::class.java)
+                val intent = Intent(this@MainActivity, EliteEroticaArticleListActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
         }

@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.lm.ll.spark.R
-import com.lm.ll.spark.db.News
+import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.DETAIL_INTENT_KEY
 
 /**
@@ -17,16 +17,16 @@ import com.lm.ll.spark.util.DETAIL_INTENT_KEY
  * 作者：Created by ll on 2018-06-10 22:06.
  * 邮箱：wenhelinlu@gmail.com
  */
-class SimpleNewsAdapter(mContext: Context, intent: Intent, newsList: ArrayList<News>) : RecyclerView.Adapter<SimpleNewsAdapter.SimpleNewsListViewHolder>() {
+class SimpleArticleAdapter(mContext: Context, intent: Intent, articleList: ArrayList<Article>) : RecyclerView.Adapter<SimpleArticleAdapter.SimpleNewsListViewHolder>() {
 
     private val context = mContext
-    private val list = newsList
+    private val list = articleList
     private var targetIntent: Intent = intent
     //列表数据源备份（用于搜索）
-    private val listBackup = ArrayList(newsList)
+    private val listBackup = ArrayList(articleList)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleNewsAdapter.SimpleNewsListViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.news_item_simple, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleArticleAdapter.SimpleNewsListViewHolder {
+        val view = LayoutInflater.from(context).inflate(R.layout.article_item_simple, parent, false)
 
         return SimpleNewsListViewHolder(view)
     }
@@ -35,10 +35,10 @@ class SimpleNewsAdapter(mContext: Context, intent: Intent, newsList: ArrayList<N
         return list.size
     }
 
-    override fun onBindViewHolder(holder: SimpleNewsAdapter.SimpleNewsListViewHolder, position: Int) {
-        holder.newsTitle.text = list[position].title
+    override fun onBindViewHolder(holder: SimpleArticleAdapter.SimpleNewsListViewHolder, position: Int) {
+        holder.articleTitle.text = list[position].title
 
-        holder.newsItem.setOnClickListener {
+        holder.articleItem.setOnClickListener {
             val news = list[position]
             //防止参数重复添加
             if (targetIntent.hasExtra(DETAIL_INTENT_KEY)) {
@@ -62,13 +62,13 @@ class SimpleNewsAdapter(mContext: Context, intent: Intent, newsList: ArrayList<N
         if (text.isEmpty()) {
             list.addAll(listBackup)
         } else {
-            list.addAll(listBackup.filter { x -> x.title!!.contains(text, true) } as ArrayList<News>)
+            list.addAll(listBackup.filter { x -> x.title!!.contains(text, true) } as ArrayList<Article>)
         }
         notifyDataSetChanged()
     }
 
     inner class SimpleNewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var newsItem: LinearLayout = itemView.findViewById(R.id.news_item_simple)
-        var newsTitle: TextView = itemView.findViewById(R.id.news_title)
+        var articleItem: LinearLayout = itemView.findViewById(R.id.article_item_simple)
+        var articleTitle: TextView = itemView.findViewById(R.id.article_title)
     }
 }

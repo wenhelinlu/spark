@@ -7,13 +7,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
-import com.lm.ll.spark.adapter.NewsAdapter
-import com.lm.ll.spark.db.News
+import com.lm.ll.spark.adapter.ArticleAdapter
+import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.NewsItemDecoration
 import com.vicpin.krealmextensions.querySorted
 import io.realm.Realm
 import io.realm.Sort
-import kotlinx.android.synthetic.main.elitenews_list.*
+import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -28,13 +28,13 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
     }
 
     //文章列表数据源
-    private var newsList: ArrayList<News> = ArrayList()
+    private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
-    private var adapter: NewsAdapter? = null
+    private var adapter: ArticleAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.elitenews_list)
+        setContentView(R.layout.elite_erotica_article_list)
 
         Realm.init(this)
 
@@ -56,13 +56,13 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
     private fun loadContent() {
         val deferredLoad = async(CommonPool) {
             //按插入时间降序排列
-            newsList = News().querySorted("insertTime", Sort.DESCENDING) as ArrayList<News>
+            articleList = Article().querySorted("insertTime", Sort.DESCENDING) as ArrayList<Article>
         }
 
         async(UI) {
             swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
-            adapter = NewsAdapter(this@FavoritedNewsListActivity, newsList)
+            adapter = ArticleAdapter(this@FavoritedNewsListActivity, articleList)
             this@FavoritedNewsListActivity.recyclerViewEliteList.adapter = adapter
             this@FavoritedNewsListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
 
@@ -78,12 +78,12 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
         val searchView = menu.findItem(R.id.action_search_favorite).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                (this@FavoritedNewsListActivity.recyclerViewEliteList.adapter as NewsAdapter).filter(query)
+                (this@FavoritedNewsListActivity.recyclerViewEliteList.adapter as ArticleAdapter).filter(query)
                 return true
             }
 
             override fun onQueryTextChange(s: String): Boolean {
-                (this@FavoritedNewsListActivity.recyclerViewEliteList.adapter as NewsAdapter).filter(s)
+                (this@FavoritedNewsListActivity.recyclerViewEliteList.adapter as ArticleAdapter).filter(s)
                 return true
             }
         })
@@ -97,17 +97,17 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_sort_author -> {
-                newsList.sortBy { x -> x.author }
+                articleList.sortBy { x -> x.author }
                 this.recyclerViewEliteList.adapter.notifyDataSetChanged()
                 return true
             }
             R.id.action_sort_title -> {
-                newsList.sortBy { x -> x.title }
+                articleList.sortBy { x -> x.title }
                 this.recyclerViewEliteList.adapter.notifyDataSetChanged()
                 return true
             }
             R.id.action_sort_insertDate -> {
-                newsList.sortBy { x -> x.insertTime }
+                articleList.sortBy { x -> x.insertTime }
                 this.recyclerViewEliteList.adapter.notifyDataSetChanged()
                 return true
             }

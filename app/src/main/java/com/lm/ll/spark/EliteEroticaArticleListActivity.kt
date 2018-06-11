@@ -7,28 +7,29 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import com.lm.ll.spark.adapter.SimpleNewsAdapter
-import com.lm.ll.spark.db.News
+import com.lm.ll.spark.adapter.SimpleArticleAdapter
+import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.NewsItemDecoration
 import com.lm.ll.spark.util.*
-import kotlinx.android.synthetic.main.elitenews_list.*
+import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 
 /**
+ * 说明：禁忌书屋精华区
  * 作者：Created by ll on 2018-06-05 18:37.
  * 邮箱：wenhelinlu@gmail.com
  */
-class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
         this.swipeRefreshEliteList.isRefreshing = false
     }
 
     //文章列表数据源
-    private var newsList:ArrayList<News> = ArrayList()
+    private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
-    private var adapter: SimpleNewsAdapter? = null
+    private var adapter: SimpleArticleAdapter? = null
 
     //当前加载的页数
     private var currentPage: Int = 1
@@ -36,7 +37,7 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.elitenews_list)
+        setContentView(R.layout.elite_erotica_article_list)
 
         supportActionBar!!.title = "精华区"
 
@@ -47,7 +48,7 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
             loadContent()
         })
 
-        val linearLayoutManager = LinearLayoutManager(this@EliteNewsListActivity)
+        val linearLayoutManager = LinearLayoutManager(this@EliteEroticaArticleListActivity)
 
         this.recyclerViewEliteList.addItemDecoration(NewsItemDecoration(2))
         this.recyclerViewEliteList.layoutManager = linearLayoutManager
@@ -71,7 +72,7 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
      */
     private fun loadContent(isLoadMore: Boolean = false) {
 
-        val currentPos: Int = newsList.size
+        val currentPos: Int = articleList.size
 
         val deferredLoad = async(CommonPool) {
             val spider = Spider()
@@ -80,31 +81,31 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
             val list = spider.scratchEliteNewsList("$BASE_URL$CURRENT_ELITEAREA_BASE_URL$pageIndex")
 
             if (isLoadMore) {
-                newsList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
+                articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
             } else {
                 /**
                  *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
                  *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
                  *  这个位置之前的数据添加到已有集合中
                  */
-                if (newsList.count() > 0) {
-                    val firstNews = list.findLast { x -> x.url == newsList[0].url }
+                if (articleList.count() > 0) {
+                    val firstNews = list.findLast { x -> x.url == articleList[0].url }
                     if (firstNews != null) {
                         val firstIndex = list.indexOf(firstNews)
                         if (firstIndex > 0) {
                             val latest = list.take(firstIndex)
-                            newsList.addAll(latest)
+                            articleList.addAll(latest)
                         } else {
                         }
                     } else {
                     }
                 } else {
-                    newsList = list
+                    articleList = list
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
-                    while (newsList.size < MIN_ROWS){
+                    while (articleList.size < MIN_ROWS) {
                         currentPage++
                         val tmpList = spider.scratchEliteNewsList("$BASE_URL$CURRENT_ELITEAREA_BASE_URL$currentPage")
-                        newsList.addAll(tmpList)
+                        articleList.addAll(tmpList)
                     }
                 }
             }
@@ -113,13 +114,13 @@ class EliteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
         async(UI) {
             swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
-            val intent = Intent(this@EliteNewsListActivity, NewsDisplayActivity::class.java)
-            adapter = SimpleNewsAdapter(this@EliteNewsListActivity, intent, newsList)
-            this@EliteNewsListActivity.recyclerViewEliteList.adapter = adapter
-            this@EliteNewsListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
+            val intent = Intent(this@EliteEroticaArticleListActivity, ArticleDisplayActivity::class.java)
+            adapter = SimpleArticleAdapter(this@EliteEroticaArticleListActivity, intent, articleList)
+            this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter = adapter
+            this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
 
             if (isLoadMore) {
-                this@EliteNewsListActivity.recyclerViewEliteList.layoutManager.scrollToPosition(currentPos - 1)
+                this@EliteEroticaArticleListActivity.recyclerViewEliteList.layoutManager.scrollToPosition(currentPos - 1)
             }
 
             //停止刷新

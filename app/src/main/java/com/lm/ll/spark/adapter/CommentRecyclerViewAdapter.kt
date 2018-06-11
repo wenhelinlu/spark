@@ -8,9 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.lm.ll.spark.NewsDisplayActivity
+import com.lm.ll.spark.ArticleDisplayActivity
 import com.lm.ll.spark.R
-import com.lm.ll.spark.db.News
+import com.lm.ll.spark.db.Article
 
 
 /**
@@ -18,10 +18,10 @@ import com.lm.ll.spark.db.News
  * 作者：Created by ll on 2018-06-05 13:18.
  * 邮箱：wenhelinlu@gmail.com
  */
-class CommentRecyclerViewAdapter(mContext: Context, newsList: ArrayList<News>) : RecyclerView.Adapter<CommentRecyclerViewAdapter.CommentListViewHolder>(){
+class CommentRecyclerViewAdapter(mContext: Context, articleList: ArrayList<Article>) : RecyclerView.Adapter<CommentRecyclerViewAdapter.CommentListViewHolder>() {
 
     private val context = mContext
-    private val list = newsList
+    private val list = articleList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentRecyclerViewAdapter.CommentListViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.comment_item,parent,false)
@@ -42,7 +42,7 @@ class CommentRecyclerViewAdapter(mContext: Context, newsList: ArrayList<News>) :
 
         holder.commentItem.setOnClickListener {
             val news = list[position]
-            val intent = Intent(context, NewsDisplayActivity::class.java)
+            val intent = Intent(context, ArticleDisplayActivity::class.java)
             intent.putExtra("news", news)
             context.startActivity(intent)
         }

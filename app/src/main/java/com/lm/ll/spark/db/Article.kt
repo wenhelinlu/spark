@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
  * Created by ll on 2018-05-24 17:23.
  */
 @Poko
-data class News(
+data class Article(
         @PrimaryKey var url: String? = null, //url链接
         var title: String? = null, //标题
         var author: String? = null, //作者
@@ -53,12 +53,12 @@ data class News(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<News> {
-        override fun createFromParcel(parcel: Parcel): News {
-            return News(parcel)
+    companion object CREATOR : Parcelable.Creator<Article> {
+        override fun createFromParcel(parcel: Parcel): Article {
+            return Article(parcel)
         }
 
-        override fun newArray(size: Int): Array<News?> {
+        override fun newArray(size: Int): Array<Article?> {
             return arrayOfNulls(size)
         }
     }
