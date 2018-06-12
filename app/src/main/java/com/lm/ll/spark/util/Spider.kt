@@ -221,7 +221,6 @@ class Spider {
             }
         }
         article.text = stringBuilder.toString()
-
         return article
     }
 }

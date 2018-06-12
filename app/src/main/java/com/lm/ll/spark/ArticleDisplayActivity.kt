@@ -169,6 +169,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
                 }
             }
 
+//            tvText.addTextViewAtIndex(tvText.lastIndex, article.text)
             tvText.text = article.text
             viewDivider.visibility = View.VISIBLE
 
