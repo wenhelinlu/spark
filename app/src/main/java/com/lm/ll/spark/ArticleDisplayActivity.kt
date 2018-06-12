@@ -171,7 +171,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
 //            tvText.addTextViewAtIndex(tvText.lastIndex, article.text)
 
-            tvText.text = article.text
+            val content = article.text!!.replace("\\n", "") //TODO 去除单个的\n，保留连续的\n\n，解决对齐问题
+            tvText.text = content
 
             viewDivider.visibility = View.VISIBLE
 
