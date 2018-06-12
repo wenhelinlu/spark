@@ -5,9 +5,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.text.Spannable
+import android.text.SpannableString
 import android.view.View
 import android.widget.ScrollView
 import android.widget.Toast
+import com.bluejamesbond.text.DocumentView
+import com.bluejamesbond.text.style.JustifiedSpan
+import com.bluejamesbond.text.style.TextAlignment
 import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
@@ -170,7 +175,16 @@ class ArticleDisplayActivity : AppCompatActivity() {
             }
 
 //            tvText.addTextViewAtIndex(tvText.lastIndex, article.text)
-            tvText.text = article.text
+
+//            tvText.text = article.text
+
+            val span = SpannableString(article.text)
+            span.setSpan(JustifiedSpan(),0,span.length,Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            val docmentView = DocumentView(this@ArticleDisplayActivity,DocumentView.FORMATTED_TEXT)
+            docmentView.documentLayoutParams.textAlignment = TextAlignment.JUSTIFIED
+            docmentView.text = span
+
+
             viewDivider.visibility = View.VISIBLE
 
             //根据文章收藏状态显示不同的图标

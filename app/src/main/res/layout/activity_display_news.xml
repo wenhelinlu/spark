@@ -22,20 +22,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <!--<TextView-->
+                <!--android:id="@+id/tvText"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="8dp"-->
+                <!--android:layout_marginEnd="8dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:layout_marginBottom="16dp"-->
+                <!--android:paddingBottom="8dp"-->
+                <!--android:background="@color/transparent"-->
+                <!--android:textColor="@color/grey_600"-->
+                <!--android:textSize="@dimen/text_size_18"-->
+                <!--android:lineSpacingMultiplier="1.2"-->
+                <!--android:breakStrategy="simple"-->
+                <!--android:textIsSelectable="true" />-->
+            <com.bluejamesbond.text.DocumentView
                 android:id="@+id/tvText"
+                xmlns:ext="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                android:paddingBottom="8dp"
-                android:background="@color/transparent"
-                android:textColor="@color/grayLite"
-                android:textSize="@dimen/text_size_18"
-                android:lineSpacingMultiplier="1.2"
-                android:textIsSelectable="true" />
+                ext:documentView_antialias="true"
+                ext:documentView_cacheConfig="auto_quality"
+                ext:documentView_hyphen="-"
+                ext:documentView_maxLines="1000"
+                ext:documentView_lineHeightMultiplier="2.0"
+                ext:documentView_offsetX="10dp"
+                ext:documentView_offsetY="10dp"
+                ext:documentView_insetPadding="10dp"
+                ext:documentView_insetPaddingBottom="10dp"
+                ext:documentView_insetPaddingLeft="10dp"
+                ext:documentView_insetPaddingRight="10dp"
+                ext:documentView_insetPaddingTop="10dp"
+                ext:documentView_reverse="false"
+                ext:documentView_textAlignment="justified"
+                ext:documentView_textColor="@color/grey_600"
+                ext:documentView_textFormat="formatted"
+                ext:documentView_textSize="@dimen/text_size_18"
+                ext:documentView_textSubPixel="true"
+                ext:documentView_wordSpacingMultiplier="5.0" />
 
             <View
                 android:id="@+id/viewDivider"
