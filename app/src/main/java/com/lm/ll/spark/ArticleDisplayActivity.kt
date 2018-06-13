@@ -13,6 +13,7 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
+import com.lm.ll.spark.util.REPLACER_FLAG
 import com.lm.ll.spark.util.Spider
 import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
@@ -169,11 +170,10 @@ class ArticleDisplayActivity : AppCompatActivity() {
                 }
             }
 
-//            tvText.addTextViewAtIndex(tvText.lastIndex, article.text)
+            //去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
+            tvText.text = article.text!!.replace("\r\n\r\n", REPLACER_FLAG, false).replace("\r\n", "", false).replace(REPLACER_FLAG, "\r\n\r\n", false)
 
-            val content = article.text!!.replace("\\n", "") //TODO 去除单个的\n，保留连续的\n\n，解决对齐问题
-            tvText.text = content
-
+            //加载正文后，显示分隔栏
             viewDivider.visibility = View.VISIBLE
 
             //根据文章收藏状态显示不同的图标

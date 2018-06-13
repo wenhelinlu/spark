@@ -35,8 +35,6 @@
                 android:textColor="@color/grey_600"
                 android:textSize="@dimen/text_size_18"
                 android:lineSpacingMultiplier="1.2"
-                android:breakStrategy="high_quality"
-                android:justificationMode="inter_word"
                 android:textIsSelectable="true" />
 
             <!--<WebView-->

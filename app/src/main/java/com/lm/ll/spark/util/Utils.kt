@@ -36,3 +36,6 @@ const val PULL_REFRESH_DISTANCE = 400
 
 //抓取网页设置的Useragent，防止被服务器阻止
 const val USER_AGENT = "User-Agent,Mozilla/5.0 (Linux; Android 7.1.1; MI MAX 2 Build/NMF26F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.83 Mobile Safari/537.36"
+
+//用于字符串替换的标记
+const val REPLACER_FLAG = "REPLACER_FLAG"
