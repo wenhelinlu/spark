@@ -102,8 +102,6 @@ class Spider {
         //去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
         article.text = parseText(body[0]).replace("\r\n\r\n", REPLACER_FLAG, false).replace("\r\n", "", false).replace(REPLACER_FLAG, "\r\n\r\n", false)
 
-//        article.text = Regex("^(\r\n)$").replace(parseText(body[0]),"")
-
         //抓取文章正文中可能包含的其他章节链接
         val links: Elements = body[0].getElementsByTag("a")
         for (link in links){

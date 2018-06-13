@@ -34,20 +34,21 @@ class CommentRecyclerViewAdapter(mContext: Context, articleList: ArrayList<Artic
     }
 
     override fun onBindViewHolder(holder: CommentRecyclerViewAdapter.CommentListViewHolder, position: Int) {
-        holder.commentTitle.text = list[position].title
+        with(holder) {
+            commentTitle.text = list[position].title
 
-        holder.commentAuthor.text = "${list[position].author}"
-        holder.commentDate.text = list[position].date
-        holder.commentTextLength.text = list[position].textLength
-        holder.commentReadCount.text = list[position].readCount
+            commentAuthor.text = "${list[position].author}"
+            commentDate.text = list[position].date
+            commentTextLength.text = list[position].textLength
+            commentReadCount.text = list[position].readCount
 
-        holder.commentItem.setOnClickListener {
-            val news = list[position]
-            val intent = Intent(context, ArticleDisplayActivity::class.java)
-            intent.putExtra(ARTICLE_TEXT_INTENT_KEY, news)
-            context.startActivity(intent)
+            commentItem.setOnClickListener {
+                val news = list[position]
+                val intent = Intent(context, ArticleDisplayActivity::class.java)
+                intent.putExtra(ARTICLE_TEXT_INTENT_KEY, news)
+                context.startActivity(intent)
+            }
         }
-
     }
 
     inner class CommentListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

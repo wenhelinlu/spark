@@ -26,8 +26,8 @@
                 android:id="@+id/tvText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:paddingBottom="8dp"
@@ -37,10 +37,6 @@
                 android:lineSpacingMultiplier="1.2"
                 android:textIsSelectable="true" />
 
-            <!--<WebView-->
-            <!--android:id="@+id/textContent"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content" />-->
             <View
                 android:id="@+id/viewDivider"
                 android:visibility="gone"

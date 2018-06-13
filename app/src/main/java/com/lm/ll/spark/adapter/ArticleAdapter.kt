@@ -35,20 +35,21 @@ class ArticleAdapter(mContext: Context, articleList: ArrayList<Article>) : Recyc
     }
 
     override fun onBindViewHolder(holder: ArticleAdapter.ArticleListViewHolder, position: Int) {
-        holder.articleTitle.text = list[position].title
+        with(holder) {
+            articleTitle.text = list[position].title
 
-        holder.articleAuthor.text = "${list[position].author}"
-        holder.articleDate.text = list[position].date
-        holder.articleTextLength.text = list[position].textLength
-        holder.articleReadCount.text = list[position].readCount
+            articleAuthor.text = "${list[position].author}"
+            articleDate.text = list[position].date
+            articleTextLength.text = list[position].textLength
+            articleReadCount.text = list[position].readCount
 
-        holder.articleItem.setOnClickListener {
-            val article = list[position]
-            val intent = Intent(context, ArticleDisplayActivity::class.java)
-            intent.putExtra(ARTICLE_TEXT_INTENT_KEY, article)
-            context.startActivity(intent)
+            articleItem.setOnClickListener {
+                val article = list[position]
+                val intent = Intent(context, ArticleDisplayActivity::class.java)
+                intent.putExtra(ARTICLE_TEXT_INTENT_KEY, article)
+                context.startActivity(intent)
+            }
         }
-
     }
 
     /**
