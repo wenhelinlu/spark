@@ -99,8 +99,14 @@ class Spider {
         val doc = getDocument(article.url!!)
         val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
 
-        //去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
-        val text = Regex("\\r\\n\\s*?\\r\\n").replace(parseText(body[0]), "\r\n\r\n")//因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
+        /**
+         *
+         * 去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
+         * \s* 表示若干个空格（可以是0个），\s+ 表示一个或多个空格
+         *
+         * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
+         */
+        val text = Regex("\\r\\n\\s*?\\r\\n").replace(parseText(body[0]), "\r\n\r\n")
         article.text = text.replace("\r\n\r\n", REPLACER_FLAG, false).replace("\r\n", "", false).replace(REPLACER_FLAG, "\r\n\r\n", false)
 
         //抓取文章正文中可能包含的其他章节链接
