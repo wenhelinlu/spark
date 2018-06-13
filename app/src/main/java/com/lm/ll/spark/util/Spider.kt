@@ -98,7 +98,9 @@ class Spider {
     fun scratchText(article: Article, commentList: ArrayList<Article>): Article {
         val doc = getDocument(article.url!!)
         val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
-        article.text = parseText(body[0])
+
+        //去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
+        article.text = parseText(body[0]).replace("\r\n\r\n", REPLACER_FLAG, false).replace("\r\n", "", false).replace(REPLACER_FLAG, "\r\n\r\n", false)
 
         //抓取文章正文中可能包含的其他章节链接
         val links: Elements = body[0].getElementsByTag("a")
