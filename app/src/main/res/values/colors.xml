@@ -13,7 +13,7 @@
     <color name="blueGrey">#607d8b</color>
     <color name="blueGreyLite">#90a4ae</color>
     <color name="blueGreyHeavy">#78909c</color>
-    <color name="whiteBlur">#50000000</color>
+    <color name="blackBlur">#90000000</color>
 
     <!-- Grey-->
     <color name="grey_000">#FFFFFF</color>

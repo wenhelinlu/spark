@@ -15,7 +15,7 @@ fun String.toDate(format: String = "yyyy-MM-dd") :String{
 
 
 //文章列表初次加载时最小行数
-const val MIN_ROWS = 15
+const val MIN_ROWS = 20
 
 //禁忌书屋基地址
 const val BASE_URL = "https://www.cool18.com/bbs4/"
