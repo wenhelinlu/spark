@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -111,7 +110,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val pageIndex = if (isLoadMore) currentPage else 1
             val list = spider.scratchArticleList("$BASE_URL$CURRENT_BASE_URL$pageIndex")
 
-            Log.d("首次列表size", list.size.toString())
+//            Log.d("首次列表size", list.size.toString())
 
             if (isLoadMore) {
                 articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
@@ -147,7 +146,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         async(UI) {
             swipeRefreshTitles.isRefreshing = true
             deferredLoad.await()
-            Log.d("列表size", articleList.size.toString())
+//            Log.d("列表size", articleList.size.toString())
             adapter = ArticleAdapter(this@MainActivity, articleList)
             this@MainActivity.recyclerViewTitles.adapter = adapter
             this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
