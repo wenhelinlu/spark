@@ -201,6 +201,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(this@MainActivity, ClassicEroticaArticleListActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
+            R.id.nav_forum -> {
+                val intent = Intent(this@MainActivity, FullscreenActivity::class.java)
+                this@MainActivity.startActivity(intent)
+            }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
@@ -211,4 +215,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //TODO: 首页显示论坛列表
 //TODO：实现夜间模式
 //TODO：增加启动Splash
+//TODO: 正文使用全屏Activity显示
 
