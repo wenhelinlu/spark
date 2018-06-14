@@ -18,18 +18,18 @@ import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_display_news.*
+import kotlinx.android.synthetic.main.activity_display_article.*
 import kotlinx.android.synthetic.main.bottom_toolbar_text.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 
-
 /**
- * 作者：Created by ll on 2018-05-28 14:56.
+ * 显示文章正文
+ * 作者：Created by ll on 2018-06-13 16:56.
  * 邮箱：wenhelinlu@gmail.com
  */
-class ArticleDisplayActivity : AppCompatActivity() {
+class DisplayArticleActivity : AppCompatActivity() {
 
     //是否是经典情色书库中文章的正文（需要单独解析）
     private var isClassic = false
@@ -40,10 +40,15 @@ class ArticleDisplayActivity : AppCompatActivity() {
     //评论adapter
     private lateinit var commentsAdapter: CommentRecyclerViewAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private var isHidding = false
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_display_news)
+
+        setContentView(R.layout.activity_display_article)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         Realm.init(this)
 
@@ -52,6 +57,42 @@ class ArticleDisplayActivity : AppCompatActivity() {
         initView()
 
         loadText()
+    }
+
+    private fun hide() {
+        // Hide UI first
+        supportActionBar?.hide()
+
+        // Note that some of these constants are new as of API 16 (Jelly Bean)
+        // and API 19 (KitKat). It is safe to use them, as they are inlined
+        // at compile-time and do nothing on earlier devices.
+        fullscreen_content.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LOW_PROFILE or
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        isHidding = true
+    }
+
+    private fun show() {
+        // Show the system bar
+        fullscreen_content.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+
+        isHidding = false
+    }
+
+    private fun toggle() {
+
+        if (isHidding) {
+            show()
+        } else {
+            hide()
+
+        }
     }
 
     /**
@@ -79,6 +120,10 @@ class ArticleDisplayActivity : AppCompatActivity() {
         //跟?结合使用， let函数可以在对象不为 null 的时候执行函数内的代码，从而避免了空指针异常的出现。
         this.supportActionBar?.let {
             it.title = article.title
+        }
+
+        tvText.setOnClickListener {
+            toggle()
         }
 
         //收藏图标点击事件
@@ -119,7 +164,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
+        val linearLayoutManager = LinearLayoutManager(this@DisplayArticleActivity)
         //评论列表添加点线分隔线
         this.recyclerViewComment.addItemDecoration(DashlineItemDecoration())
         this.recyclerViewComment.layoutManager = linearLayoutManager
@@ -130,8 +175,10 @@ class ArticleDisplayActivity : AppCompatActivity() {
             var isShow = true
             if (scrollY - oldScrollY > 0) {
                 isShow = false
+
             } else if (oldScrollY - scrollY > 0) {
                 isShow = true
+
             }
             showBottomToolbar(isShow)
         }
@@ -142,7 +189,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
      * @author ll
      * @time 2018-05-29 19:40
      */
-    private fun loadText(){
+    private fun loadText() {
         val deferredLoad = async(CommonPool) {
             val spider = Spider()
             if (isClassic) {
@@ -182,20 +229,21 @@ class ArticleDisplayActivity : AppCompatActivity() {
             }
 
             //在正文加载完成后再显示评论区提示
-            tvCommentRemark.text = this@ArticleDisplayActivity.getString(R.string.comment_remark)
+            tvCommentRemark.text = this@DisplayArticleActivity.getString(R.string.comment_remark)
 
-            commentsAdapter = CommentRecyclerViewAdapter(this@ArticleDisplayActivity, comments)
+            commentsAdapter = CommentRecyclerViewAdapter(this@DisplayArticleActivity, comments)
             recyclerViewComment.adapter = commentsAdapter
             recyclerViewComment.adapter.notifyDataSetChanged()
         }
     }
+
 
     /**
      * @desc 滑动正文内容时显示或隐藏底栏
      * @author ll
      * @time 2018-06-03 08:14
      */
-    private fun showBottomToolbar(isShow: Boolean){
+    private fun showBottomToolbar(isShow: Boolean) {
 //        if (isShow) {
 //            toolbar_bottom_text.visibility = View.VISIBLE
 //            val animation = AnimationUtils.loadAnimation(this@ArticleDisplayActivity, R.anim.fab_jump_from_down)
@@ -209,4 +257,3 @@ class ArticleDisplayActivity : AppCompatActivity() {
         toolbar_bottom_text.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 }
-

@@ -33,7 +33,7 @@
             android:name=".ClassicEroticaArticleListActivity"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".FullscreenActivity"
+            android:name=".DisplayArticleActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/FullscreenTheme"></activity>

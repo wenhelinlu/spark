@@ -8,7 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.lm.ll.spark.ArticleDisplayActivity
+import com.lm.ll.spark.DisplayArticleActivity
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
@@ -44,7 +44,7 @@ class CommentRecyclerViewAdapter(mContext: Context, articleList: ArrayList<Artic
 
             commentItem.setOnClickListener {
                 val news = list[position]
-                val intent = Intent(context, ArticleDisplayActivity::class.java)
+                val intent = Intent(context, DisplayArticleActivity::class.java)
                 intent.putExtra(ARTICLE_TEXT_INTENT_KEY, news)
                 context.startActivity(intent)
             }
