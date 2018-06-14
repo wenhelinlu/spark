@@ -102,12 +102,15 @@ class Spider {
         /**
          *
          * 去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
+         *
          * \s* 表示若干个空格（可以是0个），\s+ 表示一个或多个空格
          *
          * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
          */
-        val text = Regex("\\r\\n\\s*?\\r\\n").replace(parseText(body[0]), "\r\n\r\n")
-        article.text = text.replace("\r\n\r\n", REPLACER_FLAG, false).replace("\r\n", "", false).replace(REPLACER_FLAG, "\r\n\r\n", false)
+        val text = Regex("\\r\\n\\s*?\\r\\n").replace(parseText(body[0]), REPLACER_FLAG)
+
+        //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
+        article.text = Regex("\\s*?\\r\\n\\s*?").replace(text, "").replace(REPLACER_FLAG, "\r\n\r\n", false)
 
         //抓取文章正文中可能包含的其他章节链接
         val links: Elements = body[0].getElementsByTag("a")
