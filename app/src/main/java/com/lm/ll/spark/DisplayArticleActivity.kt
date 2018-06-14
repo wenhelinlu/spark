@@ -7,6 +7,7 @@ import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ScrollView
 import android.widget.Toast
 import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
@@ -76,6 +77,8 @@ class DisplayArticleActivity : AppCompatActivity() {
         // Delayed display of UI elements
         supportActionBar?.show()
         fullscreen_content_controls.visibility = View.VISIBLE
+        val animation = AnimationUtils.loadAnimation(this@DisplayArticleActivity, R.anim.fab_jump_from_down)
+        fullscreen_content_controls.startAnimation(animation)
     }
 
     /**
@@ -90,18 +93,6 @@ class DisplayArticleActivity : AppCompatActivity() {
      * @time 2018-06-14 15:52
      */
     private val mHideRunnable = Runnable { hide() }
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private val mDelayHideTouchListener = View.OnTouchListener { _, _ ->
-        if (DisplayArticleActivity.AUTO_HIDE) {
-            delayedHide(DisplayArticleActivity.AUTO_HIDE_DELAY_MILLIS)
-        }
-        false
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,7 +108,12 @@ class DisplayArticleActivity : AppCompatActivity() {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        toolbar_bottom_text.setOnTouchListener(mDelayHideTouchListener)
+        toolbar_bottom_text.setOnTouchListener { _, _ ->
+            if (DisplayArticleActivity.AUTO_HIDE) {
+                delayedHide(DisplayArticleActivity.AUTO_HIDE_DELAY_MILLIS)
+            }
+            false
+        }
 
         Realm.init(this)
 
@@ -159,6 +155,9 @@ class DisplayArticleActivity : AppCompatActivity() {
         // Hide UI first
         supportActionBar?.hide()
         fullscreen_content_controls.visibility = View.GONE
+        val animation = AnimationUtils.loadAnimation(this@DisplayArticleActivity, R.anim.fab_jump_to_down)
+        fullscreen_content_controls.startAnimation(animation)
+
         mVisible = false
 
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -209,7 +208,7 @@ class DisplayArticleActivity : AppCompatActivity() {
          * Some older devices needs a small delay between UI widget updates
          * and a change of the status and navigation bar.
          */
-        private const val UI_ANIMATION_DELAY = 300
+        private const val UI_ANIMATION_DELAY = 100
     }
 
     /**
