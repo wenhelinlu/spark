@@ -8,6 +8,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //                    .setAction("Action", null).show()
 //        }
 
+
         //若函数参数对应的函数只有一个参数，在使用时，可以省略参数定义，直接使用“it”代替参数
         fab.setOnClickListener {
             Snackbar.make(it, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -72,9 +74,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //触发刷新的下拉距离
         swipeRefreshTitles.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
         //下拉刷新监听
-        swipeRefreshTitles.setOnRefreshListener({
+        swipeRefreshTitles.setOnRefreshListener {
             loadContent()
-        })
+        }
 
 
         //recyclerview设置
@@ -204,6 +206,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_forum -> {
                 val intent = Intent(this@MainActivity, DisplayArticleActivity::class.java)
                 this@MainActivity.startActivity(intent)
+            }
+            R.id.nav_nightMode -> {
+//                if (switchNightMode.isChecked) {
+                this@MainActivity.delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//                } else {
+//                    this@MainActivity.delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//                }
+                recreate()
             }
         }
 
