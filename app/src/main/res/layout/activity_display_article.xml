@@ -9,124 +9,104 @@
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
-    <!--<TextView-->
-    <!--android:id="@+id/fullscreen_content"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:gravity="center"-->
-    <!--android:keepScreenOn="true"-->
-    <!--android:text="@string/dummy_content"-->
-    <!--android:textColor="#33b5e5"-->
-    <!--android:textSize="50sp"-->
-    <!--android:textStyle="bold" />-->
-    <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:background="#000000">
+        android:background="#000000"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/scrollviewText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/scrollviewText"
-            android:scrollbars="vertical"
             android:background="@color/transparent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:fillViewport="true">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp"
-                    android:paddingBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
                     android:background="@color/transparent"
-                    android:textColor="@color/grey_600"
-                    android:textSize="@dimen/text_size_18"
                     android:lineSpacingMultiplier="1.2"
-                    android:textIsSelectable="true" />
+                    android:paddingBottom="8dp"
+                    android:textColor="@color/grey_600"
+                    android:textIsSelectable="true"
+                    android:textSize="@dimen/text_size_18" />
 
                 <View
                     android:id="@+id/viewDivider"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="24dp"
-                    android:background="@color/grayLite" />
+                    android:background="@color/grayLite"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tvCommentRemark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="18dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="18dp"
-                    android:layout_marginBottom="18dp"
                     android:background="@color/transparent"
                     android:textColor="@color/grayLite"
-                    android:textStyle="bold"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerViewComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginBottom="12dp"
                     android:background="@color/transparent"
                     android:clipToPadding="true" />
             </LinearLayout>
         </ScrollView>
-
-        <include
-            android:id="@+id/toolbar_bottom_text"
-            layout="@layout/bottom_toolbar_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-    <!--<FrameLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:fitsSystemWindows="true">-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-    <!--<LinearLayout-->
-    <!--android:id="@+id/fullscreen_content_controls"-->
-    <!--style="?metaButtonBarStyle"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="bottom|center_horizontal"-->
-    <!--android:background="@color/black_overlay"-->
-    <!--android:orientation="horizontal"-->
-    <!--tools:ignore="UselessParent">-->
+        <LinearLayout
+            android:id="@+id/fullscreen_content_controls"
+            style="?metaButtonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/black_overlay"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
 
-    <!--<Button-->
-    <!--android:id="@+id/dummy_button"-->
-    <!--style="?metaButtonBarButtonStyle"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1"-->
-    <!--android:text="@string/dummy_button" />-->
-
-    <!--</LinearLayout>-->
-    <!--</FrameLayout>-->
+            <include
+                android:id="@+id/toolbar_bottom_text"
+                layout="@layout/bottom_toolbar_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </FrameLayout>
 
 </FrameLayout>
