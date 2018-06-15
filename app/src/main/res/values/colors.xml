@@ -15,6 +15,9 @@
     <color name="blueGreyHeavy">#78909c</color>
     <color name="blackBlur">#90000000</color>
 
+    <color name="colorText">#212121</color>
+    <color name="colorBg">#e0e0e0</color>
+
     <!-- Grey-->
     <color name="grey_000">#FFFFFF</color>
     <color name="grey_050">#FAFAFA</color>

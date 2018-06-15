@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="?attr/bgColor"
     tools:context=".activity.DisplayArticleActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
@@ -14,7 +14,7 @@
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
+        android:background="?attr/bgColor"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -41,10 +41,10 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/transparent"
+                    android:background="?attr/bgColor"
                     android:lineSpacingMultiplier="1.2"
                     android:paddingBottom="8dp"
-                    android:textColor="@color/grey_600"
+                    android:textColor="?attr/textColor"
                     android:textIsSelectable="true"
                     android:textSize="@dimen/text_size_18" />
 
@@ -64,8 +64,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="18dp"
-                    android:background="@color/transparent"
-                    android:textColor="@color/grayLite"
+                    android:background="?attr/bgColor"
+                    android:textColor="?attr/textColor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
