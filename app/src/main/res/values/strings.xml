@@ -24,4 +24,6 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="title_activity_fullscreen1">FullscreenActivity1</string>
+    <string name="ic_menu_nightMode_off">关</string>
+    <string name="ic_menu_nightMode_on">开</string>
 </resources>

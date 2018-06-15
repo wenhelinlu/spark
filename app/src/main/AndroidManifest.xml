@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -23,16 +23,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EliteEroticaArticleListActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".activity.EliteEroticaArticleListActivity"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".FavoritedNewsListActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".activity.FavoritedNewsListActivity"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".ClassicEroticaArticleListActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".activity.ClassicEroticaArticleListActivity"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".DisplayArticleActivity"
+            android:name=".activity.DisplayArticleActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/FullscreenTheme" />

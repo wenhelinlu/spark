@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.lm.ll.spark.DisplayArticleActivity
 import com.lm.ll.spark.R
+import com.lm.ll.spark.activity.DisplayArticleActivity
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 
