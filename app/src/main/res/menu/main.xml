@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_nightMode"
-        android:icon="@drawable/ic_menu_daymode"
+        android:icon="?attr/nightMode"
         android:title="@string/ic_menu_nightMode"
         app:showAsAction="ifRoom" />
     <item

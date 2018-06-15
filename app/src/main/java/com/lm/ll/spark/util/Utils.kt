@@ -39,3 +39,6 @@ const val USER_AGENT = "User-Agent,Mozilla/5.0 (Linux; Android 7.1.1; MI MAX 2 B
 
 //用于字符串替换的标记
 const val REPLACER_FLAG = "REPLACER_FLAG"
+
+//存储夜间模式设置的键
+const val NIGHT_MODE = "NIGHT_MODE"

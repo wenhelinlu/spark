@@ -14,8 +14,8 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
-import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
+import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.NewsItemDecoration
 import com.lm.ll.spark.util.*
@@ -43,6 +43,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //根据配置切换日间\夜间模式
+        switchDayNightMode(InitApplication.getInstance().isNightModeEnabled())
+
         setContentView(R.layout.activity_main)
 
         val layoutParams = window.attributes
@@ -185,10 +189,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_nightMode -> {
-
-
-                this@MainActivity.delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                var isNightMode = InitApplication.getInstance().isNightModeEnabled()
+                isNightMode = !isNightMode
+                InitApplication.getInstance().setIsNightModeEnabled(isNightMode)
+                switchDayNightMode(isNightMode)
                 recreate()
+
                 return true
             }
             R.id.action_search -> true
@@ -219,6 +225,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    /**
+     * @desc 切换日间\夜间模式
+     * @author ll
+     * @time 2018-06-15 15:28
+     */
+    private fun switchDayNightMode(isNightMode: Boolean) {
+        if (isNightMode) {
+            this@MainActivity.delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            this@MainActivity.delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 }
 
