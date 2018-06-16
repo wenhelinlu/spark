@@ -18,7 +18,7 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.decoration.NewsItemDecoration
+import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.lm.ll.spark.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -87,7 +87,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //recyclerview设置
         val linearLayoutManager = LinearLayoutManager(this@MainActivity)
-        this.recyclerViewTitles.addItemDecoration(NewsItemDecoration(2))
+        this.recyclerViewTitles.addItemDecoration(DashlineItemDecoration())
+//        this.recyclerViewTitles.addItemDecoration(NewsItemDecoration(2))
         this.recyclerViewTitles.layoutManager = linearLayoutManager
 
         //上拉加载更多

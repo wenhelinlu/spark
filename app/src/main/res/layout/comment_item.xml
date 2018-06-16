@@ -4,7 +4,7 @@
     android:id="@+id/comment_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black">
+    android:background="?attr/bgColor">
 
     <TextView
         android:id="@+id/comment_title"
@@ -16,7 +16,7 @@
         android:paddingEnd="4dp"
         android:background="@color/transparent"
         android:textAlignment="viewStart"
-        android:textColor="@color/blueGreyHeavy"
+        android:textColor="?attr/textColor"
         android:textSize="17sp"
         android:text="comment_title"
         app:layout_constraintEnd_toEndOf="parent"

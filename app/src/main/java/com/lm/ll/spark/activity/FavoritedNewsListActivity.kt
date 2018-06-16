@@ -10,7 +10,7 @@ import android.view.MenuItem
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.decoration.NewsItemDecoration
+import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.vicpin.krealmextensions.querySorted
 import io.realm.Realm
 import io.realm.Sort
@@ -43,7 +43,7 @@ class FavoritedNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefr
 
         val linearLayoutManager = LinearLayoutManager(this@FavoritedNewsListActivity)
 
-        this.recyclerViewEliteList.addItemDecoration(NewsItemDecoration(2))
+        this.recyclerViewEliteList.addItemDecoration(DashlineItemDecoration())
         this.recyclerViewEliteList.layoutManager = linearLayoutManager
 
         loadContent()

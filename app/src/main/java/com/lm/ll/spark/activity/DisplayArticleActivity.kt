@@ -284,7 +284,7 @@ class DisplayArticleActivity : AppCompatActivity() {
 
         val linearLayoutManager = LinearLayoutManager(this@DisplayArticleActivity)
         //评论列表添加点线分隔线
-        this.recyclerViewComment.addItemDecoration(DashlineItemDecoration())
+        this.recyclerViewComment.addItemDecoration(DashlineItemDecoration(10f))
         this.recyclerViewComment.layoutManager = linearLayoutManager
         this.recyclerViewComment.isNestedScrollingEnabled = false
     }
