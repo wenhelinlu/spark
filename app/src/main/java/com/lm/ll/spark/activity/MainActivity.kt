@@ -244,6 +244,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 }
 
 //TODO: 首页显示论坛列表
-//TODO：完善夜间模式（如列表和正文都随模式切换而改变）
 //TODO：增加启动Splash
+
+//TODO: 学习Gradle
+
 

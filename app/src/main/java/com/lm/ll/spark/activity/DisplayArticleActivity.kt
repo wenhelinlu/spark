@@ -27,6 +27,7 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 
+
 /**
  * 显示文章正文
  * 作者：Created by ll on 2018-06-13 16:56.
@@ -99,22 +100,6 @@ class DisplayArticleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_display_article)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        mVisible = true
-
-        // Set up the user interaction to manually show or hide the system UI.
-        tvText.setOnClickListener { toggle() }
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        toolbar_bottom_text.setOnTouchListener { _, _ ->
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS)
-            }
-            false
-        }
 
         Realm.init(this)
 
@@ -234,6 +219,20 @@ class DisplayArticleActivity : AppCompatActivity() {
      */
     private fun initView() {
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        mVisible = true
+
+        // Upon interacting with UI controls, delay any scheduled hide()
+        // operations to prevent the jarring behavior of controls going away
+        // while interacting with the UI.
+        toolbar_bottom_text.setOnTouchListener { _, _ ->
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS)
+            }
+            false
+        }
+
         //跟?结合使用， let函数可以在对象不为 null 的时候执行函数内的代码，从而避免了空指针异常的出现。
         this.supportActionBar?.let {
             it.title = article.title
@@ -342,3 +341,5 @@ class DisplayArticleActivity : AppCompatActivity() {
         }
     }
 }
+
+//TODO: 记录上次阅读位置
