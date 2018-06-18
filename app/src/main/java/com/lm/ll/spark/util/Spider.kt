@@ -15,7 +15,13 @@ import org.jsoup.select.Elements
  */
 class Spider {
 
-    private val pattern = "[0-9]+" //匹配数字
+    companion object {
+        private const val pattern = "[0-9]+" //匹配数字正则表达式模式串
+        private const val paragraphFlagPattern = "\\r\\n\\s*?\\r\\n" //匹配段落标记符的正则表达式模式串，可匹配\r\n\r\n,\r\n \r\n, \r\n   \r\n等两个\r\n之间包含0到多个空格的情况
+        private const val paragraphFlag = "\r\n\r\n" //段落标记符
+        private const val newlineFlagPattern = "\\s*?\\r\\n\\s*?" //匹配换行标记符的正则表达式的模式串，可匹配\r\n, \r\n ,\r\n 等\r\n两边有0到多个空格的情况
+        private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
+    }
 
 
     /**
@@ -38,10 +44,10 @@ class Spider {
         val mList = ArrayList<Article>()
         Log.d("加载列表", webUrl)
         val doc = getDocument(webUrl)
-        val titleLinks: Elements = doc.select ("div#d_list")
-        for (e: Element in titleLinks){
+        val titleLinks: Elements = doc.select("div#d_list")
+        for (e: Element in titleLinks) {
             val uls: Elements = e.getElementsByTag("ul")
-            for (ul: Element in uls){
+            for (ul: Element in uls) {
                 parseArticleList(ul, mList)
             }
         }
@@ -55,8 +61,8 @@ class Spider {
      * @time 2018-05-28 10:01
      */
     private fun parseArticleList(ul: Element, list: ArrayList<Article>) {
-        for(child in ul.childNodes()){
-            if(child.childNodes() == null || child.childNodeSize() != 7){
+        for (child in ul.childNodes()) {
+            if (child.childNodes() == null || child.childNodeSize() != 7) {
                 continue
             }
             val childNodes = child.childNodes()
@@ -83,7 +89,7 @@ class Spider {
      * @author ll
      * @time 2018-05-29 18:44
      */
-    private fun parseText(e: Element): String{
+    private fun parseText(e: Element): String {
         return HanLP.convertToSimplifiedChinese(e.text())    //繁体转简体
     }
 
@@ -107,14 +113,22 @@ class Spider {
          *
          * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
          */
-        val text = Regex("\\r\\n\\s*?\\r\\n").replace(parseText(body[0]), REPLACER_FLAG)
 
-        //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
-        article.text = Regex("\\s*?\\r\\n\\s*?").replace(text, "").replace(REPLACER_FLAG, "\r\n\r\n", false)
+        val originalText = parseText(body[0])
+        val containsParagraphFlag = Regex(paragraphFlagPattern).containsMatchIn(originalText) //是否包含段落标记（\r\n\r\n）
+        //如果包含段落标记，则按照规则清除换行标记，保留段落标记
+        if (containsParagraphFlag) {
+            val text = Regex(paragraphFlagPattern).replace(parseText(body[0]), replacerWord)
+            //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
+            article.text = Regex(newlineFlagPattern).replace(text, "").replace(replacerWord, paragraphFlag, false)
+        } else {
+            article.text = originalText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
+        }
+
 
         //抓取文章正文中可能包含的其他章节链接
         val links: Elements = body[0].getElementsByTag("a")
-        for (link in links){
+        for (link in links) {
             val comment = Article()
             comment.url = link.attr("href")
             comment.title = HanLP.convertToSimplifiedChinese(link.text())
@@ -145,7 +159,7 @@ class Spider {
      * @time 2018-06-04 16:34
      */
     private fun parseComments(ul: Element, list: ArrayList<Article>) {
-        for(child in ul.childNodes()){
+        for (child in ul.childNodes()) {
             val childNodes = child.childNodes()
             val article = Article()
             val link: Element = childNodes[0] as Element
@@ -172,10 +186,10 @@ class Spider {
         val mList = ArrayList<Article>()
 //        Log.d("加载列表",webUrl)
         val doc = getDocument(webUrl)
-        val children: Elements = doc.select ("ul#thread_list")
-        for (e: Element in children){
-            for (child in e.childNodes()){
-                if(child.childNodeSize() ==0){
+        val children: Elements = doc.select("ul#thread_list")
+        for (e: Element in children) {
+            for (child in e.childNodes()) {
+                if (child.childNodeSize() == 0) {
                     continue
                 }
                 val article = Article()
