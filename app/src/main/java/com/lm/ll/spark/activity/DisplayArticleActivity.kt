@@ -294,21 +294,23 @@ class DisplayArticleActivity : AppCompatActivity() {
      * @time 2018-05-29 19:40
      */
     private fun loadText() {
-        val deferredLoad = async(CommonPool) {
-            val spider = Spider()
-            if (isClassic) { //经典文库的文章解析方式不同
-                article = spider.scratchClassicEroticaArticleText(article)
-            } else {
-                article = spider.scratchText(article, comments) //正文中可能也包含链接（比如精华区）
-                comments.reverse() //因为在精华区中，章节链接是倒序显示，所以将其翻转
-                comments.addAll(spider.scratchComments(article))
-            }
-        }
-
         async(UI) {
 
-            //如果正文有内容，则说明是从本地读取的，不需要再从网上抓取
+            //如果正文有内容，则说明是从本地读取（我的收藏）的，不需要再从网上抓取
             if (article.text == null || article.text.toString().isEmpty()) {
+
+                //注意：如果此协程定义在if外部，则它会一定在运行，并不是调用await才运行（要理解协程的概念）
+                val deferredLoad = async(CommonPool) {
+                    val spider = Spider()
+                    if (isClassic) { //经典文库的文章解析方式不同
+                        article = spider.scratchClassicEroticaArticleText(article)
+                    } else {
+                        article = spider.scratchText(article, comments) //正文中可能也包含链接（比如精华区）
+                        comments.reverse() //因为在精华区中，章节链接是倒序显示，所以将其翻转
+                        comments.addAll(spider.scratchComments(article))
+                    }
+                }
+
                 deferredLoad.await()
                 //如果是从主页打开的链接，则查询此条数据在数据库中是否存在
                 val find = query<Article> {
