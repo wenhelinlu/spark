@@ -299,7 +299,7 @@ class DisplayArticleActivity : AppCompatActivity() {
             //如果正文有内容，则说明是从本地读取（我的收藏）的，不需要再从网上抓取
             if (article.text == null || article.text.toString().isEmpty()) {
 
-                //注意：如果此协程定义在if外部，则它会一定在运行，并不是调用await才运行（要理解协程的概念）
+                //注意：如果此协程定义在if外部，则它一定会运行，不受if判断的限制，并不是调用await才运行（要理解协程的概念）
                 val deferredLoad = async(CommonPool) {
                     val spider = Spider()
                     if (isClassic) { //经典文库的文章解析方式不同
@@ -345,3 +345,5 @@ class DisplayArticleActivity : AppCompatActivity() {
 }
 
 //TODO: 记录上次阅读位置
+//TODO：理解async和await概念
+//TODO：增强程序健壮性

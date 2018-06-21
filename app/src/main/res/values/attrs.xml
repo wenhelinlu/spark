@@ -11,9 +11,9 @@
 
     <declare-styleable name="NightModeTheme">
         <attr name="nightMode" format="reference" />
-
         <attr name="textColor" format="reference" />
         <attr name="bgColor" format="reference" />
+        <attr name="backgroundColor" format="reference" />
     </declare-styleable>
 
 </resources>
