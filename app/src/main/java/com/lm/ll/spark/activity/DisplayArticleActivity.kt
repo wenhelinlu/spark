@@ -347,3 +347,5 @@ class DisplayArticleActivity : AppCompatActivity() {
 //TODO: 记录上次阅读位置
 //TODO：理解async和await概念
 //TODO：增强程序健壮性
+//TODO：将文章对应的评论也存入数据库中
+
