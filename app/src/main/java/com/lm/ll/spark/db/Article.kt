@@ -3,6 +3,7 @@ package com.lm.ll.spark.db
 import android.os.Parcel
 import android.os.Parcelable
 import com.lm.ll.spark.annotation.Poko
+import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import java.time.LocalDateTime
@@ -22,19 +23,26 @@ data class Article(
         var readCount: String? = null, //阅读数
         var text: String? = null, //文章正文
         var insertTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), //文章收藏入库时间
-        var isFavorited: Int = 0  //是否被收藏, 1表示已收藏，0表示未收藏
+        var isFavorited: Int = 0,  //是否被收藏, 1表示已收藏，0表示未收藏
+        var comments: RealmList<Comment> = RealmList() //此文章的评论列表
 ) : Parcelable, RealmObject() {
 
-    constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readInt())
+    constructor(parcel: Parcel) : this() {
+        url = parcel.readString()
+        title = parcel.readString()
+        author = parcel.readString()
+        date = parcel.readString()
+        textLength = parcel.readString()
+        readCount = parcel.readString()
+        text = parcel.readString()
+        insertTime = parcel.readString()
+        isFavorited = parcel.readInt()
+
+        //实现RealmList的Parcelable处理
+        val mList = RealmList<Comment>()
+        mList.addAll(parcel.createTypedArrayList(Comment.CREATOR))
+        comments = mList
+    }
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeString(url)
@@ -46,6 +54,7 @@ data class Article(
         dest.writeString(text)
         dest.writeString(insertTime)
         dest.writeInt(isFavorited)
+        dest.writeTypedList(comments) //实现RealmList的Parcelable处理
     }
 
 
@@ -64,3 +73,4 @@ data class Article(
     }
 }
 
+//TODO: 在Wiki中记录将RealmList数据Parcelable化的方法

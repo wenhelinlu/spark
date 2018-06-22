@@ -3,6 +3,8 @@ package com.lm.ll.spark.util
 import android.util.Log
 import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.db.Comment
+import io.realm.RealmList
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -98,10 +100,9 @@ class Spider {
      * @author ll
      * @time 2018-05-29 18:46
      * @param article 待抓取正文的文章链接
-     * @param commentList 存储正文中其他章节链接的列表
      * @return 包含正文的文章链接
      */
-    fun scratchText(article: Article, commentList: ArrayList<Article>): Article {
+    fun scratchText(article: Article): Article {
         val doc = getDocument(article.url!!)
         val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
 
@@ -126,15 +127,23 @@ class Spider {
         }
 
 
-        //抓取文章正文中可能包含的其他章节链接
+        val commentList = RealmList<Comment>()
+        //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
         val links: Elements = body[0].getElementsByTag("a")
         for (link in links) {
-            val comment = Article()
+            val comment = Comment()
             comment.url = link.attr("href")
             comment.title = HanLP.convertToSimplifiedChinese(link.text())
             comment.author = ""
+
             commentList.add(comment)
         }
+        //因为在精华区中，章节链接是倒序显示，所以将其翻转
+        commentList.reverse()
+
+        //抓取对正文的评论列表
+        commentList.addAll(scratchComments(article))
+        article.comments = commentList
 
         return article
     }
@@ -145,12 +154,10 @@ class Spider {
      * @author ll
      * @time 2018-06-04 15:06
      */
-    fun scratchComments(article: Article): ArrayList<Article> {
-        val commentList = ArrayList<Article>()
+    private fun scratchComments(article: Article): RealmList<Comment> {
         val doc: Document = Jsoup.connect(article.url).get()
         val comments: Elements = doc.getElementsByTag("ul")
-        parseComments(comments[0], commentList)
-        return commentList
+        return parseComments(comments[0])
     }
 
     /**
@@ -158,23 +165,25 @@ class Spider {
      * @author ll
      * @time 2018-06-04 16:34
      */
-    private fun parseComments(ul: Element, list: ArrayList<Article>) {
+    private fun parseComments(ul: Element): RealmList<Comment> {
+        val list = RealmList<Comment>()
         for (child in ul.childNodes()) {
             val childNodes = child.childNodes()
-            val article = Article()
+            val comment = Comment()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
-            article.url = "$BASE_URL$uri"
-            article.title = HanLP.convertToSimplifiedChinese(link.text())
+            comment.url = "$BASE_URL$uri"
+            comment.title = HanLP.convertToSimplifiedChinese(link.text())
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
             val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
-            article.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
-            article.author = "作者:$author"
-            article.date = (childNodes[2] as Element).text() //日期
+            comment.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
+            comment.author = "作者:$author"
+            comment.date = (childNodes[2] as Element).text() //日期
 
-            list.add(article)
+            list.add(comment)
         }
+        return list
     }
 
     /**

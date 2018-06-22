@@ -10,8 +10,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.activity.DisplayArticleActivity
-import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
+import io.realm.RealmList
 
 
 /**
@@ -19,7 +20,7 @@ import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
  * 作者：Created by ll on 2018-06-05 13:18.
  * 邮箱：wenhelinlu@gmail.com
  */
-class CommentRecyclerViewAdapter(mContext: Context, articleList: ArrayList<Article>) : RecyclerView.Adapter<CommentRecyclerViewAdapter.CommentListViewHolder>() {
+class CommentRecyclerViewAdapter(mContext: Context, articleList: RealmList<Comment>) : RecyclerView.Adapter<CommentRecyclerViewAdapter.CommentListViewHolder>() {
 
     private val context = mContext
     private val list = articleList
@@ -35,19 +36,21 @@ class CommentRecyclerViewAdapter(mContext: Context, articleList: ArrayList<Artic
 
     override fun onBindViewHolder(holder: CommentRecyclerViewAdapter.CommentListViewHolder, position: Int) {
         with(holder) {
-            commentTitle.text = list[position].title
+            list[position]?.let {
+                commentTitle.text = it.title
 
-            commentAuthor.text = "${list[position].author}"
-            commentDate.text = list[position].date
-            commentTextLength.text = list[position].textLength
-            commentReadCount.text = list[position].readCount
+                commentAuthor.text = it.author
+                commentDate.text = it.date
+                commentTextLength.text = it.textLength
+                commentReadCount.text = it.readCount
 
-            commentItem.setOnClickListener {
-                val news = list[position]
-                val intent = Intent(context, DisplayArticleActivity::class.java)
-                intent.putExtra(ARTICLE_TEXT_INTENT_KEY, news)
-                context.startActivity(intent)
+                commentItem.setOnClickListener {
+                    val intent = Intent(context, DisplayArticleActivity::class.java)
+                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, list[position]!!.toArticle())
+                    context.startActivity(intent)
+                }
             }
+
         }
     }
 

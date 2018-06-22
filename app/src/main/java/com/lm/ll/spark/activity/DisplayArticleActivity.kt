@@ -302,24 +302,22 @@ class DisplayArticleActivity : AppCompatActivity() {
                 //注意：如果此协程定义在if外部，则它一定会运行，不受if判断的限制，并不是调用await才运行（要理解协程的概念）
                 val deferredLoad = async(CommonPool) {
                     val spider = Spider()
-                    if (isClassic) { //经典文库的文章解析方式不同
-                        article = spider.scratchClassicEroticaArticleText(article)
+                    article = if (isClassic) { //经典文库的文章解析方式不同
+                        spider.scratchClassicEroticaArticleText(article)
                     } else {
-                        article = spider.scratchText(article, comments) //正文中可能也包含链接（比如精华区）
-                        comments.reverse() //因为在精华区中，章节链接是倒序显示，所以将其翻转
-                        comments.addAll(spider.scratchComments(article))
+                        spider.scratchText(article) //正文中可能也包含链接（比如精华区）
                     }
                 }
 
                 deferredLoad.await()
-                //如果是从主页打开的链接，则查询此条数据在数据库中是否存在
-                val find = query<Article> {
-                    equalTo("url", article.url)
-                }.firstOrNull()
-                //如果存在，说明此文章已被收藏并存入数据库中
-                if (find != null) {
-                    article.isFavorited = 1
-                }
+//                //如果是从主页打开的链接，则查询此条数据在数据库中是否存在
+//                val find = query<Article> {
+//                    equalTo("url", article.url)
+//                }.firstOrNull()
+//                //如果存在，说明此文章已被收藏并存入数据库中
+//                if (find != null) {
+//                    article.isFavorited = 1
+//                }
             }
 
             tvText.text = article.text
@@ -337,7 +335,7 @@ class DisplayArticleActivity : AppCompatActivity() {
             //在正文加载完成后再显示评论区提示
             tvCommentRemark.text = this@DisplayArticleActivity.getString(R.string.comment_remark)
 
-            commentsAdapter = CommentRecyclerViewAdapter(this@DisplayArticleActivity, comments)
+            commentsAdapter = CommentRecyclerViewAdapter(this@DisplayArticleActivity, article.comments)
             recyclerViewComment.adapter = commentsAdapter
             recyclerViewComment.adapter.notifyDataSetChanged()
         }

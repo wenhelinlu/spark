@@ -37,17 +37,17 @@ class SimpleArticleAdapter(mContext: Context, intent: Intent, articleList: Array
 
     override fun onBindViewHolder(holder: SimpleArticleAdapter.SimpleNewsListViewHolder, position: Int) {
         with(holder) {
-            articleTitle.text = list[position].title
+            list[position].let {
+                articleTitle.text = it.title
+                articleItem.setOnClickListener {
+                    //防止参数重复添加
+                    if (targetIntent.hasExtra(ARTICLE_TEXT_INTENT_KEY)) {
+                        targetIntent.removeExtra(ARTICLE_TEXT_INTENT_KEY)
+                    }
 
-            articleItem.setOnClickListener {
-                val article = list[position]
-                //防止参数重复添加
-                if (targetIntent.hasExtra(ARTICLE_TEXT_INTENT_KEY)) {
-                    targetIntent.removeExtra(ARTICLE_TEXT_INTENT_KEY)
+                    targetIntent.putExtra(ARTICLE_TEXT_INTENT_KEY, list[position])
+                    context.startActivity(targetIntent)
                 }
-
-                targetIntent.putExtra(ARTICLE_TEXT_INTENT_KEY, article)
-                context.startActivity(targetIntent)
             }
         }
     }
