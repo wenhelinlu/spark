@@ -10,7 +10,7 @@
     <string name="nav_header_subtitle">wenhelinlu@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_search">搜索</string>
-    <string name="action_favouited">我的收藏</string>
+    <string name="action_favorite">我的收藏</string>
     <string name="action_sort">排序</string>
     <string name="action_sort_title">标题</string>
     <string name="action_sort_author">作者</string>
@@ -26,4 +26,13 @@
     <string name="title_activity_fullscreen1">FullscreenActivity1</string>
     <string name="ic_menu_nightMode_off">关</string>
     <string name="ic_menu_nightMode_on">开</string>
+    <string name="menu_favorite">收藏文章</string>
+    <string name="menu_top">定位到最顶部</string>
+    <string name="menu_bottom">TODO</string>
+    <string name="menu_openinbrowser">在浏览器中打开</string>
+    <string name="article_title">article_title</string>
+    <string name="article_author">article_author</string>
+    <string name="article_date">article_date</string>
+    <string name="article_readcount">article_readCount</string>
+    <string name="article_textlength">article_textLength</string>
 </resources>

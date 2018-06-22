@@ -247,16 +247,16 @@ class DisplayArticleActivity : AppCompatActivity() {
         iv_favorite.setOnClickListener {
 
             //收藏或取消收藏
-            if (article.isFavorited == 1) {
-                article.isFavorited = 0
+            if (article.isFavorite == 1) {
+                article.isFavorite = 0
                 Article().delete { equalTo("url", article.url) } //从数据库中删除此条数据
             } else {
-                article.isFavorited = 1
+                article.isFavorite = 1
                 article.save() //将数据插入表中
             }
 
-            iv_favorite.setImageResource(if (article.isFavorited == 1) R.drawable.ic_menu_favorited else R.drawable.ic_menu_unfavorite)
-            Toast.makeText(this, if (article.isFavorited == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
+            iv_favorite.setImageResource(if (article.isFavorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite)
+            Toast.makeText(this, if (article.isFavorite == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
         }
 
         //滚动到最顶端
@@ -310,14 +310,17 @@ class DisplayArticleActivity : AppCompatActivity() {
                 }
 
                 deferredLoad.await()
-//                //如果是从主页打开的链接，则查询此条数据在数据库中是否存在
-//                val find = query<Article> {
-//                    equalTo("url", article.url)
-//                }.firstOrNull()
-//                //如果存在，说明此文章已被收藏并存入数据库中
-//                if (find != null) {
-//                    article.isFavorited = 1
-//                }
+
+                //查询此文章是否已收藏（在数据库中存在）
+                //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
+                //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
+                val find = query<Article> {
+                    equalTo("url", article.url)
+                }.firstOrNull()
+                //如果存在，说明此文章已被收藏并存入数据库中
+                if (find != null) {
+                    article.isFavorite = 1
+                }
             }
 
             tvText.text = article.text
@@ -326,8 +329,8 @@ class DisplayArticleActivity : AppCompatActivity() {
             viewDivider.visibility = View.VISIBLE
 
             //根据文章收藏状态显示不同的图标
-            if (article.isFavorited == 1) {
-                iv_favorite.setImageResource(R.drawable.ic_menu_favorited)
+            if (article.isFavorite == 1) {
+                iv_favorite.setImageResource(R.drawable.ic_menu_favorite)
             } else {
                 iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
             }

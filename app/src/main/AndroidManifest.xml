@@ -27,7 +27,7 @@
             android:name=".activity.EliteEroticaArticleListActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".activity.FavoritedNewsListActivity"
+            android:name=".activity.FavoriteNewsListActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.ClassicEroticaArticleListActivity"

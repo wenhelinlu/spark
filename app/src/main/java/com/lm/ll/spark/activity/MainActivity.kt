@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_favorite -> {
-                val intent = Intent(this@MainActivity, FavoritedNewsListActivity::class.java)
+                val intent = Intent(this@MainActivity, FavoriteNewsListActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
             R.id.nav_elite -> {

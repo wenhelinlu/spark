@@ -18,7 +18,8 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_menu_unfavorite" />
+        app:srcCompat="@drawable/ic_menu_unfavorite"
+        android:contentDescription="@string/menu_favorite" />
 
     <ImageView
         android:id="@+id/iv_scrollUp"
@@ -30,7 +31,8 @@
         app:layout_constraintStart_toEndOf="@+id/iv_favorite"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:srcCompat="@drawable/ic_menu_up" />
+        app:srcCompat="@drawable/ic_menu_up"
+        android:contentDescription="@string/menu_top" />
 
     <ImageView
         android:id="@+id/iv_scrollDown"
@@ -42,7 +44,8 @@
         app:layout_constraintStart_toEndOf="@+id/iv_scrollUp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:srcCompat="@drawable/ic_menu_down" />
+        app:srcCompat="@drawable/ic_menu_down"
+        android:contentDescription="@string/menu_bottom" />
 
     <ImageView
         android:id="@+id/iv_openInBrowser"
@@ -55,5 +58,6 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/iv_scrollDown"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_menu_openinbrowser" />
+        app:srcCompat="@drawable/ic_menu_openinbrowser"
+        android:contentDescription="@string/menu_openinbrowser" />
 </android.support.constraint.ConstraintLayout>

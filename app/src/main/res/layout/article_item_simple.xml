@@ -19,5 +19,5 @@
         android:textAlignment="viewStart"
         android:textColor="?attr/textColor"
         android:textSize="17sp"
-        android:text="news_title" />
+        android:text="@string/article_title" />
 </LinearLayout>
