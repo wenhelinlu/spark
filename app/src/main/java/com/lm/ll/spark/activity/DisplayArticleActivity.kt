@@ -327,6 +327,8 @@ class DisplayArticleActivity : AppCompatActivity() {
 
             //加载正文后，显示分隔栏
             viewDivider.visibility = View.VISIBLE
+            //隐藏进度条
+            pb_loadText.visibility = View.GONE
 
             //根据文章收藏状态显示不同的图标
             if (article.isFavorite == 1) {
@@ -348,5 +350,5 @@ class DisplayArticleActivity : AppCompatActivity() {
 //TODO: 记录上次阅读位置
 //TODO：理解async和await概念
 //TODO：增强程序健壮性
-//TODO：将文章对应的评论也存入数据库中
+//TODO：打开正文时显示进度条
 

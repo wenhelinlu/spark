@@ -60,6 +60,12 @@ dependencies {
 
     //图文混排库
     implementation 'com.github.sendtion:XRichText:1.3'
+
+    //google风格进度条
+    implementation 'com.github.castorflex.smoothprogressbar:library:1.1.0'
+
+    //带有加载效果的TextView和ImageView控件
+    implementation 'com.elyeproj.libraries:loaderviewlibrary:1.4.1'
 }
 
 noArg {

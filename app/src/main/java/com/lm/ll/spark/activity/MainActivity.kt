@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         //下拉刷新进度条颜色
-        swipeRefreshTitles.setColorSchemeResources(R.color.colorPrimary)
+        swipeRefreshTitles.setColorSchemeResources(R.color.cyan, R.color.colorPrimary, R.color.yellow, R.color.green)
         //触发刷新的下拉距离
         swipeRefreshTitles.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
         //下拉刷新监听
@@ -245,7 +245,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 //TODO: 首页显示论坛列表
 //TODO：增加启动Splash
-
+//TODO: 检测网络状态，不通时通过Toast提示
 //TODO: 学习Gradle
 
 
