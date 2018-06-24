@@ -228,5 +228,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //TODO：增加启动Splash
 //TODO: 检测网络状态，不通时通过Toast提示
 //TODO: 学习Gradle
+//TODO：使用MVVM模式
 
 

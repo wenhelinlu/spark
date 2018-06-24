@@ -23,6 +23,7 @@ class Spider {
         private const val paragraphFlag = "\r\n\r\n" //段落标记符
         private const val newlineFlagPattern = "\\s*?\\r\\n\\s*?" //匹配换行标记符的正则表达式的模式串，可匹配\r\n, \r\n ,\r\n 等\r\n两边有0到多个空格的情况
         private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
+        private const val TIMEOUT = 5000  //连接超时时长
 
 
         /**
@@ -32,7 +33,7 @@ class Spider {
          * @param url 网络地址
          */
         private fun getDocument(url: String): Document {
-            return Jsoup.connect(url).userAgent(USER_AGENT).get()
+            return Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIMEOUT).get()
         }
 
 
@@ -259,3 +260,5 @@ class Spider {
         }
     }
 }
+
+//TODO：使用Retrofit + Jsoup抓取分析
