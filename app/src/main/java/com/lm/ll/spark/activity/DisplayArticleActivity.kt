@@ -299,11 +299,10 @@ class DisplayArticleActivity : AppCompatActivity() {
 
                 //注意：如果此协程定义在if外部，则它一定会运行，不受if判断的限制，并不是调用await才运行（要理解协程的概念）
                 val deferredLoad = async(CommonPool) {
-                    val spider = Spider()
                     article = if (isClassic) { //经典文库的文章解析方式不同
-                        spider.scratchClassicEroticaArticleText(article)
+                        Spider.scratchClassicEroticaArticleText(article)
                     } else {
-                        spider.scratchText(article) //正文中可能也包含链接（比如精华区）
+                        Spider.scratchText(article) //正文中可能也包含链接（比如精华区）
                     }
                 }
 

@@ -80,10 +80,9 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
         val currentPos: Int = articleList.size
 
         val deferredLoad = async(CommonPool) {
-            val spider = Spider()
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
             val pageIndex = if (isLoadMore) currentPage else 1
-            val list = spider.scratchClassicEroticaArticleList("${BASE_URL}classbk/md$pageIndex.shtml")
+            val list = Spider.scratchClassicEroticaArticleList("${BASE_URL}classbk/md$pageIndex.shtml")
 
             if (isLoadMore) {
                 articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
@@ -109,7 +108,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
                     while (articleList.size < MIN_ROWS) {
                         currentPage++
-                        val tmpList = spider.scratchClassicEroticaArticleList("${BASE_URL}classbk/md$currentPos.shtml")
+                        val tmpList = Spider.scratchClassicEroticaArticleList("${BASE_URL}classbk/md$currentPos.shtml")
                         articleList.addAll(tmpList)
                     }
                 }
