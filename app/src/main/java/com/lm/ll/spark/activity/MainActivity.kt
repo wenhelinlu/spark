@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 isNightMode = !isNightMode
                 InitApplication.getInstance().setIsNightModeEnabled(isNightMode)
                 switchDayNightMode(isNightMode)
-                recreate() //在主Activity的onCreate方法中设置日、夜间模式后，不需要调用recreate()方法，但是，在其他方法中切换后，需要调用此方法
+                recreate() //在onCreate方法中设置日、夜间模式后，不需要调用recreate()方法，但是，在其他方法中切换后，需要调用此方法
 
                 return true
             }
