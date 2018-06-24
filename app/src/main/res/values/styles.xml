@@ -10,6 +10,7 @@
         <item name="nightMode">@drawable/ic_menu_nightmode</item>
         <item name="textColor">@color/colorText</item>
         <item name="bgColor">@color/colorBg</item>
+        <item name="sideNavBarBg">@drawable/side_nav_bar</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

@@ -40,7 +40,6 @@
     <color name="black_overlay">#66000000</color>
 
     <array name="rainbow">
-        <item>@color/green</item>
         <item>@color/yellow</item>
         <item>@color/colorPrimaryDark</item>
         <item>@color/lightBlue</item>

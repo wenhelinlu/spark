@@ -43,12 +43,12 @@
                     app:spb_colors="@array/rainbow"
                     app:spb_speed="1.0"
                     app:spb_stroke_width="4dp"
-                    app:spb_stroke_separator_length="6dp"
+                    app:spb_stroke_separator_length="8dp"
                     app:spb_reversed="true"
                     app:spb_mirror_mode="true"
                     app:spb_progressiveStart_activated="true"
                     app:spb_progressiveStart_speed="1.5"
-                    app:spb_progressiveStop_speed="3.4" />
+                    app:spb_progressiveStop_speed="3.0" />
                 <TextView
                     android:id="@+id/tvText"
                     android:layout_width="match_parent"
