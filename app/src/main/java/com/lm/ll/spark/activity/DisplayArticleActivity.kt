@@ -39,8 +39,6 @@ class DisplayArticleActivity : AppCompatActivity() {
     private var isClassic = false
     //接收从文章列表传过来的被点击的文章Model
     private lateinit var article: Article
-    //此文章下的首层评论
-    private var comments: ArrayList<Article> = ArrayList()
     //评论列表adapter
     private lateinit var commentsAdapter: CommentRecyclerViewAdapter
 

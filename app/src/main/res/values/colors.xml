@@ -3,6 +3,11 @@
     <color name="colorPrimary">#FF1744</color>
     <color name="colorPrimaryDark">#CC1236</color>
     <color name="colorAccent">#FF1744</color>
+
+    <!--Day Mode-->
+    <color name="colorText">#747170</color>
+    <color name="colorBg">#f4f2ee</color>
+
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="grayLite">#DDDDDD</color>
@@ -19,10 +24,6 @@
     <color name="cyan">#00bcd4</color>
     <color name="lightBlue">#03a9f4</color>
     <color name="yellow">#ff9800</color>
-
-    <!--Day Mode-->
-    <color name="colorText">#747170</color>
-    <color name="colorBg">#f4f2ee</color>
 
     <!-- Grey-->
     <color name="grey_000">#FFFFFF</color>

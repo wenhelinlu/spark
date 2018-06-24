@@ -27,13 +27,16 @@ class InitApplication : Application() {
         super.onCreate()
         singleton = this
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-        this.isNightModeEnabled = mPrefs.getBoolean(NIGHT_MODE, false)
+        this.isNightModeEnabled = mPrefs.getBoolean(NIGHT_MODE, false) //获取夜间模式配置
     }
 
     fun isNightModeEnabled(): Boolean {
         return isNightModeEnabled
     }
 
+    /**
+     * 保存夜间模式配置
+     */
     fun setIsNightModeEnabled(isNightModeEnabled: Boolean) {
         this.isNightModeEnabled = isNightModeEnabled
 
