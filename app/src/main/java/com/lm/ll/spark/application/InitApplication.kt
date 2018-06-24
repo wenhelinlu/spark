@@ -3,6 +3,7 @@ package com.lm.ll.spark.application
 import android.app.Application
 import android.preference.PreferenceManager
 import com.lm.ll.spark.util.NIGHT_MODE
+import com.lm.ll.spark.util.switchDayNightMode
 
 
 /**
@@ -28,6 +29,9 @@ class InitApplication : Application() {
         singleton = this
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         this.isNightModeEnabled = mPrefs.getBoolean(NIGHT_MODE, false) //获取夜间模式配置
+
+        //根据配置切换日间\夜间模式
+        switchDayNightMode(this.isNightModeEnabled)
     }
 
     fun isNightModeEnabled(): Boolean {

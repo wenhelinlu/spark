@@ -1,6 +1,7 @@
 package com.lm.ll.spark.util
 
 import android.annotation.SuppressLint
+import android.support.v7.app.AppCompatDelegate
 import java.text.SimpleDateFormat
 
 @SuppressLint("SimpleDateFormat")
@@ -13,6 +14,22 @@ fun String.toDate(format: String = "yyyy-MM-dd") :String{
     return date.toString()
 }
 
+/**
+ *  setDefaultNightMode()与setLocalNightMode()区别
+ *  AppCompatDelegate.setDefaultNightMode()是对整个App中theme为DayNight主题生效
+ *  getDelegate().setLocalNightMode()只对特定的组件生效
+ *
+ * @desc 切换日间\夜间模式
+ * @author ll
+ * @time 2018-06-15 15:28
+ */
+fun switchDayNightMode(isNightMode: Boolean) {
+    if (isNightMode) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    } else {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    }
+}
 
 //文章列表初次加载时最小行数
 const val MIN_ROWS = 25

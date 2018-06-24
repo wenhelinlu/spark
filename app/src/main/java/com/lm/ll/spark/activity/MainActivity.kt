@@ -8,7 +8,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -44,10 +43,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //根据配置切换日间\夜间模式
-        switchDayNightMode(InitApplication.getInstance().isNightModeEnabled())
-
         setContentView(R.layout.activity_main)
 
         val layoutParams = window.attributes
@@ -227,19 +222,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
-    }
-
-    /**
-     * @desc 切换日间\夜间模式
-     * @author ll
-     * @time 2018-06-15 15:28
-     */
-    private fun switchDayNightMode(isNightMode: Boolean) {
-        if (isNightMode) {
-            this@MainActivity.delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            this@MainActivity.delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
     }
 }
 
