@@ -16,7 +16,7 @@
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/WelcomeContentOverlay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
