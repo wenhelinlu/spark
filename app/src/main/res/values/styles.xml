@@ -19,12 +19,10 @@
     </style>
 
     <!--  如果启动时设置为夜间模式，可能会先闪过一个白色页面才进入夜间模式，所以MainActivity的Theme使用WelcomeContentOverlay -->
-    <style name="WelcomeContentOverlay" parent="AppTheme.NoActionBar">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowFullscreen">false</item>
+    <style name="SplashTheme" parent="AppTheme.NoActionBar">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@null</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
