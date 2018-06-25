@@ -18,6 +18,7 @@ import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
+import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -94,7 +95,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
+//        testRetrofit2()
+
         loadContent()
+    }
+
+    private fun testRetrofit2(){
+        async(UI) {
+            val repository = TabooArticlesRepository(ApiStores.create())
+            repository.getArticles("1")
+        }
+
     }
 
 

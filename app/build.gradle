@@ -53,7 +53,8 @@ dependencies {
     implementation "com.github.vicpinm:krealmextensions:2.2.0"
     //For Single and Flowable queries:
     implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    // rxandroid
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
 
     //HanLP库
     implementation 'com.hankcs:hanlp:portable-1.6.4'
@@ -66,6 +67,15 @@ dependencies {
 
     //带有加载效果的TextView和ImageView控件
 //    implementation 'com.elyeproj.libraries:loaderviewlibrary:1.4.1'
+
+    //retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
+    // RxJava2支持
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit2_version"
+    // 字符串依赖
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit2_version"
+//    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"  //gson依赖
+
 }
 
 noArg {
