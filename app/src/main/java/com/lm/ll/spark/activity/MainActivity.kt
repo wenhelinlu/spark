@@ -79,8 +79,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         swipeRefreshTitles.setOnRefreshListener {
             loadContent()
         }
-
-
+        
         //recyclerview设置
         val linearLayoutManager = LinearLayoutManager(this@MainActivity)
         this.recyclerViewTitles.addItemDecoration(DashlineItemDecoration())
@@ -95,17 +94,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-//        testRetrofit2()
-
         loadContent()
-    }
-
-    private fun testRetrofit2(){
-        async(UI) {
-            val repository = TabooArticlesRepository(ApiStores.create())
-            repository.getArticles("1")
-        }
-
     }
 
 
