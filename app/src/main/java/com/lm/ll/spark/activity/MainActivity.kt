@@ -10,22 +10,26 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
+import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
-import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import org.jsoup.Jsoup
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
@@ -94,7 +98,39 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
+//        testRetrofit2()
+
         loadContent()
+    }
+
+
+    private fun testRetrofit2() {
+//        val repository = TabooArticlesRepository(TabooBooksApiService.create())
+//        repository.getArticles("tree1")
+
+        swipeRefreshTitles.isRefreshing = true
+
+        TabooBooksApiService.create().loadDataByString("tree1")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ result ->
+                    val document = Jsoup.parse(result.toString())
+                    val list = Spider.scratchArticleList(document)
+
+
+                    adapter = ArticleAdapter(this@MainActivity, list)
+                    this@MainActivity.recyclerViewTitles.adapter = adapter
+                    this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+
+                    //停止刷新
+                    swipeRefreshTitles.isRefreshing = false
+                    Log.d("Result", list.count().toString())
+
+                }, { error ->
+                    error.printStackTrace()
+                    //停止刷新
+                    swipeRefreshTitles.isRefreshing = false
+                })
     }
 
 

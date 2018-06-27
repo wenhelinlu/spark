@@ -58,6 +58,25 @@ class Spider {
         }
 
         /**
+         * @desc 抓取文章列表
+         * @author ll
+         * @time 2018-05-29 18:35
+         * @param doc Jsoup的Document文档（由Retrofit2获取网页内容，然后加载成Jsoup的Document文档）
+         */
+        fun scratchArticleList(doc: Document): ArrayList<Article> {
+            val mList = ArrayList<Article>()
+            val titleLinks: Elements = doc.select("div#d_list")
+            for (e: Element in titleLinks) {
+                val uls: Elements = e.getElementsByTag("ul")
+                for (ul: Element in uls) {
+                    parseArticleList(ul, mList)
+                }
+            }
+
+            return mList
+        }
+
+        /**
          * @desc 解析抓取到的网页内容，生成标题列表
          * @author ll
          * @time 2018-05-28 10:01
