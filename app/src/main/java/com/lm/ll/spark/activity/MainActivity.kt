@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         swipeRefreshTitles.setOnRefreshListener {
             loadContent()
         }
-        
+
         //recyclerview设置
         val linearLayoutManager = LinearLayoutManager(this@MainActivity)
         this.recyclerViewTitles.addItemDecoration(DashlineItemDecoration())
