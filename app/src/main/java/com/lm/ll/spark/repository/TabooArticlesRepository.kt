@@ -1,11 +1,11 @@
 package com.lm.ll.spark.repository
 
 import android.util.Log
-import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.api.TabooBooksApiService
-import io.reactivex.Observable
+import com.lm.ll.spark.util.Spider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.jsoup.Jsoup
 
 
 /**
@@ -19,12 +19,15 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      * @author ll
      * @time 2018-06-26 20:51
      */
-    fun getArticles(pageNo: Int) {
+    fun getArticles(pageNo: String) {
         tabooBooksApiService.loadDataByString(pageNo)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe({ result ->
-                    Log.d("Result", result.toString())
+                    val document = Jsoup.parse(result.toString())
+                    val list = Spider.scratchArticleList(document)
+                    Log.d("Result", list.count().toString())
+
                 }, { error ->
                     error.printStackTrace()
                 })
