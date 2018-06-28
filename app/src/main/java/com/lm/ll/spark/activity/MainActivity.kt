@@ -10,27 +10,21 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
-import android.widget.Toast
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
-import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.lm.ll.spark.util.*
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import org.jsoup.Jsoup
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
@@ -109,32 +103,57 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //        val repository = TabooArticlesRepository(TabooBooksApiService.create())
 //        repository.getArticles("tree1")
 
-        //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
-        val pageIndex = if (isLoadMore) currentPage else 1
-        TabooBooksApiService.create().loadDataByString("tree$pageIndex")
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe {  //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
-                    swipeRefreshTitles.isRefreshing = true //显示进度条
-                }
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ result ->
-                    val document = Jsoup.parse(result.toString())
-                    val list = Spider.scratchArticleList(document)
-
-                    adapter = ArticleAdapter(this@MainActivity, list)
-                    this@MainActivity.recyclerViewTitles.adapter = adapter
-                    this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
-
-                    //停止刷新
-                    swipeRefreshTitles.isRefreshing = false
-
-                }, { error ->
-                    error.printStackTrace()
-                    //停止刷新
-                    swipeRefreshTitles.isRefreshing = false
-                    Toast.makeText(this,"加载失败",Toast.LENGTH_SHORT).show()
-                })
+//        //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
+//        val pageIndex = if (isLoadMore) currentPage else 1
+//        TabooBooksApiService.create().loadDataByString("tree$pageIndex")
+//                .repeatWhen(object : Function<in Observable<Any!>!, out ObservableSource<*>!>!() {
+//                    @Throws(Exception::class)
+//                    // 在Function函数中，必须对输入的 Observable<Object>进行处理，此处使用flatMap操作符接收上游的数据
+//                    fun apply(@NonNull objectObservable: Observable<Any>): ObservableSource<*> {
+//                        // 将原始 Observable 停止发送事件的标识（Complete（） /  Error（））转换成1个 Object 类型数据传递给1个新被观察者（Observable）
+//                        // 以此决定是否重新订阅 & 发送原来的 Observable，即轮询
+//                        // 此处有2种情况：
+//                        // 1. 若返回1个Complete（） /  Error（）事件，则不重新订阅 & 发送原来的 Observable，即轮询结束
+//                        // 2. 若返回其余事件，则重新订阅 & 发送原来的 Observable，即继续轮询
+//                        return objectObservable.flatMap(object : Function<Any, ObservableSource<*>>() {
+//                            @Throws(Exception::class)
+//                            fun apply(@NonNull throwable: Any): ObservableSource<*> {
+//
+//                                // 加入判断条件：当轮询次数 = 5次后，就停止轮询
+//                                return if (i > 3) {
+//                                    // 此处选择发送onError事件以结束轮询，因为可触发下游观察者的onError（）方法回调
+//                                    Observable.error(Throwable("轮询结束"))
+//                                } else Observable.just(1).delay(2000, TimeUnit.MILLISECONDS)
+//                                // 若轮询次数＜4次，则发送1Next事件以继续轮询
+//                                // 注：此处加入了delay操作符，作用 = 延迟一段时间发送（此处设置 = 2s），以实现轮询间间隔设置
+//                            }
+//                        })
+//
+//                    }
+//                })
+//                .subscribeOn(Schedulers.io())
+//                .doOnSubscribe {  //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
+//                    swipeRefreshTitles.isRefreshing = true //显示进度条
+//                }
+//                .subscribeOn(AndroidSchedulers.mainThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({ result ->
+//                    val document = Jsoup.parse(result.toString())
+//                    val list = Spider.scratchArticleList(document)
+//
+//                    adapter = ArticleAdapter(this@MainActivity, list)
+//                    this@MainActivity.recyclerViewTitles.adapter = adapter
+//                    this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+//
+//                    //停止刷新
+//                    swipeRefreshTitles.isRefreshing = false
+//
+//                }, { error ->
+//                    error.printStackTrace()
+//                    //停止刷新
+//                    swipeRefreshTitles.isRefreshing = false
+//                    Toast.makeText(this,"加载失败",Toast.LENGTH_SHORT).show()
+//                })
     }
 
 

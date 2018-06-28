@@ -64,11 +64,9 @@ dependencies {
 
     implementation "com.github.vicpinm:krealmextensions:2.2.0"
 
-
     //ReactiveX series
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
-
 
     //Retrofit series
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
