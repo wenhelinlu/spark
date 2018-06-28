@@ -105,13 +105,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    private fun testRetrofit2() {
+    private fun testRetrofit2(isLoadMore: Boolean = false) {
 //        val repository = TabooArticlesRepository(TabooBooksApiService.create())
 //        repository.getArticles("tree1")
 
-        swipeRefreshTitles.isRefreshing = true
-
-        TabooBooksApiService.create().loadDataByString("tree1")
+        //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
+        val pageIndex = if (isLoadMore) currentPage else 1
+        TabooBooksApiService.create().loadDataByString("tree$pageIndex")
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {  //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
                     swipeRefreshTitles.isRefreshing = true //显示进度条
@@ -152,8 +152,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
             val pageIndex = if (isLoadMore) currentPage else 1
             val list = Spider.scratchArticleList("$BASE_URL$CURRENT_BASE_URL$pageIndex")
-
-//            Log.d("首次列表size", list.size.toString())
 
             if (isLoadMore) {
                 articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中

@@ -63,12 +63,14 @@ dependencies {
 //    implementation 'com.elyeproj.libraries:loaderviewlibrary:1.4.1'
 
     implementation "com.github.vicpinm:krealmextensions:2.2.0"
-    //For Single and Flowable queries:
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
-    // rxandroid
-    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
 
-    //retrofit
+
+    //ReactiveX series
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+
+
+    //Retrofit series
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
     // RxJava2支持
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit2_version"
