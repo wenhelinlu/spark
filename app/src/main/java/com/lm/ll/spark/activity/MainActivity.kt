@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Toast
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
@@ -111,12 +112,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         swipeRefreshTitles.isRefreshing = true
 
         TabooBooksApiService.create().loadDataByString("tree1")
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
+                .doOnSubscribe {  //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
+                    swipeRefreshTitles.isRefreshing = true //显示进度条
+                }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result ->
                     val document = Jsoup.parse(result.toString())
                     val list = Spider.scratchArticleList(document)
-
 
                     adapter = ArticleAdapter(this@MainActivity, list)
                     this@MainActivity.recyclerViewTitles.adapter = adapter
@@ -124,12 +128,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     //停止刷新
                     swipeRefreshTitles.isRefreshing = false
-                    Log.d("Result", list.count().toString())
 
                 }, { error ->
                     error.printStackTrace()
                     //停止刷新
                     swipeRefreshTitles.isRefreshing = false
+                    Toast.makeText(this,"加载失败",Toast.LENGTH_SHORT).show()
                 })
     }
 

@@ -26,6 +26,7 @@ class Spider {
         private const val TIMEOUT = 5000  //连接超时时长
 
 
+        //region 使用Jsoup直接解析网页
         /**
          * @desc 获取jsoup的Document实例
          * @author ll
@@ -46,25 +47,6 @@ class Spider {
             val mList = ArrayList<Article>()
             Log.d("加载列表", webUrl)
             val doc = getDocument(webUrl)
-            val titleLinks: Elements = doc.select("div#d_list")
-            for (e: Element in titleLinks) {
-                val uls: Elements = e.getElementsByTag("ul")
-                for (ul: Element in uls) {
-                    parseArticleList(ul, mList)
-                }
-            }
-
-            return mList
-        }
-
-        /**
-         * @desc 抓取文章列表
-         * @author ll
-         * @time 2018-05-29 18:35
-         * @param doc Jsoup的Document文档（由Retrofit2获取网页内容，然后加载成Jsoup的Document文档）
-         */
-        fun scratchArticleList(doc: Document): ArrayList<Article> {
-            val mList = ArrayList<Article>()
             val titleLinks: Elements = doc.select("div#d_list")
             for (e: Element in titleLinks) {
                 val uls: Elements = e.getElementsByTag("ul")
@@ -277,7 +259,32 @@ class Spider {
             article.text = stringBuilder.toString()
             return article
         }
+        //endregion
+
+
+        //region 使用Retrofit2 + RxJava + Jsoup
+        /**
+         * @desc 抓取文章列表
+         * @author ll
+         * @time 2018-05-29 18:35
+         * @param doc Jsoup的Document文档（由Retrofit2获取网页内容，然后加载成Jsoup的Document文档）
+         */
+        fun scratchArticleList(doc: Document): ArrayList<Article> {
+            val mList = ArrayList<Article>()
+            val titleLinks: Elements = doc.select("div#d_list")
+            for (e: Element in titleLinks) {
+                val uls: Elements = e.getElementsByTag("ul")
+                for (ul: Element in uls) {
+                    parseArticleList(ul, mList)
+                }
+            }
+
+            return mList
+        }
+        //endregion
     }
 }
 
 //TODO：使用Retrofit + Jsoup抓取分析
+
+//TODO： 选中要折叠的代码后，按Ctrl + Alt + T 实现类似VS中Region的功能
