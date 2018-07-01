@@ -12,15 +12,18 @@ import android.widget.ScrollView
 import android.widget.Toast
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
+import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
+import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
 import com.lm.ll.spark.util.Spider
 import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
-import io.realm.Realm
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_display_article.*
 import kotlinx.android.synthetic.main.bottom_toolbar_text.*
 import kotlinx.coroutines.experimental.CommonPool
@@ -37,6 +40,8 @@ class DisplayArticleActivity : AppCompatActivity() {
 
     //是否是经典情色书库中文章的正文（需要单独解析）
     private var isClassic = false
+    //是否需要强制刷新（如果是从我的收藏打开，则直接读取数据库中，否则重新从网上获取）
+    private var isForceRefresh = false
     //接收从文章列表传过来的被点击的文章Model
     private lateinit var article: Article
     //评论列表adapter
@@ -99,13 +104,12 @@ class DisplayArticleActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_display_article)
 
-        Realm.init(this)
-
         initData()
 
         initView()
 
-        loadText()
+//        loadText()
+        loadTextWithRx()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -204,6 +208,10 @@ class DisplayArticleActivity : AppCompatActivity() {
         //从列表中传来的点击的标题
         article = this.intent.getParcelableExtra(ARTICLE_TEXT_INTENT_KEY)
 
+        if (article.text.isNullOrEmpty()) {
+            isForceRefresh = true
+        }
+
         //文章来源（普通还是经典书库中的）
         if (this.intent.hasExtra(IS_CLASSIC_ARTICLE)) {
             isClassic = this.intent.getBooleanExtra(IS_CLASSIC_ARTICLE, false)
@@ -287,6 +295,42 @@ class DisplayArticleActivity : AppCompatActivity() {
     }
 
     /**
+     * @desc 使用RxJava+Retrofit实现异步读取数据
+     * @author lm
+     * @time 2018-07-01 17:21
+     */
+    private fun loadTextWithRx() {
+        val repository = TabooArticlesRepository(TabooBooksApiService.create())
+        repository.getArticle(article, isClassic, isForceRefresh)
+                .firstElement()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    article = it
+                    tvText.text = article.text
+
+                    //加载正文后，显示分隔栏
+                    viewDivider.visibility = View.VISIBLE
+                    //隐藏进度条
+                    pb_loadText.visibility = View.GONE
+
+                    //根据文章收藏状态显示不同的图标
+                    if (article.isFavorite == 1) {
+                        iv_favorite.setImageResource(R.drawable.ic_menu_favorite)
+                    } else {
+                        iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
+                    }
+
+                    //在正文加载完成后再显示评论区提示
+                    tvCommentRemark.text = this@DisplayArticleActivity.getString(R.string.comment_remark)
+
+                    commentsAdapter = CommentRecyclerViewAdapter(this@DisplayArticleActivity, article.comments)
+                    recyclerViewComment.adapter = commentsAdapter
+                    recyclerViewComment.adapter.notifyDataSetChanged()
+                }
+    }
+
+    /**
      * @desc 加载文章正文和评论
      * @author ll
      * @time 2018-05-29 19:40
@@ -295,7 +339,7 @@ class DisplayArticleActivity : AppCompatActivity() {
         async(UI) {
 
             //如果正文有内容，则说明是从本地读取（我的收藏）的，不需要再从网上抓取
-            if (article.text == null || article.text.toString().isEmpty()) {
+            if (article.text.isNullOrEmpty()) {
 
                 //注意：如果此协程定义在if外部，则它一定会运行，不受if判断的限制，并不是调用await才运行（要理解协程的概念）
                 val deferredLoad = async(CommonPool) {

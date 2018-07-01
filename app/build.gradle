@@ -68,6 +68,8 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
 
+    //okhttp3 interceptor
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
     //Retrofit series
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
     // RxJava2支持

@@ -2,7 +2,11 @@ package com.lm.ll.spark.repository
 
 import android.util.Log
 import com.lm.ll.spark.api.TabooBooksApiService
+import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.Spider
+import com.vicpin.krealmextensions.query
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.jsoup.Jsoup
@@ -13,6 +17,7 @@ import org.jsoup.Jsoup
  * 邮箱：wenhelinlu@gmail.com
  */
 class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiService) {
+
 
     /**
      * @desc 获取文章列表
@@ -31,5 +36,52 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
                 }, { error ->
                     error.printStackTrace()
                 })
+    }
+
+
+    /**
+     * @desc 抓取文章内容，利用缓存，首先判断数据库中是否存在数据，是则从数据库中读取，否则从网络获取（如果强制刷新则直接从网络获取）
+     * @author lm
+     * @time 2018-07-01 11:38
+     * @param article 要抓取内容的文章
+     * @param isClassicalArticle 是否是经典文章（解析正文方式不同）
+     * @param isForceRefresh 是否强制刷新（总是从网上抓取，不用本地存储）
+     */
+    fun getArticle(article: Article, isClassicalArticle: Boolean = false, isForceRefresh: Boolean = true): Observable<Article> {
+        //是否是已收藏的文章（即已保存到数据库中）
+        val fromDb = Observable.create(ObservableOnSubscribe<Article> { emitter ->
+
+            val find = query<Article> {
+                equalTo("url", article.url)
+            }.firstOrNull()
+            if (find == null) {
+                emitter.onComplete()
+            } else {
+                emitter.onNext(find)
+            }
+        })
+
+        //从网络中抓取文章
+        val fromNetwork = tabooBooksApiService.getArticle(article.url!!)
+                .flatMap {
+                    val doc = Jsoup.parse(it)
+                    val item = if (isClassicalArticle) {
+                        Spider.scratchClassicEroticaArticleText(doc, article)
+
+                    } else {
+                        Spider.scratchText(doc, article)
+                    }
+
+                    //just操作会使操作立即执行（可能会引发android.os.NetworkOnMainThreadException），而不是等到subscribe后，所有使用defer操作符强制到subscribe后再执行
+                    Observable.defer {
+                        Observable.just(item)
+                    }
+                }
+
+        return if (isForceRefresh) {
+            fromNetwork
+        } else {
+            Observable.concat(fromDb, fromNetwork)
+        }
     }
 }

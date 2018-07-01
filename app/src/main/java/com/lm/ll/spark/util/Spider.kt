@@ -23,8 +23,6 @@ class Spider {
         private const val paragraphFlag = "\r\n\r\n" //段落标记符
         private const val newlineFlagPattern = "\\s*?\\r\\n\\s*?" //匹配换行标记符的正则表达式的模式串，可匹配\r\n, \r\n ,\r\n 等\r\n两边有0到多个空格的情况
         private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
-        private const val TIMEOUT = 5000  //连接超时时长
-
 
         //region 使用Jsoup直接解析网页
         /**
@@ -34,7 +32,7 @@ class Spider {
          * @param url 网络地址
          */
         private fun getDocument(url: String): Document {
-            return Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIMEOUT).get()
+            return Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIME_OUT).get()
         }
 
 
@@ -280,6 +278,75 @@ class Spider {
             }
 
             return mList
+        }
+
+        /**
+         * @desc 抓取文章正文
+         * @author ll
+         * @time 2018-05-29 18:46
+         * @param article 待抓取正文的文章链接
+         * @return 包含正文的文章链接
+         */
+        fun scratchText(doc: Document, article: Article): Article {
+            val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
+
+            /**
+             *
+             * 去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
+             *
+             * \s* 表示若干个空格（可以是0个），\s+ 表示一个或多个空格
+             *
+             * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
+             */
+
+            val originalText = parseText(body[0])
+            val containsParagraphFlag = Regex(paragraphFlagPattern).containsMatchIn(originalText) //是否包含段落标记（\r\n\r\n）
+            //如果包含段落标记，则按照规则清除换行标记，保留段落标记
+            if (containsParagraphFlag) {
+                val text = Regex(paragraphFlagPattern).replace(parseText(body[0]), replacerWord)
+                //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
+                article.text = Regex(newlineFlagPattern).replace(text, "").replace(replacerWord, paragraphFlag, false)
+            } else {
+                article.text = originalText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
+            }
+
+
+            val commentList = RealmList<Comment>()
+            //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
+            val links: Elements = body[0].getElementsByTag("a")
+            for (link in links) {
+                val comment = Comment()
+                comment.url = link.attr("href")
+                comment.title = HanLP.convertToSimplifiedChinese(link.text())
+                comment.author = ""
+
+                commentList.add(comment)
+            }
+            //因为在精华区中，章节链接是倒序显示，所以将其翻转
+            commentList.reverse()
+
+            //抓取对正文的评论列表
+            commentList.addAll(scratchComments(article))
+            article.comments = commentList
+
+            return article
+        }
+
+        /**
+         * @desc 抓取经典书库的文章正文
+         * @author ll
+         * @time 2018-06-11 19:53
+         */
+        fun scratchClassicEroticaArticleText(doc: Document, article: Article): Article {
+            val elements = doc.getElementsByTag("p")
+            val stringBuilder = StringBuilder()
+            for (e in elements) {
+                if (e.childNodeSize() == 2) {
+                    stringBuilder.appendln((e.childNodes()[0] as TextNode).text())
+                }
+            }
+            article.text = stringBuilder.toString()
+            return article
         }
         //endregion
     }

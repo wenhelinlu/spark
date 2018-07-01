@@ -1,11 +1,15 @@
 package com.lm.ll.spark.api
 
+import com.lm.ll.spark.util.TIME_OUT
 import io.reactivex.Observable
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import retrofit2.http.Url
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -17,9 +21,11 @@ interface TabooBooksApiService {
     @GET("index.php?app=forum&act=cachepage")
     fun loadDataByString(@Query("cp") pageNo: String): Observable<String>
 
-    companion object Factory{
-        private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
+    @GET
+    fun getArticle(@Url url: String): Observable<String>
 
+    companion object Factory {
+        private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
         /**
          * @desc 创建ApiStores实例
          * @author ll
@@ -27,12 +33,34 @@ interface TabooBooksApiService {
          */
         fun create(): TabooBooksApiService {
             val retrofit = Retrofit.Builder()
+                    .baseUrl(API_SERVER_URL)
+                    .client(genericClient())
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .baseUrl(API_SERVER_URL)
                     .build()
 
             return retrofit.create(TabooBooksApiService::class.java)
         }
+
+        //配置okHttpCient
+        private fun genericClient(): OkHttpClient {
+            return OkHttpClient.Builder()
+                    .retryOnConnectionFailure(true)
+                    .connectTimeout(TIME_OUT.toLong(), TimeUnit.MILLISECONDS)
+                    .addInterceptor { chain ->
+                        val request = chain.request()
+                                .newBuilder()
+                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                                .addHeader("Connection", "keep-alive")
+                                .addHeader("Accept", "*/*")
+                                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36")
+                                .build()
+                        chain.proceed(request)
+                    }
+                    .build()
+        }
+
     }
 }
+
+//TODO：Keep in mind that if you use Retrofit you shouldn't need defer(), as retrofit will re-initiate the call when a new subscription happens.

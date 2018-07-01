@@ -12,7 +12,6 @@ import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.vicpin.krealmextensions.querySorted
-import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.experimental.CommonPool
@@ -36,8 +35,6 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.elite_erotica_article_list)
-
-        Realm.init(this)
 
         supportActionBar!!.title = this.getString(R.string.action_favorite)
 
