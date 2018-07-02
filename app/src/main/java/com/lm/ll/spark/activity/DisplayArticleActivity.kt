@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.bottom_toolbar_text.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.getStackTraceString
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -336,9 +337,10 @@ class DisplayArticleActivity : AppCompatActivity() {
 
                     when (error) {
                         is HttpException -> Toast.makeText(this, "网络异常", Toast.LENGTH_SHORT).show()
-                        is NullPointerException -> Toast.makeText(this, "解析异常", Toast.LENGTH_SHORT).show()
+                        is IndexOutOfBoundsException -> Toast.makeText(this, "解析异常", Toast.LENGTH_SHORT).show()
                         is ConnectException -> Toast.makeText(this, "网络连接异常，请稍后重试", Toast.LENGTH_SHORT).show()
                         is TimeoutException -> Toast.makeText(this, "网络连接超时，请稍后重试", Toast.LENGTH_SHORT).show()
+                        else -> Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
                     }
                 })
     }
