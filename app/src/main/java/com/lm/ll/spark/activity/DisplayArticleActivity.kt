@@ -29,6 +29,9 @@ import kotlinx.android.synthetic.main.bottom_toolbar_text.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import retrofit2.HttpException
+import java.net.ConnectException
+import java.util.concurrent.TimeoutException
 
 
 /**
@@ -305,14 +308,16 @@ class DisplayArticleActivity : AppCompatActivity() {
                 .firstElement() //如果数据库中有数据，则直接取数据库中数据
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doFinally {
+                    //隐藏进度条
+                    pb_loadText.visibility = View.GONE
+                }
                 .subscribe({ result ->
                     article = result
                     tvText.text = article.text
 
                     //加载正文后，显示分隔栏
                     viewDivider.visibility = View.VISIBLE
-                    //隐藏进度条
-                    pb_loadText.visibility = View.GONE
 
                     //根据文章收藏状态显示不同的图标
                     if (article.isFavorite == 1) {
@@ -327,10 +332,14 @@ class DisplayArticleActivity : AppCompatActivity() {
                     commentsAdapter = CommentRecyclerViewAdapter(this@DisplayArticleActivity, article.comments)
                     recyclerViewComment.adapter = commentsAdapter
                     recyclerViewComment.adapter.notifyDataSetChanged()
-                }, { _ ->  //异常处理
+                }, { error ->  //异常处理
 
-                    pb_loadText.visibility = View.GONE //隐藏进度条
-                    Toast.makeText(this, "网络连接异常，请稍后再试", Toast.LENGTH_SHORT).show()
+                    when (error) {
+                        is HttpException -> Toast.makeText(this, "网络异常", Toast.LENGTH_SHORT).show()
+                        is NullPointerException -> Toast.makeText(this, "解析异常", Toast.LENGTH_SHORT).show()
+                        is ConnectException -> Toast.makeText(this, "网络连接异常，请稍后重试", Toast.LENGTH_SHORT).show()
+                        is TimeoutException -> Toast.makeText(this, "网络连接超时，请稍后重试", Toast.LENGTH_SHORT).show()
+                    }
                 })
     }
 

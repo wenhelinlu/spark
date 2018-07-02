@@ -72,8 +72,12 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
                     } else {
                         Spider.scratchText(doc, article)
                     }
-                    //将从网络解析的文章作为Observable传出去
-                    Observable.just(item)
+                    if(item == null){
+                        Observable.error(NullPointerException("解析异常"))
+                    }else{
+                        //将从网络解析的文章作为Observable传出去
+                        Observable.just(item)
+                    }
                 }
 
         return if (isForceRefresh) {
