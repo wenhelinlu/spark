@@ -63,6 +63,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
 
         //从网络中抓取文章
         val fromNetwork = tabooBooksApiService.getArticle(article.url!!)
+                .retry(1)
                 .flatMap {
                     val doc = Jsoup.parse(it)
                     val item = if (isClassicalArticle) {
@@ -71,11 +72,8 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
                     } else {
                         Spider.scratchText(doc, article)
                     }
-
-                    //just操作会使操作立即执行（可能会引发android.os.NetworkOnMainThreadException），而不是等到subscribe后，所有使用defer操作符强制到subscribe后再执行
-                    Observable.defer {
-                        Observable.just(item)
-                    }
+                    //将从网络解析的文章作为Observable传出去
+                    Observable.just(item)
                 }
 
         return if (isForceRefresh) {

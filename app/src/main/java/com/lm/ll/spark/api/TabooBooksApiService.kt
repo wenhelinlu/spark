@@ -1,6 +1,5 @@
 package com.lm.ll.spark.api
 
-import com.lm.ll.spark.util.TIME_OUT
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -26,6 +25,8 @@ interface TabooBooksApiService {
 
     companion object Factory {
         private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
+        private const val TIMEOUT: Long = 30000 //超时时长
+
         /**
          * @desc 创建ApiStores实例
          * @author ll
@@ -46,7 +47,9 @@ interface TabooBooksApiService {
         private fun genericClient(): OkHttpClient {
             return OkHttpClient.Builder()
                     .retryOnConnectionFailure(true)
-                    .connectTimeout(TIME_OUT.toLong(), TimeUnit.MILLISECONDS)
+                    .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                    .readTimeout(TIMEOUT,TimeUnit.MILLISECONDS)
+                    .writeTimeout(TIMEOUT,TimeUnit.MILLISECONDS)
                     .addInterceptor { chain ->
                         val request = chain.request()
                                 .newBuilder()

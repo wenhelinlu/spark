@@ -302,11 +302,11 @@ class DisplayArticleActivity : AppCompatActivity() {
     private fun loadTextWithRx() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
         repository.getArticle(article, isClassic, isForceRefresh)
-                .firstElement()
+                .firstElement() //如果数据库中有数据，则直接取数据库中数据
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    article = it
+                .subscribe({ result ->
+                    article = result
                     tvText.text = article.text
 
                     //加载正文后，显示分隔栏
@@ -327,7 +327,11 @@ class DisplayArticleActivity : AppCompatActivity() {
                     commentsAdapter = CommentRecyclerViewAdapter(this@DisplayArticleActivity, article.comments)
                     recyclerViewComment.adapter = commentsAdapter
                     recyclerViewComment.adapter.notifyDataSetChanged()
-                }
+                }, { _ ->  //异常处理
+
+                    pb_loadText.visibility = View.GONE //隐藏进度条
+                    Toast.makeText(this, "网络连接异常，请稍后再试", Toast.LENGTH_SHORT).show()
+                })
     }
 
     /**
