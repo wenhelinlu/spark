@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 interface TabooBooksApiService {
 
     @GET("index.php?app=forum&act=cachepage")
-    fun loadDataByString(@Query("cp") pageNo: String): Observable<String>
+    fun getArticleList(@Query("cp") pageNo: String): Observable<String>
 
     @GET
     fun getArticle(@Url url: String): Observable<String>

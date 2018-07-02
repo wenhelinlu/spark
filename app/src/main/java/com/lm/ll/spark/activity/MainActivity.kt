@@ -13,12 +13,17 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Toast
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
+import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
+import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -100,35 +105,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private fun testRetrofit2(isLoadMore: Boolean = false) {
-//        val repository = TabooArticlesRepository(TabooBooksApiService.create())
-//        repository.getArticles("tree1")
+        val repository = TabooArticlesRepository(TabooBooksApiService.create())
 
-//        //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
-//        val pageIndex = if (isLoadMore) currentPage else 1
-//        TabooBooksApiService.create().loadDataByString("tree$pageIndex")
-//                .subscribeOn(Schedulers.io())
-//                .doOnSubscribe {  //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
-//                    swipeRefreshTitles.isRefreshing = true //显示进度条
-//                }
-//                .subscribeOn(AndroidSchedulers.mainThread())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({ result ->
-//                    val document = Jsoup.parse(result.toString())
-//                    val list = Spider.scratchArticleList(document)
-//
-//                    adapter = ArticleAdapter(this@MainActivity, list)
-//                    this@MainActivity.recyclerViewTitles.adapter = adapter
-//                    this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
-//
-//                    //停止刷新
-//                    swipeRefreshTitles.isRefreshing = false
-//
-//                }, { error ->
-//                    error.printStackTrace()
-//                    //停止刷新
-//                    swipeRefreshTitles.isRefreshing = false
-//                    Toast.makeText(this,"加载失败",Toast.LENGTH_SHORT).show()
-//                })
+        //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
+        val pageIndex = if (isLoadMore) currentPage else 1
+        repository.getArticleList("tree$pageIndex")
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe {
+                    //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
+                    swipeRefreshTitles.isRefreshing = true //显示进度条
+                }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally {
+                    //停止刷新
+                    swipeRefreshTitles.isRefreshing = false
+                }
+                .subscribe({ result ->
+                    adapter = ArticleAdapter(this@MainActivity, result)
+                    this@MainActivity.recyclerViewTitles.adapter = adapter
+                    this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+                }, { error ->
+                    error.printStackTrace()
+                    Toast.makeText(this, "加载失败", Toast.LENGTH_SHORT).show()
+                })
     }
 
 
@@ -169,7 +169,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 } else {
                     articleList = list
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
-                    while (articleList.size < MIN_ROWS) {
+                    while (articleList.size < LIST_MIN_COUNT) {
                         currentPage++
                         val tmpList = Spider.scratchArticleList("$BASE_URL$CURRENT_BASE_URL$currentPage")
                         articleList.addAll(tmpList)

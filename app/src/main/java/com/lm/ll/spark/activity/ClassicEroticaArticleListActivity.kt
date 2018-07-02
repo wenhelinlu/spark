@@ -106,7 +106,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
                 } else {
                     articleList = list
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
-                    while (articleList.size < MIN_ROWS) {
+                    while (articleList.size < LIST_MIN_COUNT) {
                         currentPage++
                         val tmpList = Spider.scratchClassicEroticaArticleList("${BASE_URL}classbk/md$currentPos.shtml")
                         articleList.addAll(tmpList)
