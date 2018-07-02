@@ -29,7 +29,6 @@ import kotlinx.android.synthetic.main.bottom_toolbar_text.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.getStackTraceString
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -334,7 +333,6 @@ class DisplayArticleActivity : AppCompatActivity() {
                     recyclerViewComment.adapter = commentsAdapter
                     recyclerViewComment.adapter.notifyDataSetChanged()
                 }, { error ->  //异常处理
-
                     when (error) {
                         is HttpException -> Toast.makeText(this, "网络异常", Toast.LENGTH_SHORT).show()
                         is IndexOutOfBoundsException -> Toast.makeText(this, "解析异常", Toast.LENGTH_SHORT).show()

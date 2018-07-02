@@ -25,7 +25,7 @@ interface TabooBooksApiService {
 
     companion object Factory {
         private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
-        private const val TIMEOUT: Long = 30000 //超时时长
+        private const val TIMEOUT: Long = 50000 //超时时长
 
         /**
          * @desc 创建ApiStores实例
