@@ -202,6 +202,8 @@ class Spider {
                     comment.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
                     comment.author = "作者:$author"
                     comment.date = (childNodes[2] as Element).text() //日期
+                    comment.readCount = ""
+                    comment.text = ""
 
                     list.add(comment)
                 }
@@ -364,7 +366,7 @@ class Spider {
                 commentList.reverse()
 
                 //抓取对正文的评论列表
-                commentList.addAll(scratchComments(article))
+                commentList.addAll(scratchComments(doc))
                 article.comments = commentList
 
                 return article
@@ -393,6 +395,21 @@ class Spider {
                 throw Exceptions.propagate(t)
             }
         }
+
+        /**
+         * @desc 抓取正文的评论
+         * @author ll
+         * @time 2018-06-04 15:06
+         */
+        private fun scratchComments(doc: Document): RealmList<Comment> {
+            try {
+                val comments: Elements = doc.getElementsByTag("ul")
+                return parseComments(comments[0])
+            } catch (t: Throwable) {
+                throw Exceptions.propagate(t)
+            }
+        }
+
 
         //endregion
     }
