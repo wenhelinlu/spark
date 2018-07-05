@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ class CommentRecyclerViewAdapter(mContext: Context, articleList: RealmList<Comme
     private val list = articleList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentRecyclerViewAdapter.CommentListViewHolder {
+        Log.d("CREATE","你出来")
         val view = LayoutInflater.from(context).inflate(R.layout.comment_item,parent,false)
         return CommentListViewHolder(view)
     }
@@ -35,6 +37,7 @@ class CommentRecyclerViewAdapter(mContext: Context, articleList: RealmList<Comme
     }
 
     override fun onBindViewHolder(holder: CommentRecyclerViewAdapter.CommentListViewHolder, position: Int) {
+        Log.d("BIND","你也出来")
         with(holder) {
             list[position]?.let {
                 commentTitle.text = it.title
@@ -50,8 +53,19 @@ class CommentRecyclerViewAdapter(mContext: Context, articleList: RealmList<Comme
                     context.startActivity(intent)
                 }
             }
-
         }
+//        val comment = list[position]!!
+//        holder.commentTitle.text = comment.title
+//        holder.commentAuthor.text = comment.author
+//        holder.commentDate.text = comment.date
+//        holder.commentTextLength.text = comment.textLength
+//        holder.commentReadCount.text = comment.readCount
+//
+//        holder.commentItem.setOnClickListener {
+//            val intent = Intent(context, DisplayArticleActivity::class.java)
+//            intent.putExtra(ARTICLE_TEXT_INTENT_KEY, comment.toArticle())
+//            context.startActivity(intent)
+//        }
     }
 
     inner class CommentListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

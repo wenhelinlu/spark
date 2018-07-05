@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -271,14 +272,14 @@ class DisplayArticleActivity : AppCompatActivity() {
         //滚动到最顶端
         iv_scrollUp.setOnClickListener {
             scrollviewText.post {
-                scrollviewText.fullScroll(ScrollView.FOCUS_UP)
+                scrollviewText.fullScroll(NestedScrollView.FOCUS_UP)
             }
         }
 
         //滚动到最底端
         iv_scrollDown.setOnClickListener {
             scrollviewText.post {
-                scrollviewText.fullScroll(ScrollView.FOCUS_DOWN)
+                scrollviewText.fullScroll(NestedScrollView.FOCUS_DOWN)
             }
         }
 
