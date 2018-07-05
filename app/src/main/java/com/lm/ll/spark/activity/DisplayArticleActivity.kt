@@ -68,7 +68,7 @@ class DisplayArticleActivity : AppCompatActivity() {
         // Note that some of these constants are new as of API 16 (Jelly Bean)
         // and API 19 (KitKat). It is safe to use them, as they are inlined
         // at compile-time and do nothing on earlier devices.
-        fullscreen_content.systemUiVisibility =
+        scrollviewText.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LOW_PROFILE or
                 View.SYSTEM_UI_FLAG_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -164,7 +164,7 @@ class DisplayArticleActivity : AppCompatActivity() {
      */
     private fun show() {
         // Show the system bar
-        fullscreen_content.systemUiVisibility =
+        scrollviewText.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         mVisible = true
@@ -272,6 +272,7 @@ class DisplayArticleActivity : AppCompatActivity() {
         //滚动到最顶端
         iv_scrollUp.setOnClickListener {
             scrollviewText.post {
+                scrollviewText.fling(0) //NestedScrollView需要加此语句才能一键到最顶端
                 scrollviewText.fullScroll(NestedScrollView.FOCUS_UP)
             }
         }
