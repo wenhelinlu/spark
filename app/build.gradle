@@ -62,6 +62,7 @@ dependencies {
     //带有加载效果的TextView和ImageView控件
 //    implementation 'com.elyeproj.libraries:loaderviewlibrary:1.4.1'
 
+    //realm数据库的kotlin插件
     implementation "com.github.vicpinm:krealmextensions:2.2.0"
 
     //ReactiveX series
@@ -78,6 +79,10 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-scalars:$retrofit2_version"
     //gson依赖
 //    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
+
+
+    //使用Delegate设计模式的Recyclerview.Adapter框架
+    implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
 
 }
 
