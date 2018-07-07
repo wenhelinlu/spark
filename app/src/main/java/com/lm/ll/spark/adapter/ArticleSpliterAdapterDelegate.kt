@@ -13,6 +13,7 @@ import io.realm.RealmList
 
 
 /**
+ * 描述：显示正文和评论之间分割条的Adapter
  * 作者：Created by ll on 2018-07-06 17:33.
  * 邮箱：wenhelinlu@gmail.com
  */

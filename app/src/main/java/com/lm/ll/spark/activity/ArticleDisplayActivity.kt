@@ -30,7 +30,7 @@ import java.net.ConnectException
 import java.util.concurrent.TimeoutException
 
 /**
- * @desc
+ * @desc 使用AdapterDelegates实现Recyclerview的高级布局的方式显示正文
  * @author lm
  * @time 2018-07-07 22:27
  * @email: wenhelinlu@gmail.com

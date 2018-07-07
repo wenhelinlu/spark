@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.article_item_text.view.*
 
 
 /**
+ * 描述：显示文章正文数据的Adapter
  * 作者：Created by ll on 2018-07-06 17:31.
  * 邮箱：wenhelinlu@gmail.com
  */
