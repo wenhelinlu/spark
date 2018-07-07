@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import com.lm.ll.spark.activity.DisplayArticleActivity
 import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import io.realm.RealmList
+import kotlinx.android.synthetic.main.comment_item.view.*
 
 
 /**
@@ -55,11 +55,11 @@ class CommentRecyclerViewAdapter(mContext: Context, articleList: RealmList<Comme
     }
 
     inner class CommentListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val commentItem: ConstraintLayout = itemView.findViewById(R.id.comment_item)
-        val commentTitle: TextView = itemView.findViewById(R.id.comment_title)
-        val commentAuthor: TextView = itemView.findViewById(R.id.comment_author)
-        val commentDate: TextView = itemView.findViewById(R.id.comment_date)
-        val commentTextLength: TextView = itemView.findViewById(R.id.comment_textLength)
-        val commentReadCount: TextView = itemView.findViewById(R.id.comment_readCount)
+        val commentItem: ConstraintLayout = itemView.comment_item
+        val commentTitle: TextView = itemView.comment_title
+        val commentAuthor: TextView = itemView.comment_author
+        val commentDate: TextView = itemView.comment_date
+        val commentTextLength: TextView = itemView.comment_textLength
+        val commentReadCount: TextView = itemView.comment_readCount
     }
 }

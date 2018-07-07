@@ -3,8 +3,11 @@ package com.lm.ll.spark.adapter
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
+import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
 import io.realm.RealmList
 
@@ -14,20 +17,22 @@ import io.realm.RealmList
  * 邮箱：wenhelinlu@gmail.com
  */
 class ArticleSpliterAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<RealmList<Article>>() {
-    private lateinit var inflater: LayoutInflater
-    init {
-        inflater = activity.layoutInflater
-    }
+    private var inflater: LayoutInflater = activity.layoutInflater
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return ArticleSpliterViewHolder(inflater.inflate(R.layout.article_item_spliter, parent, false))
     }
 
     override fun isForViewType(items: RealmList<Article>, position: Int): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return items[position] == null
     }
 
     override fun onBindViewHolder(items: RealmList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+    }
+
+    inner class ArticleSpliterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val divider: View = itemView.findViewById(R.id.viewDivider)
+        val commentRemark: TextView = itemView.findViewById(R.id.tvCommentRemark)
     }
 }

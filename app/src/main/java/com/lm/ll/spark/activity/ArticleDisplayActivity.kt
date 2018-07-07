@@ -4,42 +4,39 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.widget.NestedScrollView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.lm.ll.spark.R
-import com.lm.ll.spark.adapter.CommentRecyclerViewAdapter
+import com.lm.ll.spark.adapter.ArticleDelegateAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashlineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
-import com.lm.ll.spark.util.Spider
 import com.vicpin.krealmextensions.delete
-import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_display_article.*
+import kotlinx.android.synthetic.main.article_display.*
 import kotlinx.android.synthetic.main.bottom_toolbar_text.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
 
-
 /**
- * 显示文章正文
- * 作者：Created by ll on 2018-06-13 16:56.
- * 邮箱：wenhelinlu@gmail.com
+ * @desc
+ * @author lm
+ * @time 2018-07-07 22:27
+ * @email: wenhelinlu@gmail.com
+ * @version: 0.1
  */
-class DisplayArticleActivity : AppCompatActivity() {
+class ArticleDisplayActivity : AppCompatActivity() {
 
     //是否是经典情色书库中文章的正文（需要单独解析）
     private var isClassic = false
@@ -48,7 +45,7 @@ class DisplayArticleActivity : AppCompatActivity() {
     //接收从文章列表传过来的被点击的文章Model
     private lateinit var article: Article
     //评论列表adapter
-    private lateinit var commentsAdapter: CommentRecyclerViewAdapter
+    private lateinit var commentsAdapter: ArticleDelegateAdapter
 
     /**
      * @desc 用于延迟触发隐藏状态栏、导航栏等操作
@@ -67,7 +64,7 @@ class DisplayArticleActivity : AppCompatActivity() {
         // Note that some of these constants are new as of API 16 (Jelly Bean)
         // and API 19 (KitKat). It is safe to use them, as they are inlined
         // at compile-time and do nothing on earlier devices.
-        nestedScrollview.systemUiVisibility =
+        articleLayout.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LOW_PROFILE or
                 View.SYSTEM_UI_FLAG_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -85,7 +82,7 @@ class DisplayArticleActivity : AppCompatActivity() {
         // Delayed display of UI elements
         supportActionBar?.show()
         fullscreen_content_controls.visibility = View.VISIBLE
-        val animation = AnimationUtils.loadAnimation(this@DisplayArticleActivity, R.anim.fab_jump_from_down)
+        val animation = AnimationUtils.loadAnimation(this@ArticleDisplayActivity, R.anim.fab_jump_from_down)
         fullscreen_content_controls.startAnimation(animation)
     }
 
@@ -105,13 +102,12 @@ class DisplayArticleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_display_article)
+        setContentView(R.layout.article_display)
 
         initData()
 
         initView()
 
-//        loadText()
         loadTextWithRx()
     }
 
@@ -145,9 +141,9 @@ class DisplayArticleActivity : AppCompatActivity() {
     private fun hide() {
         // Hide UI first
         supportActionBar?.hide()
-        fullscreen_content_controls.visibility = View.GONE
-        val animation = AnimationUtils.loadAnimation(this@DisplayArticleActivity, R.anim.fab_jump_to_down)
-        fullscreen_content_controls.startAnimation(animation)
+        fullscreen_article_controls.visibility = View.GONE
+        val animation = AnimationUtils.loadAnimation(this@ArticleDisplayActivity, R.anim.fab_jump_to_down)
+        fullscreen_article_controls.startAnimation(animation)
 
         mVisible = false
 
@@ -163,7 +159,7 @@ class DisplayArticleActivity : AppCompatActivity() {
      */
     private fun show() {
         // Show the system bar
-        nestedScrollview.systemUiVisibility =
+        articleLayout.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         mVisible = true
@@ -235,7 +231,7 @@ class DisplayArticleActivity : AppCompatActivity() {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        toolbar_bottom_text.setOnTouchListener { _, _ ->
+        toolbar_bottom_article.setOnTouchListener { _, _ ->
             if (AUTO_HIDE) {
                 delayedHide(AUTO_HIDE_DELAY_MILLIS)
             }
@@ -247,10 +243,10 @@ class DisplayArticleActivity : AppCompatActivity() {
             it.title = article.title
         }
 
-        //点击正文显示或隐藏状态栏和导航栏
-        tvText.setOnClickListener {
-            toggle()
-        }
+//        //点击正文显示或隐藏状态栏和导航栏
+//        tvText.setOnClickListener {
+//            toggle()
+//        }
 
         //收藏图标点击事件
         iv_favorite.setOnClickListener {
@@ -268,20 +264,20 @@ class DisplayArticleActivity : AppCompatActivity() {
             Toast.makeText(this, if (article.isFavorite == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
         }
 
-        //滚动到最顶端
-        iv_scrollUp.setOnClickListener {
-            nestedScrollview.post {
-                nestedScrollview.fling(0) //NestedScrollView需要加此语句才能一键到最顶端
-                nestedScrollview.fullScroll(NestedScrollView.FOCUS_UP)
-            }
-        }
-
-        //滚动到最底端
-        iv_scrollDown.setOnClickListener {
-            nestedScrollview.post {
-                nestedScrollview.fullScroll(NestedScrollView.FOCUS_DOWN)
-            }
-        }
+//        //滚动到最顶端
+//        iv_scrollUp.setOnClickListener {
+//            nestedScrollview.post {
+//                nestedScrollview.fling(0) //NestedScrollView需要加此语句才能一键到最顶端
+//                nestedScrollview.fullScroll(NestedScrollView.FOCUS_UP)
+//            }
+//        }
+//
+//        //滚动到最底端
+//        iv_scrollDown.setOnClickListener {
+//            nestedScrollview.post {
+//                nestedScrollview.fullScroll(NestedScrollView.FOCUS_DOWN)
+//            }
+//        }
 
         //在浏览器中打开
         iv_openInBrowser.setOnClickListener {
@@ -291,11 +287,11 @@ class DisplayArticleActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val linearLayoutManager = LinearLayoutManager(this@DisplayArticleActivity)
+        val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
         //评论列表添加点线分隔线
-        this.recyclerViewComment.addItemDecoration(DashlineItemDecoration(10f))
-        this.recyclerViewComment.layoutManager = linearLayoutManager
-        this.recyclerViewComment.isNestedScrollingEnabled = false
+        this.recyclerViewArticle.addItemDecoration(DashlineItemDecoration(10f))
+        this.recyclerViewArticle.layoutManager = linearLayoutManager
+        this.recyclerViewArticle.isNestedScrollingEnabled = false
     }
 
     /**
@@ -311,14 +307,14 @@ class DisplayArticleActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally {
                     //隐藏进度条
-                    pb_loadText.visibility = View.GONE
+                    pb_loadArticle.visibility = View.GONE
                 }
                 .subscribe({ result ->
                     article = result
-                    tvText.text = article.text
-
-                    //加载正文后，显示分隔栏
-                    viewDivider.visibility = View.VISIBLE
+//                    tvText.text = article.text
+//
+//                    //加载正文后，显示分隔栏
+//                    viewDivider.visibility = View.VISIBLE
 
                     //根据文章收藏状态显示不同的图标
                     if (article.isFavorite == 1) {
@@ -327,15 +323,15 @@ class DisplayArticleActivity : AppCompatActivity() {
                         iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
                     }
 
-                    //在正文加载完成后再显示评论区提示
-                    tvCommentRemark.text = this@DisplayArticleActivity.getString(R.string.comment_remark)
+//                    //在正文加载完成后再显示评论区提示
+//                    tvCommentRemark.text = this@ArticleDisplayActivity.getString(R.string.comment_remark)
 
 
-
-                    commentsAdapter = CommentRecyclerViewAdapter(this@DisplayArticleActivity, article.comments)
-                    recyclerViewComment.adapter = commentsAdapter
-                    recyclerViewComment.adapter.notifyDataSetChanged()
-                }, { error ->  //异常处理
+                    commentsAdapter = ArticleDelegateAdapter(this@ArticleDisplayActivity, toArticleList(article))
+                    recyclerViewArticle.adapter = commentsAdapter
+                    recyclerViewArticle.adapter.notifyDataSetChanged()
+                }, { error ->
+                    //异常处理
                     when (error) {
                         is HttpException -> Toast.makeText(this, "网络异常", Toast.LENGTH_SHORT).show()
                         is IndexOutOfBoundsException -> Toast.makeText(this, "解析异常", Toast.LENGTH_SHORT).show()
@@ -346,66 +342,24 @@ class DisplayArticleActivity : AppCompatActivity() {
                 })
     }
 
-    /**
-     * @desc 加载文章正文和评论
-     * @author ll
-     * @time 2018-05-29 19:40
-     */
-    private fun loadText() {
-        async(UI) {
+    private fun toArticleList(article: Article): RealmList<Article> {
+        val list = RealmList<Article>()
+        list.add(article)
+        list.add(null)
+        for (comment in article.comments) {
+            val article = Article()
 
-            //如果正文有内容，则说明是从本地读取（我的收藏）的，不需要再从网上抓取
-            if (article.text.isNullOrEmpty()) {
+            article.url = comment.url
+            article.title = comment.title
+            article.textLength = comment.textLength
+            article.author = comment.author
+            article.date = comment.date
+            article.readCount = comment.readCount
+            article.text = comment.text
+            article.isArticle = 1
 
-                //注意：如果此协程定义在if外部，则它一定会运行，不受if判断的限制，并不是调用await才运行（要理解协程的概念）
-                val deferredLoad = async(CommonPool) {
-                    article = if (isClassic) { //经典文库的文章解析方式不同
-                        Spider.scratchClassicEroticaArticleText(article)
-                    } else {
-                        Spider.scratchText(article) //正文中可能也包含链接（比如精华区）
-                    }
-                }
-
-                deferredLoad.await()
-
-                //查询此文章是否已收藏（在数据库中存在）
-                //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
-                //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
-                val find = query<Article> {
-                    equalTo("url", article.url)
-                }.firstOrNull()
-                //如果存在，说明此文章已被收藏并存入数据库中
-                if (find != null) {
-                    article.isFavorite = 1
-                }
-            }
-
-            tvText.text = article.text
-
-            //加载正文后，显示分隔栏
-            viewDivider.visibility = View.VISIBLE
-            //隐藏进度条
-            pb_loadText.visibility = View.GONE
-
-            //根据文章收藏状态显示不同的图标
-            if (article.isFavorite == 1) {
-                iv_favorite.setImageResource(R.drawable.ic_menu_favorite)
-            } else {
-                iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
-            }
-
-            //在正文加载完成后再显示评论区提示
-            tvCommentRemark.text = this@DisplayArticleActivity.getString(R.string.comment_remark)
-
-            commentsAdapter = CommentRecyclerViewAdapter(this@DisplayArticleActivity, article.comments)
-            recyclerViewComment.adapter = commentsAdapter
-            recyclerViewComment.adapter.notifyDataSetChanged()
+            list.add(article)
         }
+        return list
     }
 }
-
-//TODO: 记录上次阅读位置
-//TODO：理解async和await概念
-//TODO：增强程序健壮性
-//TODO：打开正文时显示进度条
-

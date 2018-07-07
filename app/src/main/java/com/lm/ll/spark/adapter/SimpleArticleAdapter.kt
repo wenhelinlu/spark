@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
+import kotlinx.android.synthetic.main.article_item_simple.view.*
 
 /**
  * 说明：此Adapter用于精华区、论坛列表等只显示title的Recyclerview
@@ -69,7 +70,7 @@ class SimpleArticleAdapter(mContext: Context, intent: Intent, articleList: Array
     }
 
     inner class SimpleNewsListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var articleItem: LinearLayout = itemView.findViewById(R.id.article_item_simple)
-        var articleTitle: TextView = itemView.findViewById(R.id.article_title)
+        var articleItem: LinearLayout = itemView.article_item_simple
+        var articleTitle: TextView = itemView.article_title
     }
 }

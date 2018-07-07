@@ -9,9 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.lm.ll.spark.R
-import com.lm.ll.spark.activity.DisplayArticleActivity
+import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
+import kotlinx.android.synthetic.main.article_item.view.*
 
 /**
  * 作者：Created by ll on 2018-05-28 13:36.
@@ -45,7 +46,8 @@ class ArticleAdapter(mContext: Context, articleList: ArrayList<Article>) : Recyc
                 articleReadCount.text = it.readCount
 
                 articleItem.setOnClickListener {
-                    val intent = Intent(context, DisplayArticleActivity::class.java)
+                    //                    val intent = Intent(context, DisplayArticleActivity::class.java)
+                    val intent = Intent(context, ArticleDisplayActivity::class.java)
                     intent.putExtra(ARTICLE_TEXT_INTENT_KEY, list[position])
                     context.startActivity(intent)
                 }
@@ -70,11 +72,11 @@ class ArticleAdapter(mContext: Context, articleList: ArrayList<Article>) : Recyc
     }
 
     inner class ArticleListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var articleItem: ConstraintLayout = itemView.findViewById(R.id.article_item)
-        var articleTitle: TextView = itemView.findViewById(R.id.article_title)
-        var articleAuthor: TextView = itemView.findViewById(R.id.article_author)
-        var articleDate: TextView = itemView.findViewById(R.id.article_date)
-        var articleTextLength: TextView = itemView.findViewById(R.id.article_textLength)
-        var articleReadCount: TextView = itemView.findViewById(R.id.article_readCount)
+        var articleItem: ConstraintLayout = itemView.article_item
+        var articleTitle: TextView = itemView.article_title
+        var articleAuthor: TextView = itemView.article_author
+        var articleDate: TextView = itemView.article_date
+        var articleTextLength: TextView = itemView.article_textLength
+        var articleReadCount: TextView = itemView.article_readCount
     }
 }

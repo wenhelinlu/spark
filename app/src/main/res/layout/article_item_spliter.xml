@@ -2,6 +2,27 @@
 <!-- 正文界面的评论和正文之间的分割条item布局 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
+    <View
+        android:id="@+id/viewDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="24dp"
+        android:background="?attr/textColor" />
+
+    <TextView
+        android:id="@+id/tvCommentRemark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="18dp"
+        android:background="?attr/bgColor"
+        android:textColor="?attr/textColor"
+        android:text="@string/comment_remark"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 </LinearLayout>
