@@ -118,7 +118,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
         async(UI) {
             swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
-            val intent = Intent(this@ClassicEroticaArticleListActivity, DisplayArticleActivity::class.java)
+            val intent = Intent(this@ClassicEroticaArticleListActivity, ArticleDisplayActivity::class.java)
             intent.putExtra(IS_CLASSIC_ARTICLE, true)
             adapter = SimpleArticleAdapter(this@ClassicEroticaArticleListActivity, intent, articleList)
             this@ClassicEroticaArticleListActivity.recyclerViewEliteList.adapter = adapter

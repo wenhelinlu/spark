@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.article_item_comment.view.*
 
 
 /**
- * 描述：显示评论数据的Adapter
+ * 描述：显示评论数据列表的Adapter
  * 作者：Created by ll on 2018-07-06 17:34.
  * 邮箱：wenhelinlu@gmail.com
  */

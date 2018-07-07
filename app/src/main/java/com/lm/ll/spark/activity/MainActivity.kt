@@ -294,7 +294,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(intent)
             }
             R.id.nav_forum -> {
-                val intent = Intent(this@MainActivity, DisplayArticleActivity::class.java)
+                val intent = Intent(this@MainActivity, ArticleDisplayActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
         }

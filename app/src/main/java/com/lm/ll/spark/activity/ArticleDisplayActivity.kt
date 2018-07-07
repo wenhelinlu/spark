@@ -22,7 +22,6 @@ import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.RealmList
-import kotlinx.android.synthetic.main.activity_display_article.*
 import kotlinx.android.synthetic.main.article_display.*
 import kotlinx.android.synthetic.main.bottom_toolbar_text.*
 import retrofit2.HttpException
@@ -44,8 +43,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private var isForceRefresh = false
     //接收从文章列表传过来的被点击的文章Model
     private lateinit var article: Article
-    //评论列表adapter
-    private lateinit var commentsAdapter: ArticleDelegateAdapter
+    //不同布局的adapter
+    private lateinit var delegateAdapter: ArticleDelegateAdapter
 
     /**
      * @desc 用于延迟触发隐藏状态栏、导航栏等操作
@@ -81,9 +80,9 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private val mShowPart2Runnable = Runnable {
         // Delayed display of UI elements
         supportActionBar?.show()
-        fullscreen_content_controls.visibility = View.VISIBLE
+        fullscreen_article_controls.visibility = View.VISIBLE
         val animation = AnimationUtils.loadAnimation(this@ArticleDisplayActivity, R.anim.fab_jump_from_down)
-        fullscreen_content_controls.startAnimation(animation)
+        fullscreen_article_controls.startAnimation(animation)
     }
 
     /**
@@ -327,8 +326,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
 //                    tvCommentRemark.text = this@ArticleDisplayActivity.getString(R.string.comment_remark)
 
 
-                    commentsAdapter = ArticleDelegateAdapter(this@ArticleDisplayActivity, toArticleList(article))
-                    recyclerViewArticle.adapter = commentsAdapter
+                    delegateAdapter = ArticleDelegateAdapter(this@ArticleDisplayActivity, toArticleList(article))
+                    recyclerViewArticle.adapter = delegateAdapter
                     recyclerViewArticle.adapter.notifyDataSetChanged()
                 }, { error ->
                     //异常处理
@@ -342,23 +341,28 @@ class ArticleDisplayActivity : AppCompatActivity() {
                 })
     }
 
+    /**
+     * @desc 将article中的comment列表转换成article列表，用于使用不同布局的Adapter中
+     * @author lm
+     * @time 2018-07-07 23:35
+     */
     private fun toArticleList(article: Article): RealmList<Article> {
         val list = RealmList<Article>()
-        list.add(article)
-        list.add(null)
+        list.add(article) // 正文布局数据
+        list.add(null) // 分割条布局数据
         for (comment in article.comments) {
-            val article = Article()
+            val temp = Article()
 
-            article.url = comment.url
-            article.title = comment.title
-            article.textLength = comment.textLength
-            article.author = comment.author
-            article.date = comment.date
-            article.readCount = comment.readCount
-            article.text = comment.text
-            article.isArticle = 1
+            temp.url = comment.url
+            temp.title = comment.title
+            temp.textLength = comment.textLength
+            temp.author = comment.author
+            temp.date = comment.date
+            temp.readCount = comment.readCount
+            temp.text = comment.text
+            temp.isArticle = 1
 
-            list.add(article)
+            list.add(temp) // 评论布局数据
         }
         return list
     }
