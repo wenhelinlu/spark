@@ -13,6 +13,7 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
+import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
 import kotlinx.android.synthetic.main.article_item.view.*
 
 /**
@@ -46,9 +47,11 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
                 articleReadCount.text = it!!.readCount
 
                 articleItem.setOnClickListener {
-                    //                    val intent = Intent(context, DisplayArticleActivity::class.java)
                     val intent = Intent(context, ArticleDisplayActivity::class.java)
                     intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
+                    if (items[position].isClassical == 1) {
+                        intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                    }
                     context.startActivity(intent)
                 }
             }

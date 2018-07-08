@@ -53,7 +53,9 @@ interface TabooBooksApiService {
                     .addInterceptor { chain ->
                         val request = chain.request()
                                 .newBuilder()
-                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                                .addHeader("Content-Type", "text/html; charset=gb2312")
+                                .addHeader("Content-Type", "text/html; charset=gbk")
+                                .addHeader("Content-Type", "text/html; charset=UTF-8")
                                 .addHeader("Connection", "keep-alive")
                                 .addHeader("Accept", "*/*")
                                 .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36")

@@ -28,7 +28,6 @@ class SimpleArticleAdapter(mContext: Context, intent: Intent, articleList: Array
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleArticleAdapter.SimpleNewsListViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.article_item_simple, parent, false)
-
         return SimpleNewsListViewHolder(view)
     }
 

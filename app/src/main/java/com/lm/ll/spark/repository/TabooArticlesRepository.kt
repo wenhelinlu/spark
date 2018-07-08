@@ -2,7 +2,6 @@ package com.lm.ll.spark.repository
 
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.LIST_MIN_COUNT
 import com.lm.ll.spark.util.Spider
 import com.vicpin.krealmextensions.query
 import io.reactivex.Observable
@@ -24,6 +23,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      */
     fun getArticleList(pageNo: String): Observable<ArrayList<Article>> {
         return tabooBooksApiService.getArticleList(pageNo)
+                .retry(2)
                 .flatMap {
                     val document = Jsoup.parse(it)
                     val list = Spider.scratchArticleList(document)
@@ -56,7 +56,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
 
         //从网络中抓取文章
         val fromNetwork = tabooBooksApiService.getArticle(article.url!!)
-                .retry(1)
+                .retry(2)
                 .flatMap {
                     val doc = Jsoup.parse(it)
                     val item = if (isClassicalArticle) {

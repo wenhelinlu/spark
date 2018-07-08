@@ -25,6 +25,7 @@ data class Article(
         var insertTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), //文章收藏入库时间
         var isFavorite: Int = 0,  //是否被收藏, 1表示已收藏，0表示未收藏
         var isArticle: Int = 0, //是否是Article，0表示Article，1表示Comment
+        var isClassical: Int = 0, //是否是经典书库文章，0表示否，1表示是（解析正文方式不同）
         var comments: RealmList<Comment> = RealmList() //此文章的评论列表
 ) : Parcelable, RealmObject() {
 
@@ -39,6 +40,7 @@ data class Article(
         insertTime = parcel.readString()
         isFavorite = parcel.readInt()
         isArticle = parcel.readInt()
+        isClassical = parcel.readInt()
 
         //实现RealmList的Parcelable处理
         val mList = RealmList<Comment>()
@@ -57,6 +59,7 @@ data class Article(
         dest.writeString(insertTime)
         dest.writeInt(isFavorite)
         dest.writeInt(isArticle)
+        dest.writeInt(isClassical)
         dest.writeTypedList(comments) //实现RealmList的Parcelable处理
     }
 

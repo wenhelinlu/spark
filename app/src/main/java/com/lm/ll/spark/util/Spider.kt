@@ -264,6 +264,7 @@ class Spider {
                     article.url = "${efficientNode.baseUri().substringBefore("md")}${link.attr("href")}"
                     article.title = HanLP.convertToSimplifiedChinese(link.text())
                     article.author = ""
+                    article.isClassical = 1
 
                     mList.add(article)
                 }

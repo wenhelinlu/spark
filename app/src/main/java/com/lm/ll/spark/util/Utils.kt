@@ -55,7 +55,7 @@ const val PULL_REFRESH_DISTANCE = 400
 const val USER_AGENT = "User-Agent,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36" //使用PC版User-Agent，如果使用移动版User-Agent，会导致正文解析错误
 
 //连接超时时长
-const val TIME_OUT = 30000
+const val TIME_OUT = 50000
 
 //存储夜间模式设置的键
 const val NIGHT_MODE = "NIGHT_MODE"

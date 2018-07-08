@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -16,14 +17,18 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
-import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
+import com.lm.ll.spark.util.Spider
 import com.vicpin.krealmextensions.delete
+import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.article_display.*
 import kotlinx.android.synthetic.main.bottom_toolbar_text.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -45,6 +50,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private lateinit var article: Article
     //不同布局的adapter
     private lateinit var adapter: ArticleAdapter
+    private var scrollPosition: Int = 0
 
     /**
      * @desc 用于延迟触发隐藏状态栏、导航栏等操作
@@ -107,7 +113,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         initView()
 
-        loadTextWithRx()
+//        loadTextWithRx()
+        loadText()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -117,6 +124,17 @@ class ArticleDisplayActivity : AppCompatActivity() {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(0)  //default is 100
+    }
+
+    override fun onResume() {
+        async(UI) {
+            val deferredLoad = async(CommonPool) {
+                this@ArticleDisplayActivity.recyclerViewArticle.scrollTo(0, scrollPosition)
+            }
+            deferredLoad.await()
+        }
+
+        super.onResume()
     }
 
     /**
@@ -205,14 +223,15 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private fun initData() {
         //从列表中传来的点击的标题
         article = this.intent.getParcelableExtra(ARTICLE_TEXT_INTENT_KEY)
+        article.isArticle = 0  //适用正文item布局
 
         if (article.text.isNullOrEmpty()) {
             isForceRefresh = true
         }
 
         //文章来源（普通还是经典书库中的）
-        if (this.intent.hasExtra(IS_CLASSIC_ARTICLE)) {
-            isClassic = this.intent.getBooleanExtra(IS_CLASSIC_ARTICLE, false)
+        if (article.isClassical == 1) {
+            isClassic = true
         }
     }
 
@@ -266,6 +285,13 @@ class ArticleDisplayActivity : AppCompatActivity() {
         //滚动到最底端
         iv_scrollDown.setOnClickListener {
             this.recyclerViewArticle.scrollToPosition(adapter.itemCount - 1)
+        }
+
+        this.recyclerViewArticle.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_MOVE) {
+                scrollPosition = this.recyclerViewArticle.scrollY
+            }
+            false
         }
 
         //在浏览器中打开
@@ -329,12 +355,59 @@ class ArticleDisplayActivity : AppCompatActivity() {
     }
 
     /**
+     * @desc 加载文章正文和评论
+     * @author ll
+     * @time 2018-05-29 19:40
+     */
+    private fun loadText() {
+        async(UI) {
+
+            //如果正文有内容，则说明是从本地读取（我的收藏）的，不需要再从网上抓取
+            if (article.text.isNullOrEmpty()) {
+
+                //注意：如果此协程定义在if外部，则它一定会运行，不受if判断的限制，并不是调用await才运行（要理解协程的概念）
+                val deferredLoad = async(CommonPool) {
+                    article = if (isClassic) { //经典文库的文章解析方式不同
+                        Spider.scratchClassicEroticaArticleText(article)
+                    } else {
+                        Spider.scratchText(article) //正文中可能也包含链接（比如精华区）
+                    }
+                }
+
+                deferredLoad.await()
+
+                //查询此文章是否已收藏（在数据库中存在）
+                //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
+                //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
+                val find = query<Article> {
+                    equalTo("url", article.url)
+                }.firstOrNull()
+                //如果存在，说明此文章已被收藏并存入数据库中
+                if (find != null) {
+                    article.isFavorite = 1
+                }
+            }
+
+            adapter = ArticleAdapter(this@ArticleDisplayActivity, toArticleList(article))
+            adapter.mItemClickListener = object : ArticleAdapter.Companion.OnItemClickListener {
+                override fun onItemClick(view: View) {
+                    toggle() //点击正文显示或隐藏状态栏和导航栏
+                }
+            }
+            recyclerViewArticle.adapter = adapter
+            recyclerViewArticle.adapter.notifyDataSetChanged()
+
+        }
+    }
+
+    /**
      * @desc 将article中的comment列表转换成article列表，用于使用不同布局的Adapter中
      * @author lm
      * @time 2018-07-07 23:35
      */
     private fun toArticleList(article: Article): RealmList<Article> {
         val list = RealmList<Article>()
+
         list.add(article) // 正文布局数据
         list.add(null) // 分割条布局数据
         for (comment in article.comments) {

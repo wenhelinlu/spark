@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import com.lm.ll.spark.R
-import com.lm.ll.spark.adapter.SimpleArticleAdapter
+import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.util.*
@@ -30,7 +30,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
     //文章列表数据源
     private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
-    private lateinit var adapter: SimpleArticleAdapter
+    private lateinit var adapter: ArticleListAdapter
 
     //当前加载的页数
     private var currentPage: Int = 1
@@ -115,7 +115,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
             swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
             val intent = Intent(this@EliteEroticaArticleListActivity, ArticleDisplayActivity::class.java)
-            adapter = SimpleArticleAdapter(this@EliteEroticaArticleListActivity, intent, articleList)
+            adapter = ArticleListAdapter(this@EliteEroticaArticleListActivity, articleList)
             this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter = adapter
             this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
 
