@@ -242,11 +242,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
             it.title = article.title
         }
 
-//        //点击正文显示或隐藏状态栏和导航栏
-//        tvText.setOnClickListener {
-//            toggle()
-//        }
-
         //收藏图标点击事件
         iv_favorite.setOnClickListener {
 
@@ -310,10 +305,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
                 }
                 .subscribe({ result ->
                     article = result
-//                    tvText.text = article.text
-//
-//                    //加载正文后，显示分隔栏
-//                    viewDivider.visibility = View.VISIBLE
 
                     //根据文章收藏状态显示不同的图标
                     if (article.isFavorite == 1) {
@@ -322,11 +313,12 @@ class ArticleDisplayActivity : AppCompatActivity() {
                         iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
                     }
 
-//                    //在正文加载完成后再显示评论区提示
-//                    tvCommentRemark.text = this@ArticleDisplayActivity.getString(R.string.comment_remark)
-
-
                     delegateAdapter = ArticleDelegateAdapter(this@ArticleDisplayActivity, toArticleList(article))
+                    delegateAdapter.mItemClickListener = object : ArticleDelegateAdapter.Companion.OnItemClickListener {
+                        override fun onItemClick(view: View) {
+                            toggle() //点击正文显示或隐藏状态栏和导航栏
+                        }
+                    }
                     recyclerViewArticle.adapter = delegateAdapter
                     recyclerViewArticle.adapter.notifyDataSetChanged()
                 }, { error ->

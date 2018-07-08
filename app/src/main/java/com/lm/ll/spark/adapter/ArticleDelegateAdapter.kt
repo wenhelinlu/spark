@@ -1,11 +1,12 @@
 package com.lm.ll.spark.adapter
 
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
+import android.view.View
+import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.db.Article
 import io.realm.RealmList
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
-import android.view.ViewGroup
 
 
 /**
@@ -14,30 +15,38 @@ import android.view.ViewGroup
  */
 class ArticleDelegateAdapter(activity: AppCompatActivity, items: RealmList<Article>) : ListDelegationAdapter<RealmList<Article>>() {
 
+    //Recyclerview内部item的自定义单击事件，用于通过点击正文显示或隐藏状态栏和底部工具栏
+    lateinit var mItemClickListener: ArticleDelegateAdapter.Companion.OnItemClickListener
+
     init {
 
         // DelegatesManager is a protected Field in ListDelegationAdapter
-        delegatesManager.addDelegate(ArticleTextAdapterDelegate(activity))
-                .addDelegate(ArticleSpliterAdapterDelegate(activity))
-                .addDelegate(ArticleCommentAdapterDelegate(activity))
+        delegatesManager.addDelegate(VIEW_TYPE_TEXT, ArticleTextAdapterDelegate(activity))
+                .addDelegate(VIEW_TYPE_SPLITTER, ArticleSplitterAdapterDelegate(activity))
+                .addDelegate(VIEW_TYPE_COMMENT, ArticleCommentAdapterDelegate(activity))
 
         // Set the items from super class.
         setItems(items)
     }
 
-    override fun getItemCount(): Int {
-        return super.getItemCount()
-    }
+    companion object {
+        const val VIEW_TYPE_TEXT = 0 //标识正文item
+        const val VIEW_TYPE_SPLITTER = 1 //标识分割条item
+        const val VIEW_TYPE_COMMENT = 2 //标识评论item
 
-    override fun getItemViewType(position: Int): Int {
-        return super.getItemViewType(position)
+        interface OnItemClickListener {
+            fun onItemClick(view: View)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return super.onCreateViewHolder(parent, viewType)
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        super.onBindViewHolder(holder, position)
+        val vh = super.onCreateViewHolder(parent, viewType)
+        //点击正文时才控制状态栏和底部工具栏的可见性
+        if (viewType == VIEW_TYPE_TEXT) {
+            (vh.itemView as ViewGroup).getChildAt(0).setOnClickListener {
+                mItemClickListener.onItemClick(it)
+            }
+        }
+        return vh
     }
 }

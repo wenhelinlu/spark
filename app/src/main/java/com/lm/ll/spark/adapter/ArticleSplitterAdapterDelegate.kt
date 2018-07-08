@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
@@ -17,11 +16,11 @@ import io.realm.RealmList
  * 作者：Created by ll on 2018-07-06 17:33.
  * 邮箱：wenhelinlu@gmail.com
  */
-class ArticleSpliterAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<RealmList<Article>>() {
+class ArticleSplitterAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<RealmList<Article>>() {
     private var inflater: LayoutInflater = activity.layoutInflater
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return ArticleSpliterViewHolder(inflater.inflate(R.layout.article_item_spliter, parent, false))
+        return ArticleSplitterViewHolder(inflater.inflate(R.layout.article_item_splitter, parent, false))
     }
 
     override fun isForViewType(items: RealmList<Article>, position: Int): Boolean {
@@ -32,8 +31,7 @@ class ArticleSpliterAdapterDelegate(activity: AppCompatActivity) : AdapterDelega
 
     }
 
-    inner class ArticleSpliterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val divider: View = itemView.findViewById(R.id.viewDivider)
-        val commentRemark: TextView = itemView.findViewById(R.id.tvCommentRemark)
+    inner class ArticleSplitterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        //分割条固定内容，不需要显示
     }
 }
