@@ -23,7 +23,6 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      */
     fun getArticleList(pageNo: String): Observable<ArrayList<Article>> {
         return tabooBooksApiService.getArticleList(pageNo)
-                .retry(2)
                 .flatMap {
                     val document = Jsoup.parse(it)
                     val list = Spider.scratchArticleList(document)
@@ -56,7 +55,6 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
 
         //从网络中抓取文章
         val fromNetwork = tabooBooksApiService.getArticle(article.url!!)
-                .retry(2)
                 .flatMap {
                     val doc = Jsoup.parse(it)
                     val item = if (isClassicalArticle) {
