@@ -30,7 +30,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
     //文章列表数据源
     private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
-    private var adapter: SimpleArticleAdapter? = null
+    private lateinit var adapter: SimpleArticleAdapter
 
     //当前加载的页数
     private var currentPage: Int = 1
@@ -42,8 +42,8 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
 
         supportActionBar!!.title = getString(R.string.action_eliteArea)
 
-        swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
-        swipeRefreshEliteList.setDistanceToTriggerSync(400)
+        swipeRefreshEliteList.setColorSchemeResources(R.color.colorPrimary, R.color.yellow, R.color.green)
+        swipeRefreshEliteList.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
 
         swipeRefreshEliteList.setOnRefreshListener {
             loadContent()

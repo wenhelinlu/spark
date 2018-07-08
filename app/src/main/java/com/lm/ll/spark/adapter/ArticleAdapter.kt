@@ -1,82 +1,55 @@
 package com.lm.ll.spark.adapter
 
-import android.content.Context
-import android.content.Intent
-import android.support.constraint.ConstraintLayout
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import com.lm.ll.spark.R
-import com.lm.ll.spark.activity.ArticleDisplayActivity
+import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import com.lm.ll.spark.adapter.adapterdelegate.ArticleCommentAdapterDelegate
+import com.lm.ll.spark.adapter.adapterdelegate.ArticleSplitterAdapterDelegate
+import com.lm.ll.spark.adapter.adapterdelegate.ArticleTextAdapterDelegate
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
-import kotlinx.android.synthetic.main.article_item.view.*
+import io.realm.RealmList
+
 
 /**
- * 作者：Created by ll on 2018-05-28 13:36.
+ * 作者：Created by ll on 2018-07-06 17:35.
  * 邮箱：wenhelinlu@gmail.com
  */
-class ArticleAdapter(mContext: Context, articleList: ArrayList<Article>) : RecyclerView.Adapter<ArticleAdapter.ArticleListViewHolder>() {
+class ArticleAdapter(activity: AppCompatActivity, items: RealmList<Article>) : ListDelegationAdapter<RealmList<Article>>() {
 
-    private val context = mContext
-    private val list = articleList
-    //列表数据源备份（用于搜索）
-    private val listBackup = ArrayList(articleList)
+    //Recyclerview内部item的自定义单击事件，用于通过点击正文显示或隐藏状态栏和底部工具栏
+    lateinit var mItemClickListener: ArticleAdapter.Companion.OnItemClickListener
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleAdapter.ArticleListViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.article_item, parent, false)
+    init {
 
-        return ArticleListViewHolder(view)
+        // DelegatesManager is a protected Field in ListDelegationAdapter
+        delegatesManager.addDelegate(VIEW_TYPE_TEXT, ArticleTextAdapterDelegate(activity))
+                .addDelegate(VIEW_TYPE_SPLITTER, ArticleSplitterAdapterDelegate(activity))
+                .addDelegate(VIEW_TYPE_COMMENT, ArticleCommentAdapterDelegate(activity))
+
+        // Set the items from super class.
+        setItems(items)
     }
 
-    override fun getItemCount(): Int {
-        return list.size
+    companion object {
+        const val VIEW_TYPE_TEXT = 0 //标识正文item
+        const val VIEW_TYPE_SPLITTER = 1 //标识分割条item
+        const val VIEW_TYPE_COMMENT = 2 //标识评论item
+
+        interface OnItemClickListener {
+            fun onItemClick(view: View)
+        }
     }
 
-    override fun onBindViewHolder(holder: ArticleAdapter.ArticleListViewHolder, position: Int) {
-        with(holder) {
-            list[position].let {
-                articleTitle.text = it.title
-
-                articleAuthor.text = it.author
-                articleDate.text = it.date
-                articleTextLength.text = it.textLength
-                articleReadCount.text = it.readCount
-
-                articleItem.setOnClickListener {
-                    //                    val intent = Intent(context, DisplayArticleActivity::class.java)
-                    val intent = Intent(context, ArticleDisplayActivity::class.java)
-                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, list[position])
-                    context.startActivity(intent)
-                }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val vh = super.onCreateViewHolder(parent, viewType)
+        //点击正文时才控制状态栏和底部工具栏的可见性
+        if (viewType == VIEW_TYPE_TEXT) {
+            (vh.itemView as ViewGroup).getChildAt(0).setOnClickListener {
+                mItemClickListener.onItemClick(it)
             }
         }
-    }
-
-    /**
-     * @desc 实现筛选功能
-     * @author ll
-     * @time 2018-06-10 17:06
-     */
-    fun filter(text: String) {
-        list.clear()
-
-        if (text.isEmpty()) {
-            list.addAll(listBackup)
-        } else {
-            list.addAll(listBackup.filter { x -> (x.title!!.contains(text, true) || x.author!!.contains(text, true)) } as ArrayList<Article>)
-        }
-        notifyDataSetChanged()
-    }
-
-    inner class ArticleListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var articleItem: ConstraintLayout = itemView.article_item
-        var articleTitle: TextView = itemView.article_title
-        var articleAuthor: TextView = itemView.article_author
-        var articleDate: TextView = itemView.article_date
-        var articleTextLength: TextView = itemView.article_textLength
-        var articleReadCount: TextView = itemView.article_readCount
+        return vh
     }
 }

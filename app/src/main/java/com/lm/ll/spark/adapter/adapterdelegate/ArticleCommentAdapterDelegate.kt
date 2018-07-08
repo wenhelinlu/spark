@@ -1,4 +1,4 @@
-package com.lm.ll.spark.adapter
+package com.lm.ll.spark.adapter.adapterdelegate
 
 import android.content.Intent
 import android.support.constraint.ConstraintLayout
@@ -56,12 +56,14 @@ class ArticleCommentAdapterDelegate(activity: AppCompatActivity) : AdapterDelega
         }
     }
 
-    inner class ArticleCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val commentItem: ConstraintLayout = itemView.article_item
-        val commentTitle: TextView = itemView.article_title
-        val commentAuthor: TextView = itemView.article_author
-        val commentDate: TextView = itemView.article_date
-        val commentTextLength: TextView = itemView.article_textLength
-        val commentReadCount: TextView = itemView.article_readCount
+    companion object {
+        class ArticleCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val commentItem: ConstraintLayout = itemView.article_item
+            val commentTitle: TextView = itemView.article_title
+            val commentAuthor: TextView = itemView.article_author
+            val commentDate: TextView = itemView.article_date
+            val commentTextLength: TextView = itemView.article_textLength
+            val commentReadCount: TextView = itemView.article_readCount
+        }
     }
 }

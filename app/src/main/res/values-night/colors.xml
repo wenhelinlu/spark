@@ -7,5 +7,5 @@
     <!-- Night Mode -->
     <color name="colorText">#757575</color>
     <color name="colorBg">#000000</color>
-    <color name="colorDivider">#353535</color>
+    <color name="colorDivider">#212121</color>
 </resources>

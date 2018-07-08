@@ -10,7 +10,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.lm.ll.spark.R
-import com.lm.ll.spark.adapter.ArticleDelegateAdapter
+import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashLineItemDecoration
@@ -44,7 +44,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
     //接收从文章列表传过来的被点击的文章Model
     private lateinit var article: Article
     //不同布局的adapter
-    private lateinit var delegateAdapter: ArticleDelegateAdapter
+    private lateinit var adapter: ArticleAdapter
 
     /**
      * @desc 用于延迟触发隐藏状态栏、导航栏等操作
@@ -265,7 +265,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         //滚动到最底端
         iv_scrollDown.setOnClickListener {
-            this.recyclerViewArticle.scrollToPosition(delegateAdapter.itemCount - 1)
+            this.recyclerViewArticle.scrollToPosition(adapter.itemCount - 1)
         }
 
         //在浏览器中打开
@@ -308,13 +308,13 @@ class ArticleDisplayActivity : AppCompatActivity() {
                         iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
                     }
 
-                    delegateAdapter = ArticleDelegateAdapter(this@ArticleDisplayActivity, toArticleList(article))
-                    delegateAdapter.mItemClickListener = object : ArticleDelegateAdapter.Companion.OnItemClickListener {
+                    adapter = ArticleAdapter(this@ArticleDisplayActivity, toArticleList(article))
+                    adapter.mItemClickListener = object : ArticleAdapter.Companion.OnItemClickListener {
                         override fun onItemClick(view: View) {
                             toggle() //点击正文显示或隐藏状态栏和导航栏
                         }
                     }
-                    recyclerViewArticle.adapter = delegateAdapter
+                    recyclerViewArticle.adapter = adapter
                     recyclerViewArticle.adapter.notifyDataSetChanged()
                 }, { error ->
                     //异常处理

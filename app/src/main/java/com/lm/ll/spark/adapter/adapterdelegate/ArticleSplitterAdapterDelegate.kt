@@ -1,4 +1,4 @@
-package com.lm.ll.spark.adapter
+package com.lm.ll.spark.adapter.adapterdelegate
 
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView

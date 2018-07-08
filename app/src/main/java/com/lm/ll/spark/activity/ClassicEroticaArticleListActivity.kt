@@ -31,7 +31,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
     //文章列表数据源
     private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
-    private var adapter: SimpleArticleAdapter? = null
+    private lateinit var adapter: SimpleArticleAdapter
 
     //当前加载的页数
     private var currentPage: Int = 1
@@ -46,12 +46,12 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
 
         supportActionBar!!.title = getString(R.string.action_classicEroticaArticleList)
 
-        swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
-        swipeRefreshEliteList.setDistanceToTriggerSync(400)
+        swipeRefreshEliteList.setColorSchemeResources(R.color.colorPrimary, R.color.yellow, R.color.green)
+        swipeRefreshEliteList.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
 
-        swipeRefreshEliteList.setOnRefreshListener({
+        swipeRefreshEliteList.setOnRefreshListener {
             loadContent()
-        })
+        }
 
         val linearLayoutManager = LinearLayoutManager(this@ClassicEroticaArticleListActivity)
 

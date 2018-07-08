@@ -1,4 +1,4 @@
-package com.lm.ll.spark.adapter
+package com.lm.ll.spark.adapter.adapterdelegate
 
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
@@ -33,21 +33,17 @@ class ArticleTextAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
     }
 
     override fun onBindViewHolder(items: RealmList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val vh = holder as ArticleTextAdapterDelegate.ArticleTextViewHolder
+        val vh = holder as ArticleTextViewHolder
         with(vh) {
             items[position]?.let {
                 articleText.text = it.text
-
-//                articleText.setOnClickListener {
-//                    val intent = Intent(context, DisplayArticleActivity::class.java)
-//                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, list[position]!!.toArticle())
-//                    context.startActivity(intent)
-//                }
             }
         }
     }
 
-    inner class ArticleTextViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val articleText: TextView = itemView.tvText
+    companion object {
+        class ArticleTextViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val articleText: TextView = itemView.tvText
+        }
     }
 }

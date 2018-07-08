@@ -8,7 +8,7 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import com.lm.ll.spark.R
-import com.lm.ll.spark.adapter.ArticleAdapter
+import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.vicpin.krealmextensions.querySorted
@@ -30,7 +30,7 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
     //文章列表数据源
     private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
-    private var adapter: ArticleAdapter? = null
+    private lateinit var adapter: ArticleListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +60,7 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
         async(UI) {
             swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
-            adapter = ArticleAdapter(this@FavoriteNewsListActivity, articleList)
+            adapter = ArticleListAdapter(this@FavoriteNewsListActivity, articleList)
             this@FavoriteNewsListActivity.recyclerViewEliteList.adapter = adapter
             this@FavoriteNewsListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
 
@@ -76,12 +76,12 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
         val searchView = menu.findItem(R.id.action_search_favorite).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                (this@FavoriteNewsListActivity.recyclerViewEliteList.adapter as ArticleAdapter).filter(query)
+                (this@FavoriteNewsListActivity.recyclerViewEliteList.adapter as ArticleListAdapter).filter(query)
                 return true
             }
 
             override fun onQueryTextChange(s: String): Boolean {
-                (this@FavoriteNewsListActivity.recyclerViewEliteList.adapter as ArticleAdapter).filter(s)
+                (this@FavoriteNewsListActivity.recyclerViewEliteList.adapter as ArticleListAdapter).filter(s)
                 return true
             }
         })

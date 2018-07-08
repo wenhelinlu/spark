@@ -15,7 +15,7 @@ import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Toast
 import com.lm.ll.spark.R
-import com.lm.ll.spark.adapter.ArticleAdapter
+import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     //文章列表数据源
     private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
-    private lateinit var adapter: ArticleAdapter
+    private lateinit var adapter: ArticleListAdapter
 
     //当前加载的页数
     private var currentPage: Int = 1
@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             articleList = result
                         }
                     }
-                    adapter = ArticleAdapter(this@MainActivity, articleList)
+                    adapter = ArticleListAdapter(this@MainActivity, articleList)
                     this@MainActivity.recyclerViewTitles.adapter = adapter
                     this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
                     //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             swipeRefreshTitles.isRefreshing = true
             deferredLoad.await()
 //            Log.d("列表size", articleList.size.toString())
-            adapter = ArticleAdapter(this@MainActivity, articleList)
+            adapter = ArticleListAdapter(this@MainActivity, articleList)
             this@MainActivity.recyclerViewTitles.adapter = adapter
             this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
 
