@@ -10,7 +10,7 @@ import android.view.MenuItem
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.SimpleArticleAdapter
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.decoration.DashlineItemDecoration
+import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.util.*
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.experimental.CommonPool
@@ -45,13 +45,13 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
         swipeRefreshEliteList.setColorSchemeResources(R.color.blueGrey)
         swipeRefreshEliteList.setDistanceToTriggerSync(400)
 
-        swipeRefreshEliteList.setOnRefreshListener({
+        swipeRefreshEliteList.setOnRefreshListener {
             loadContent()
-        })
+        }
 
         val linearLayoutManager = LinearLayoutManager(this@EliteEroticaArticleListActivity)
 
-        this.recyclerViewEliteList.addItemDecoration(DashlineItemDecoration())
+        this.recyclerViewEliteList.addItemDecoration(SolidLineItemDecoration(this@EliteEroticaArticleListActivity))
         this.recyclerViewEliteList.layoutManager = linearLayoutManager
 
         //上拉加载更多

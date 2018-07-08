@@ -15,6 +15,7 @@
         <attr name="bgColor" format="reference" />
         <attr name="backgroundColor" format="reference" />
         <attr name="sideNavBarBg" format="reference" />
+        <attr name="dividerColor" format="reference" />
     </declare-styleable>
 
 </resources>

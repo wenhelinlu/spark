@@ -10,12 +10,14 @@
         <item name="nightMode">@drawable/ic_menu_nightmode</item>
         <item name="textColor">@color/colorText</item>
         <item name="bgColor">@color/colorBg</item>
+        <item name="dividerColor">@color/colorDivider</item>
         <item name="sideNavBarBg">@drawable/side_nav_bar</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:listDivider">@drawable/divider</item>
     </style>
 
     <!--  如果启动时设置为夜间模式，可能会先闪过一个白色页面才进入夜间模式，所以MainActivity的Theme使用WelcomeContentOverlay -->

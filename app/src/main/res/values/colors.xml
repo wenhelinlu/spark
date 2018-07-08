@@ -7,6 +7,7 @@
     <!--Day Mode-->
     <color name="colorText">#747170</color>
     <color name="colorBg">#f4f2ee</color>
+    <color name="colorDivider">#E0E0E0</color>
 
     <color name="blackLite">#1f2023</color>
     <color name="black">#000000</color>

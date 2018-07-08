@@ -10,7 +10,7 @@ import android.view.MenuItem
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.decoration.DashlineItemDecoration
+import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.vicpin.krealmextensions.querySorted
 import io.realm.Sort
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
@@ -40,7 +40,7 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
 
         val linearLayoutManager = LinearLayoutManager(this@FavoriteNewsListActivity)
 
-        this.recyclerViewEliteList.addItemDecoration(DashlineItemDecoration())
+        this.recyclerViewEliteList.addItemDecoration(SolidLineItemDecoration(this@FavoriteNewsListActivity))
         this.recyclerViewEliteList.layoutManager = linearLayoutManager
 
         loadContent()

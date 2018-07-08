@@ -13,7 +13,7 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleDelegateAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.decoration.DashlineItemDecoration
+import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
@@ -258,20 +258,15 @@ class ArticleDisplayActivity : AppCompatActivity() {
             Toast.makeText(this, if (article.isFavorite == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
         }
 
-//        //滚动到最顶端
-//        iv_scrollUp.setOnClickListener {
-//            nestedScrollview.post {
-//                nestedScrollview.fling(0) //NestedScrollView需要加此语句才能一键到最顶端
-//                nestedScrollview.fullScroll(NestedScrollView.FOCUS_UP)
-//            }
-//        }
-//
-//        //滚动到最底端
-//        iv_scrollDown.setOnClickListener {
-//            nestedScrollview.post {
-//                nestedScrollview.fullScroll(NestedScrollView.FOCUS_DOWN)
-//            }
-//        }
+        //滚动到最顶端
+        iv_scrollUp.setOnClickListener {
+            this.recyclerViewArticle.scrollToPosition(0)
+        }
+
+        //滚动到最底端
+        iv_scrollDown.setOnClickListener {
+            this.recyclerViewArticle.scrollToPosition(delegateAdapter.itemCount - 1)
+        }
 
         //在浏览器中打开
         iv_openInBrowser.setOnClickListener {
@@ -283,7 +278,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
         //评论列表添加点线分隔线
-        this.recyclerViewArticle.addItemDecoration(DashlineItemDecoration(10f))
+        this.recyclerViewArticle.addItemDecoration(DashLineItemDecoration(10f, 2))
         this.recyclerViewArticle.layoutManager = linearLayoutManager
         this.recyclerViewArticle.isNestedScrollingEnabled = false
     }

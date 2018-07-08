@@ -14,8 +14,7 @@ import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import io.realm.RealmList
-import kotlinx.android.synthetic.main.article_item_comment.view.*
-
+import kotlinx.android.synthetic.main.article_item.view.*
 
 /**
  * 描述：显示评论数据列表的Adapter
@@ -27,7 +26,7 @@ class ArticleCommentAdapterDelegate(activity: AppCompatActivity) : AdapterDelega
     private val context = activity.applicationContext
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return ArticleCommentViewHolder(inflater.inflate(R.layout.article_item_comment, parent, false))
+        return ArticleCommentViewHolder(inflater.inflate(R.layout.article_item, parent, false))
     }
 
     override fun isForViewType(items: RealmList<Article>, position: Int): Boolean {
@@ -58,11 +57,11 @@ class ArticleCommentAdapterDelegate(activity: AppCompatActivity) : AdapterDelega
     }
 
     inner class ArticleCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val commentItem: ConstraintLayout = itemView.comment_item
-        val commentTitle: TextView = itemView.comment_title
-        val commentAuthor: TextView = itemView.comment_author
-        val commentDate: TextView = itemView.comment_date
-        val commentTextLength: TextView = itemView.comment_textLength
-        val commentReadCount: TextView = itemView.comment_readCount
+        val commentItem: ConstraintLayout = itemView.article_item
+        val commentTitle: TextView = itemView.article_title
+        val commentAuthor: TextView = itemView.article_author
+        val commentDate: TextView = itemView.article_date
+        val commentTextLength: TextView = itemView.article_textLength
+        val commentReadCount: TextView = itemView.article_readCount
     }
 }

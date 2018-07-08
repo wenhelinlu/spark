@@ -19,7 +19,7 @@ import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.decoration.DashlineItemDecoration
+import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
 import io.reactivex.Observable
@@ -92,8 +92,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //recyclerview设置
         val linearLayoutManager = LinearLayoutManager(this@MainActivity)
-        this.recyclerViewTitles.addItemDecoration(DashlineItemDecoration())
-//        this.recyclerViewTitles.addItemDecoration(NewsItemDecoration(2))
+//        this.recyclerViewTitles.addItemDecoration(DashLineItemDecoration())
+        this.recyclerViewTitles.addItemDecoration(SolidLineItemDecoration(this@MainActivity))
         this.recyclerViewTitles.layoutManager = linearLayoutManager
 
         //上拉加载更多
