@@ -2,17 +2,47 @@ package com.lm.ll.spark.util
 
 import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatDelegate
+import com.hankcs.hanlp.HanLP
 import java.text.SimpleDateFormat
 
-@SuppressLint("SimpleDateFormat")
+
+
+//region 扩展方法
+
+
 /**
- * String类的扩展方法，将Stirng类型的日期转换为指定格式的日期字符串形式
+ * @desc String类的扩展方法，将String类型的日期转换为指定格式的日期字符串形式
+ * @author ll
+ * @time 2018-07-09 16:23
+ * @return 包含正文的文章链接
  */
-fun String.toDate(format: String = "yyyy-MM-dd") :String{
+@SuppressLint("SimpleDateFormat")
+fun String.toFormatedDate(format: String = "yyyy-MM-dd"): String {
     val sdf = SimpleDateFormat(format)
     val date = sdf.parse(this) //this表示要转换的原日期字符串
     return date.toString()
 }
+
+/**
+ * @desc String类的扩展方法，将String转换成简体中文
+ * @author ll
+ * @time 2018-07-09 16:23
+ * @return 简体中文
+ */
+fun String.convertToSimplifiedChinese(): String {
+    return if (this.isBlank()) {
+        this
+    } else {
+        HanLP.convertToSimplifiedChinese(this)
+    }
+}
+
+
+
+//endregion
+
+//region 全局方法
+
 
 /**
  *  setDefaultNightMode()与setLocalNightMode()区别
@@ -30,6 +60,12 @@ fun switchDayNightMode(isNightMode: Boolean) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 }
+
+
+//endregion
+
+//region 全局常量
+
 
 //文章列表初次加载时最小行数
 const val LIST_MIN_COUNT = 25
@@ -59,3 +95,6 @@ const val TIME_OUT = 50000
 
 //存储夜间模式设置的键
 const val NIGHT_MODE = "NIGHT_MODE"
+
+
+//endregion

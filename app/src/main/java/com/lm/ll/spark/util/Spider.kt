@@ -1,7 +1,6 @@
 package com.lm.ll.spark.util
 
 import android.util.Log
-import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import io.reactivex.exceptions.Exceptions
@@ -82,7 +81,7 @@ class Spider {
                     val link: Element = childNodes[0] as Element
                     val uri = link.attr("href")
                     article.url = "$BASE_URL$uri"
-                    article.title = HanLP.convertToSimplifiedChinese(link.text()) //标题也将繁体转为简体
+                    article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
                     val authorStr = (childNodes[1] as TextNode).text()
                     val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
                     val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
@@ -105,7 +104,7 @@ class Spider {
          * @time 2018-05-29 18:44
          */
         private fun parseText(e: Element): String {
-            return HanLP.convertToSimplifiedChinese(e.text())    //繁体转简体
+            return e.text().convertToSimplifiedChinese()
         }
 
         /**
@@ -147,7 +146,7 @@ class Spider {
                 for (link in links) {
                     val comment = Comment()
                     comment.url = link.attr("href")
-                    comment.title = HanLP.convertToSimplifiedChinese(link.text())
+                    comment.title = link.text().convertToSimplifiedChinese()
 
                     commentList.add(comment)
                 }
@@ -194,7 +193,7 @@ class Spider {
                     val link: Element = childNodes[0] as Element
                     val uri = link.attr("href")
                     comment.url = "$BASE_URL$uri"
-                    comment.title = HanLP.convertToSimplifiedChinese(link.text())
+                    comment.title = link.text().convertToSimplifiedChinese()
                     val authorStr = (childNodes[1] as TextNode).text()
                     val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
                     val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
@@ -229,7 +228,7 @@ class Spider {
                         val link: Element = child.childNodes()[0] as Element
                         val uri = link.attr("href")
                         article.url = "$BASE_URL$uri"
-                        article.title = HanLP.convertToSimplifiedChinese(link.text().trimStart('.'))
+                        article.title = link.text().trimStart('.').convertToSimplifiedChinese()
 
                         mList.add(article)
                     }
@@ -258,7 +257,7 @@ class Spider {
 
                     val article = Article()
                     article.url = "${efficientNode.baseUri().substringBefore("md")}${link.attr("href")}"
-                    article.title = HanLP.convertToSimplifiedChinese(link.text())
+                    article.title = link.text().convertToSimplifiedChinese()
                     article.isClassical = 1
 
                     mList.add(article)
@@ -353,7 +352,7 @@ class Spider {
                 for (link in links) {
                     val comment = Comment()
                     comment.url = link.attr("href")
-                    comment.title = HanLP.convertToSimplifiedChinese(link.text())
+                    comment.title = link.text().convertToSimplifiedChinese()
 
                     commentList.add(comment)
                 }
