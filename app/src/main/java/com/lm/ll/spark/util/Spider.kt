@@ -148,7 +148,6 @@ class Spider {
                     val comment = Comment()
                     comment.url = link.attr("href")
                     comment.title = HanLP.convertToSimplifiedChinese(link.text())
-                    comment.author = ""
 
                     commentList.add(comment)
                 }
@@ -202,8 +201,6 @@ class Spider {
                     comment.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
                     comment.author = "作者:$author"
                     comment.date = (childNodes[2] as Element).text() //日期
-                    comment.readCount = ""
-                    comment.text = ""
 
                     list.add(comment)
                 }
@@ -233,7 +230,6 @@ class Spider {
                         val uri = link.attr("href")
                         article.url = "$BASE_URL$uri"
                         article.title = HanLP.convertToSimplifiedChinese(link.text().trimStart('.'))
-                        article.author = ""
 
                         mList.add(article)
                     }
@@ -263,7 +259,6 @@ class Spider {
                     val article = Article()
                     article.url = "${efficientNode.baseUri().substringBefore("md")}${link.attr("href")}"
                     article.title = HanLP.convertToSimplifiedChinese(link.text())
-                    article.author = ""
                     article.isClassical = 1
 
                     mList.add(article)
@@ -359,7 +354,6 @@ class Spider {
                     val comment = Comment()
                     comment.url = link.attr("href")
                     comment.title = HanLP.convertToSimplifiedChinese(link.text())
-                    comment.author = ""
 
                     commentList.add(comment)
                 }

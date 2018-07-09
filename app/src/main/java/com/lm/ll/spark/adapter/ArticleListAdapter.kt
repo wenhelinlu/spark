@@ -3,6 +3,7 @@ package com.lm.ll.spark.adapter
 import android.support.v7.app.AppCompatActivity
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleListAdapterDelegate
+import com.lm.ll.spark.adapter.adapterdelegate.SimpleArticleListAdapterDelegate
 import com.lm.ll.spark.db.Article
 
 /**
@@ -19,6 +20,7 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
     init {
         // DelegatesManager is a protected Field in ListDelegationAdapter
         delegatesManager.addDelegate(ArticleListAdapterDelegate(activity))
+                .addDelegate(SimpleArticleListAdapterDelegate(activity))
 
         // Set the items from super class.
         setItems(items)
