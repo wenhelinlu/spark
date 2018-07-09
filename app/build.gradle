@@ -32,6 +32,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include "armeabi-v7a","arm64-v8a"
+            universalApk false
+        }
+    }
 }
 
 dependencies {

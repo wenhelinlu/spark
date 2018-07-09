@@ -1,7 +1,11 @@
 package com.lm.ll.spark.api
 
+import android.util.Log
+import com.lm.ll.spark.BuildConfig
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -22,6 +26,9 @@ interface TabooBooksApiService {
 
     @GET
     fun getArticle(@Url url: String): Observable<String>
+
+    @GET
+    fun getArticleBody(@Url url: String): Observable<ResponseBody>
 
     companion object Factory {
         private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
@@ -48,8 +55,9 @@ interface TabooBooksApiService {
             return OkHttpClient.Builder()
                     .retryOnConnectionFailure(true)
                     .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
-                    .readTimeout(TIMEOUT,TimeUnit.MILLISECONDS)
-                    .writeTimeout(TIMEOUT,TimeUnit.MILLISECONDS)
+                    .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                    .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                    .addInterceptor(getLoggingInterceptor())
                     .addInterceptor { chain ->
                         val request = chain.request()
                                 .newBuilder()
@@ -65,6 +73,19 @@ interface TabooBooksApiService {
                     .build()
         }
 
+        private fun getLoggingInterceptor(): HttpLoggingInterceptor {
+            val interceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
+                Log.d("SPARK_LOG", it)
+            })
+            interceptor.level =
+                    if (BuildConfig.DEBUG) {
+                        HttpLoggingInterceptor.Level.BODY
+                    } else {
+                        HttpLoggingInterceptor.Level.NONE
+                    }
+
+            return interceptor
+        }
     }
 }
 

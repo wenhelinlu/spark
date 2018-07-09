@@ -376,6 +376,7 @@ class Spider {
          */
         fun scratchClassicEroticaArticleText(doc: Document, article: Article): Article {
             try {
+//                val doc1 = getDocument(article.url!!)
                 val elements = doc.getElementsByTag("p")
                 val stringBuilder = StringBuilder()
                 for (e in elements) {
