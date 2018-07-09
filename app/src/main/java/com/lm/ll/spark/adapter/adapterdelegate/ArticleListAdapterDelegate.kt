@@ -39,12 +39,12 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
         val vh = holder as ArticleListViewHolder
         with(vh) {
             items[position].let {
-                articleTitle.text = it!!.title
+                articleTitle.text = it.title
 
-                articleAuthor.text = it!!.author
-                articleDate.text = it!!.date
-                articleTextLength.text = it!!.textLength
-                articleReadCount.text = it!!.readCount
+                articleAuthor.text = it.author
+                articleDate.text = it.date
+                articleTextLength.text = it.textLength
+                articleReadCount.text = it.readCount
 
                 articleItem.setOnClickListener {
                     val intent = Intent(context, ArticleDisplayActivity::class.java)

@@ -114,7 +114,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
         async(UI) {
             swipeRefreshEliteList.isRefreshing = true
             deferredLoad.await()
-            val intent = Intent(this@EliteEroticaArticleListActivity, ArticleDisplayActivity::class.java)
+
             adapter = ArticleListAdapter(this@EliteEroticaArticleListActivity, articleList)
             this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter = adapter
             this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()

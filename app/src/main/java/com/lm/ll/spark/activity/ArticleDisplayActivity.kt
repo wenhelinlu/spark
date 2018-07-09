@@ -113,8 +113,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         initView()
 
-//        loadTextWithRx()
-        loadText()
+        loadTextWithRx()
+//        loadText()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -287,7 +287,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             this.recyclerViewArticle.scrollToPosition(adapter.itemCount - 1)
         }
 
-        this.recyclerViewArticle.setOnTouchListener { v, event ->
+        this.recyclerViewArticle.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_MOVE) {
                 scrollPosition = this.recyclerViewArticle.scrollY
             }
@@ -396,7 +396,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
             }
             recyclerViewArticle.adapter = adapter
             recyclerViewArticle.adapter.notifyDataSetChanged()
-
+            //隐藏进度条
+            pb_loadArticle.visibility = View.GONE
         }
     }
 
