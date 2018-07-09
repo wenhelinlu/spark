@@ -26,10 +26,7 @@ class ArticleTextAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
     }
 
     override fun isForViewType(items: RealmList<Article>, position: Int): Boolean {
-        if (items[position] != null) {
-            return items[position]!!.isArticle == 0
-        }
-        return false
+        return items[position] != null && items[position]!!.isArticle == 0
     }
 
     override fun onBindViewHolder(items: RealmList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

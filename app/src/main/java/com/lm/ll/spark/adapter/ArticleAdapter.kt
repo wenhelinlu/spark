@@ -5,9 +5,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import com.lm.ll.spark.adapter.adapterdelegate.ArticleCommentAdapterDelegate
+import com.lm.ll.spark.adapter.adapterdelegate.CommentListAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleSplitterAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleTextAdapterDelegate
+import com.lm.ll.spark.adapter.adapterdelegate.SimpleCommentListAdapterDelegate
 import com.lm.ll.spark.db.Article
 import io.realm.RealmList
 
@@ -26,7 +27,8 @@ class ArticleAdapter(activity: AppCompatActivity, items: RealmList<Article>) : L
         // DelegatesManager is a protected Field in ListDelegationAdapter
         delegatesManager.addDelegate(VIEW_TYPE_TEXT, ArticleTextAdapterDelegate(activity))
                 .addDelegate(VIEW_TYPE_SPLITTER, ArticleSplitterAdapterDelegate(activity))
-                .addDelegate(VIEW_TYPE_COMMENT, ArticleCommentAdapterDelegate(activity))
+                .addDelegate(VIEW_TYPE_COMMENT, CommentListAdapterDelegate(activity))
+                .addDelegate(VIEW_TYPE_COMMENT_SIMPLE,SimpleCommentListAdapterDelegate(activity))
 
         // Set the items from super class.
         setItems(items)
@@ -36,6 +38,7 @@ class ArticleAdapter(activity: AppCompatActivity, items: RealmList<Article>) : L
         const val VIEW_TYPE_TEXT = 0 //标识正文item
         const val VIEW_TYPE_SPLITTER = 1 //标识分割条item
         const val VIEW_TYPE_COMMENT = 2 //标识评论item
+        const val VIEW_TYPE_COMMENT_SIMPLE = 3
 
         interface OnItemClickListener {
             fun onItemClick(view: View)

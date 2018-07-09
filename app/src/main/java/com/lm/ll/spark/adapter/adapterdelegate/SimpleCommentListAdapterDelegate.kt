@@ -14,36 +14,37 @@ import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.article_item_simple.view.*
 
 
 /**
- * 只有文章标题的列表布局（如精华区和经典文库文章）
- * 作者：Created by ll on 2018-07-09 15:37.
+ * 只有评论标题的列表布局（如精华区文章中的其他章节链接）
+ * 作者：Created by ll on 2018-07-09 17:47.
  * 邮箱：wenhelinlu@gmail.com
  */
-class SimpleArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
+class SimpleCommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<RealmList<Article>>() {
     private val inflater: LayoutInflater = activity.layoutInflater
     private val context = activity.applicationContext
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return ArticleListViewHolder(inflater.inflate(R.layout.article_item_simple, parent, false))
+        return SimpleCommentListViewHolder(inflater.inflate(R.layout.article_item_simple, parent, false))
     }
 
-    override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {
-        return items[position].author.isNullOrEmpty() //author没有值时使用此布局
+    override fun isForViewType(items: RealmList<Article>, position: Int): Boolean {
+        return items[position] != null && items[position]!!.author.isNullOrEmpty()  //有数据且author没有值时使用此布局
     }
 
-    override fun onBindViewHolder(items: ArrayList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
-        val vh = holder as ArticleListViewHolder
+    override fun onBindViewHolder(items: RealmList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+        val vh = holder as SimpleCommentListViewHolder
         with(vh) {
             items[position].let {
-                articleTitle.text = it.title
+                articleTitle.text = it!!.title
 
                 articleItem.setOnClickListener {
                     val intent = Intent(context, ArticleDisplayActivity::class.java)
                     intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
-                    if (items[position].isClassical == 1) {
+                    if (items[position]!!.isClassical == 1) {
                         intent.putExtra(IS_CLASSIC_ARTICLE, true)
                     }
                     context.startActivity(intent)
@@ -53,7 +54,7 @@ class SimpleArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDel
     }
 
     companion object {
-        class ArticleListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        class SimpleCommentListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var articleItem: LinearLayout = itemView.article_item_simple
             var articleTitle: TextView = itemView.article_title_simple
         }

@@ -17,11 +17,11 @@ import io.realm.RealmList
 import kotlinx.android.synthetic.main.article_item.view.*
 
 /**
- * 描述：显示评论数据列表的Adapter
+ * 描述：正文界面中显示评论数据列表的Adapter
  * 作者：Created by ll on 2018-07-06 17:34.
  * 邮箱：wenhelinlu@gmail.com
  */
-class ArticleCommentAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<RealmList<Article>>() {
+class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<RealmList<Article>>() {
     private val inflater: LayoutInflater = activity.layoutInflater
     private val context = activity.applicationContext
 
@@ -30,10 +30,8 @@ class ArticleCommentAdapterDelegate(activity: AppCompatActivity) : AdapterDelega
     }
 
     override fun isForViewType(items: RealmList<Article>, position: Int): Boolean {
-        if (items[position] != null) {
-            return items[position]!!.isArticle == 1
-        }
-        return false
+        //是评论（即isArticle=1）且author有值时使用此布局
+        return items[position] != null && items[position]!!.isArticle == 1 && !items[position]!!.author.isNullOrEmpty()
     }
 
     override fun onBindViewHolder(items: RealmList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

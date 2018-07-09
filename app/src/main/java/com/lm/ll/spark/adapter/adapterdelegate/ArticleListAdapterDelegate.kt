@@ -17,7 +17,7 @@ import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
 import kotlinx.android.synthetic.main.article_item.view.*
 
 /**
- * @desc
+ * @desc 普通文章列表布局
  * @author lm
  * @time 2018-07-08 14:28
  * @email: wenhelinlu@gmail.com
