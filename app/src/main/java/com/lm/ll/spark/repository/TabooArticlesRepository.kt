@@ -39,7 +39,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      * @param isClassicalArticle 是否是经典文章（解析正文方式不同）
      * @param isForceRefresh 是否强制刷新（总是从网上抓取，不用本地存储）
      */
-    fun getArticle(article: Article, isClassicalArticle: Boolean = false, isForceRefresh: Boolean = true): Observable<Article> {
+    fun getArticle(article: Article, isClassicalArticle: Boolean = false, isForceRefresh: Boolean = false): Observable<Article> {
         //是否是已收藏的文章（即已保存到数据库中）
         val fromDb = Observable.create(ObservableOnSubscribe<Article> { emitter ->
 

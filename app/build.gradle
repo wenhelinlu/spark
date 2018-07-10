@@ -91,6 +91,13 @@ dependencies {
 
     //使用Delegate设计模式的Recyclerview.Adapter框架
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
+
+    //Automatic binding+disposal of RxJava 2 streams.
+    implementation "com.uber.autodispose:autodispose-kotlin:$uber_autodispose_version"
+    implementation "com.uber.autodispose:autodispose-android-kotlin:$uber_autodispose_version"
+    implementation "com.uber.autodispose:autodispose-android-archcomponents-kotlin:$uber_autodispose_version"
+    implementation "com.uber.autodispose:autodispose-android-archcomponents-test-kotlin:$uber_autodispose_version"
+    implementation "com.uber.autodispose:autodispose-rxlifecycle:$uber_autodispose_version"
 }
 
 noArg {

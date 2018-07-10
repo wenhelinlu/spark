@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.MotionEvent
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -18,6 +18,8 @@ import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.Spider
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import com.uber.autodispose.kotlin.autoDisposable
 import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
@@ -47,10 +49,11 @@ class ArticleDisplayActivity : AppCompatActivity() {
     //是否需要强制刷新（如果是从我的收藏打开，则直接读取数据库中，否则重新从网上获取）
     private var isForceRefresh = false
     //接收从文章列表传过来的被点击的文章Model
-    private lateinit var article: Article
-    //不同布局的adapter
+    private lateinit var currentArticle: Article
+    //可绑定不同布局的adapter
     private lateinit var adapter: ArticleAdapter
-    private var scrollPosition: Int = 0
+    //使用AutoDispose解除Rxjava2订阅
+    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     /**
      * @desc 用于延迟触发隐藏状态栏、导航栏等操作
@@ -113,8 +116,11 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         initView()
 
-        loadTextWithRx()
-//        loadText()
+        if(isClassic){
+            loadText()
+        }else{
+            loadTextWithRx()
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -124,17 +130,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(0)  //default is 100
-    }
-
-    override fun onResume() {
-        async(UI) {
-            val deferredLoad = async(CommonPool) {
-                this@ArticleDisplayActivity.recyclerViewArticle.scrollTo(0, scrollPosition)
-            }
-            deferredLoad.await()
-        }
-
-        super.onResume()
     }
 
     /**
@@ -222,15 +217,15 @@ class ArticleDisplayActivity : AppCompatActivity() {
      */
     private fun initData() {
         //从列表中传来的点击的标题
-        article = this.intent.getParcelableExtra(ARTICLE_TEXT_INTENT_KEY)
-        article.isArticle = 0  //适用正文item布局
+        currentArticle = this.intent.getParcelableExtra(ARTICLE_TEXT_INTENT_KEY)
+        currentArticle.isArticle = 0  //适用正文item布局
 
-        if (article.text.isNullOrEmpty()) {
+        if (currentArticle.text.isNullOrEmpty()) {
             isForceRefresh = true
         }
 
         //文章来源（普通还是经典书库中的）
-        if (article.isClassical == 1) {
+        if (currentArticle.isClassical == 1) {
             isClassic = true
         }
     }
@@ -258,23 +253,23 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         //跟?结合使用， let函数可以在对象不为 null 的时候执行函数内的代码，从而避免了空指针异常的出现。
         this.supportActionBar?.let {
-            it.title = article.title
+            it.title = currentArticle.title
         }
 
         //收藏图标点击事件
         iv_favorite.setOnClickListener {
 
             //收藏或取消收藏
-            if (article.isFavorite == 1) {
-                article.isFavorite = 0
-                Article().delete { equalTo("url", article.url) } //从数据库中删除此条数据
+            if (currentArticle.isFavorite == 1) {
+                currentArticle.isFavorite = 0
+                Article().delete { equalTo("url", currentArticle.url) } //从数据库中删除此条数据
             } else {
-                article.isFavorite = 1
-                article.save() //将数据插入表中
+                currentArticle.isFavorite = 1
+                currentArticle.save() //将数据插入表中
             }
 
-            iv_favorite.setImageResource(if (article.isFavorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite)
-            Toast.makeText(this, if (article.isFavorite == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
+            iv_favorite.setImageResource(if (currentArticle.isFavorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite)
+            Toast.makeText(this, if (currentArticle.isFavorite == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
         }
 
         //滚动到最顶端
@@ -287,18 +282,11 @@ class ArticleDisplayActivity : AppCompatActivity() {
             this.recyclerViewArticle.scrollToPosition(adapter.itemCount - 1)
         }
 
-        this.recyclerViewArticle.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_MOVE) {
-                scrollPosition = this.recyclerViewArticle.scrollY
-            }
-            false
-        }
-
         //在浏览器中打开
         iv_openInBrowser.setOnClickListener {
             val intent = Intent()
             intent.action = "android.intent.action.VIEW"
-            intent.data = Uri.parse(article.url)
+            intent.data = Uri.parse(currentArticle.url)
             startActivity(intent)
         }
 
@@ -316,32 +304,18 @@ class ArticleDisplayActivity : AppCompatActivity() {
      */
     private fun loadTextWithRx() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
-        repository.getArticle(article, isClassic, isForceRefresh)
+        repository.getArticle(currentArticle, isClassic, isForceRefresh)
                 .firstElement() //如果数据库中有数据，则直接取数据库中数据
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doFinally {
-                    //隐藏进度条
-                    pb_loadArticle.visibility = View.GONE
+                .doAfterTerminate {
+                    hideProgressbar()
                 }
+                .doOnDispose{ Log.i("AutoDispose", "Disposing subscription from onCreate()")}
+                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
                 .subscribe({ result ->
-                    article = result
-
-                    //根据文章收藏状态显示不同的图标
-                    if (article.isFavorite == 1) {
-                        iv_favorite.setImageResource(R.drawable.ic_menu_favorite)
-                    } else {
-                        iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
-                    }
-
-                    adapter = ArticleAdapter(this@ArticleDisplayActivity, toArticleList(article))
-                    adapter.mItemClickListener = object : ArticleAdapter.Companion.OnItemClickListener {
-                        override fun onItemClick(view: View) {
-                            toggle() //点击正文显示或隐藏状态栏和导航栏
-                        }
-                    }
-                    recyclerViewArticle.adapter = adapter
-                    recyclerViewArticle.adapter.notifyDataSetChanged()
+                    currentArticle = result
+                    updateAdapter()
                 }, { error ->
                     //异常处理
                     when (error) {
@@ -355,50 +329,73 @@ class ArticleDisplayActivity : AppCompatActivity() {
     }
 
     /**
+     * @desc 隐藏正文加载进度条
+     * @author ll
+     * @time 2018-07-10 15:17
+     */
+    private fun hideProgressbar() {
+        //隐藏进度条
+        this.pb_loadArticle.visibility = View.GONE
+    }
+
+    /**
      * @desc 加载文章正文和评论
      * @author ll
      * @time 2018-05-29 19:40
      */
     private fun loadText() {
+        @Suppress("DeferredResultUnused")
         async(UI) {
 
             //如果正文有内容，则说明是从本地读取（我的收藏）的，不需要再从网上抓取
-            if (article.text.isNullOrEmpty()) {
+            if (currentArticle.text.isNullOrEmpty()) {
 
                 //注意：如果此协程定义在if外部，则它一定会运行，不受if判断的限制，并不是调用await才运行（要理解协程的概念）
                 val deferredLoad = async(CommonPool) {
-                    article = if (isClassic) { //经典文库的文章解析方式不同
-                        Spider.scratchClassicEroticaArticleText(article)
-                    } else {
-                        Spider.scratchText(article) //正文中可能也包含链接（比如精华区）
-                    }
+                    currentArticle = Spider.scratchClassicEroticaArticleText(currentArticle)
                 }
 
                 deferredLoad.await()
-
-                //查询此文章是否已收藏（在数据库中存在）
-                //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
-                //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
-                val find = query<Article> {
-                    equalTo("url", article.url)
-                }.firstOrNull()
-                //如果存在，说明此文章已被收藏并存入数据库中
-                if (find != null) {
-                    article.isFavorite = 1
-                }
             }
 
-            adapter = ArticleAdapter(this@ArticleDisplayActivity, toArticleList(article))
-            adapter.mItemClickListener = object : ArticleAdapter.Companion.OnItemClickListener {
-                override fun onItemClick(view: View) {
-                    toggle() //点击正文显示或隐藏状态栏和导航栏
-                }
-            }
-            recyclerViewArticle.adapter = adapter
-            recyclerViewArticle.adapter.notifyDataSetChanged()
-            //隐藏进度条
-            pb_loadArticle.visibility = View.GONE
+            updateAdapter()
+            hideProgressbar()
         }
+    }
+
+    /**
+     * @desc 更新Recyclerview的Adapter
+     * @author ll
+     * @time 2018-07-10 15:23
+     */
+    private fun updateAdapter(){
+
+        //查询此文章是否已收藏（在数据库中存在）
+        //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
+        //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
+        val find = query<Article> {
+            equalTo("url", currentArticle.url)
+        }.firstOrNull()
+        //如果存在，说明此文章已被收藏并存入数据库中
+        if (find != null) {
+            currentArticle.isFavorite = 1
+        }
+
+        //根据文章收藏状态显示不同的图标
+        if (currentArticle.isFavorite == 1) {
+            iv_favorite.setImageResource(R.drawable.ic_menu_favorite)
+        } else {
+            iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
+        }
+
+        adapter = ArticleAdapter(this@ArticleDisplayActivity, toArticleList(currentArticle))
+        adapter.mItemClickListener = object : ArticleAdapter.Companion.OnItemClickListener {
+            override fun onItemClick(view: View) {
+                toggle() //点击正文显示或隐藏状态栏和导航栏
+            }
+        }
+        recyclerViewArticle.adapter = adapter
+        recyclerViewArticle.adapter.notifyDataSetChanged()
     }
 
     /**
