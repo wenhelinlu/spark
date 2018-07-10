@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -116,12 +117,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         initView()
 
-        //经典书库的文章直接使用Jsoup解析（因为使用Retrofit的时候，如果请求的结果过长，返回是分块的（trunked），则会乱码）
-        if(isClassic){
-            loadText()
-        }else{
-            loadTextWithRx()
-        }
+        loadData()
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -298,6 +294,21 @@ class ArticleDisplayActivity : AppCompatActivity() {
     }
 
     /**
+     * @desc 加载数据
+     * @author ll
+     * @time 2018-07-10 17:23
+     */
+    private fun loadData() {
+
+        //经典书库的文章直接使用Jsoup解析（因为使用Retrofit的时候，如果请求的结果过长，返回是分块的（trunked），则会乱码）
+        if (isClassic) {
+            loadText()
+        } else {
+            loadTextWithRx()
+        }
+    }
+
+    /**
      * @desc 使用RxJava+Retrofit实现异步读取数据
      * @author lm
      * @time 2018-07-01 17:21
@@ -307,24 +318,33 @@ class ArticleDisplayActivity : AppCompatActivity() {
         repository.getArticle(currentArticle, isClassic, isForceRefresh)
                 .firstElement() //如果数据库中有数据，则直接取数据库中数据
                 .subscribeOn(Schedulers.io())
+                .doOnSubscribe {
+                    showProgressbar()
+                }
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doAfterTerminate {
                     hideProgressbar()
                 }
-                .doOnDispose{ Log.i("AutoDispose", "Disposing subscription from onCreate()")}
+                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
                 .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
                 .subscribe({ result ->
                     currentArticle = result
                     updateAdapter()
+                    Snackbar.make(articleLayout, "逗你玩", Snackbar.LENGTH_LONG)
+                            .setAction("重新获取") { loadData() }.show()
                 }, { error ->
                     //异常处理
-                    when (error) {
-                        is HttpException -> Toast.makeText(this, "网络异常", Toast.LENGTH_SHORT).show()
-                        is IndexOutOfBoundsException -> Toast.makeText(this, "解析异常", Toast.LENGTH_SHORT).show()
-                        is ConnectException -> Toast.makeText(this, "网络连接异常，请稍后重试", Toast.LENGTH_SHORT).show()
-                        is TimeoutException -> Toast.makeText(this, "网络连接超时，请稍后重试", Toast.LENGTH_SHORT).show()
-                        else -> Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
-                    }
+                    val msg =
+                            when (error) {
+                                is HttpException -> "网络异常"
+                                is IndexOutOfBoundsException -> "解析异常"
+                                is ConnectException -> "网络连接异常，请稍后重试"
+                                is TimeoutException -> "网络连接超时，请稍后重试"
+                                else -> error.toString()
+                            }
+                    Snackbar.make(articleLayout, msg, Snackbar.LENGTH_LONG)
+                            .setAction("重新获取") { loadData() }.show()
                 })
     }
 
@@ -336,6 +356,15 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private fun hideProgressbar() {
         //隐藏进度条
         this.pb_loadArticle.visibility = View.GONE
+    }
+
+    /**
+     * @desc 显示正文加载进度条
+     * @author ll
+     * @time 2018-07-10 17:48
+     */
+    private fun showProgressbar() {
+        this.pb_loadArticle.visibility = View.VISIBLE
     }
 
     /**
@@ -368,7 +397,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
      * @author ll
      * @time 2018-07-10 15:23
      */
-    private fun updateAdapter(){
+    private fun updateAdapter() {
 
         //查询此文章是否已收藏（在数据库中存在）
         //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，

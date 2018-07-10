@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#1f2023</color>
     <color name="colorPrimaryDark">#18181a</color>
-    <color name="colorAccent">#04334b</color>
+    <color name="colorAccent">#009688</color>
 
     <!-- Night Mode -->
     <color name="colorText">#757575</color>
