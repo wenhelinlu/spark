@@ -116,6 +116,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         initView()
 
+        //经典书库的文章直接使用Jsoup解析（因为使用Retrofit的时候，如果请求的结果过长，返回是分块的（trunked），则会乱码）
         if(isClassic){
             loadText()
         }else{
@@ -294,7 +295,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
         //评论列表添加点线分隔线
         this.recyclerViewArticle.addItemDecoration(DashLineItemDecoration(10f, 2))
         this.recyclerViewArticle.layoutManager = linearLayoutManager
-        this.recyclerViewArticle.isNestedScrollingEnabled = false
     }
 
     /**
