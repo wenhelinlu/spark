@@ -2,10 +2,11 @@
 <resources>
     <color name="colorPrimary">#1f2023</color>
     <color name="colorPrimaryDark">#18181a</color>
-    <color name="colorAccent">#009688</color>
+    <color name="colorAccent">@color/md_teal_500</color>
 
     <!-- Night Mode -->
-    <color name="colorText">#757575</color>
-    <color name="colorBg">#000000</color>
-    <color name="colorDivider">#212121</color>
+    <color name="colorText">@color/md_grey_600</color>
+    <color name="colorBg">@color/md_black_1000</color>
+    <color name="colorDivider">@color/md_grey_900</color>
+
 </resources>

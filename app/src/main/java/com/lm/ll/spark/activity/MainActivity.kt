@@ -10,10 +10,10 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
-import android.widget.Toast
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
@@ -22,6 +22,8 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -35,6 +37,7 @@ import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.*
 import java.util.concurrent.TimeoutException
+import javax.net.ssl.SSLHandshakeException
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
@@ -43,6 +46,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.swipeRefreshTitles.isRefreshing = false
     }
 
+    //使用AutoDispose解除Rxjava2订阅
+    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
     //文章列表数据源
     private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
@@ -81,7 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         //下拉刷新进度条颜色
-        swipeRefreshTitles.setColorSchemeResources(R.color.colorPrimary, R.color.yellow, R.color.green)
+        swipeRefreshTitles.setColorSchemeResources(R.color.md_teal_500, R.color.md_orange_500, R.color.md_light_blue_500)
         //触发刷新的下拉距离
         swipeRefreshTitles.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
         //下拉刷新监听
@@ -129,13 +134,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
                     //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
-                    swipeRefreshTitles.isRefreshing = true //显示进度条
+                    showProgressbar()
                 }
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doFinally {
-                    swipeRefreshTitles.isRefreshing = false //停止刷新
+                .doAfterTerminate {
+                    hideProgressbar()
                 }
+                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
+                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
                 .subscribe({ result ->
                     val currentPos: Int = articleList.size
                     if (isLoadMore) {
@@ -169,13 +176,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         this@MainActivity.recyclerViewTitles.layoutManager.scrollToPosition(currentPos - 1)
                     }
                 }, { error ->
-                    when (error) {
-                        is HttpException -> Toast.makeText(this, "网络异常", Toast.LENGTH_SHORT).show()
-                        is IndexOutOfBoundsException -> Toast.makeText(this, "解析异常", Toast.LENGTH_SHORT).show()
-                        is ConnectException -> Toast.makeText(this, "网络连接异常，请稍后重试", Toast.LENGTH_SHORT).show()
-                        is TimeoutException -> Toast.makeText(this, "网络连接超时，请稍后重试", Toast.LENGTH_SHORT).show()
-                        else -> Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
-                    }
+                    //异常处理
+                    val msg =
+                            when (error) {
+                                is HttpException, is SSLHandshakeException,is ConnectException -> "网络连接异常"
+                                is TimeoutException -> "网络连接超时"
+                                is IndexOutOfBoundsException -> "解析异常"
+                                else -> error.toString()
+                            }
+                    Snackbar.make(this.fab, msg, Snackbar.LENGTH_LONG)
+                            .setAction("重试") { loadListWithRx() }.show()
                 })
     }
 
@@ -227,9 +237,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         async(UI) {
-            swipeRefreshTitles.isRefreshing = true
+            showProgressbar()
             deferredLoad.await()
-//            Log.d("列表size", articleList.size.toString())
             adapter = ArticleListAdapter(this@MainActivity, articleList)
             this@MainActivity.recyclerViewTitles.adapter = adapter
             this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
@@ -239,9 +248,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.recyclerViewTitles.layoutManager.scrollToPosition(currentPos - 1)
             }
 
-            //停止刷新
-            swipeRefreshTitles.isRefreshing = false
+            hideProgressbar()
         }
+    }
+
+    /**
+     * @desc 隐藏加载进度条
+     * @author ll
+     * @time 2018-07-10 15:17
+     */
+    private fun hideProgressbar() {
+        //停止刷新
+        this.swipeRefreshTitles.isRefreshing = false
+    }
+
+    /**
+     * @desc 显示加载进度条
+     * @author ll
+     * @time 2018-07-10 17:48
+     */
+    private fun showProgressbar() {
+        swipeRefreshTitles.isRefreshing = true
     }
 
 

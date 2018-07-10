@@ -35,6 +35,7 @@ import kotlinx.coroutines.experimental.async
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
+import javax.net.ssl.SSLHandshakeException
 
 /**
  * @desc 使用AdapterDelegates实现Recyclerview的高级布局的方式显示正文
@@ -331,40 +332,18 @@ class ArticleDisplayActivity : AppCompatActivity() {
                 .subscribe({ result ->
                     currentArticle = result
                     updateAdapter()
-                    Snackbar.make(articleLayout, "逗你玩", Snackbar.LENGTH_LONG)
-                            .setAction("重新获取") { loadData() }.show()
                 }, { error ->
                     //异常处理
                     val msg =
                             when (error) {
-                                is HttpException -> "网络异常"
+                                is HttpException, is SSLHandshakeException,is ConnectException -> "网络连接异常"
+                                is TimeoutException -> "网络连接超时"
                                 is IndexOutOfBoundsException -> "解析异常"
-                                is ConnectException -> "网络连接异常，请稍后重试"
-                                is TimeoutException -> "网络连接超时，请稍后重试"
                                 else -> error.toString()
                             }
                     Snackbar.make(articleLayout, msg, Snackbar.LENGTH_LONG)
-                            .setAction("重新获取") { loadData() }.show()
+                            .setAction("重试") { loadData() }.show()
                 })
-    }
-
-    /**
-     * @desc 隐藏正文加载进度条
-     * @author ll
-     * @time 2018-07-10 15:17
-     */
-    private fun hideProgressbar() {
-        //隐藏进度条
-        this.pb_loadArticle.visibility = View.GONE
-    }
-
-    /**
-     * @desc 显示正文加载进度条
-     * @author ll
-     * @time 2018-07-10 17:48
-     */
-    private fun showProgressbar() {
-        this.pb_loadArticle.visibility = View.VISIBLE
     }
 
     /**
@@ -425,6 +404,25 @@ class ArticleDisplayActivity : AppCompatActivity() {
         }
         recyclerViewArticle.adapter = adapter
         recyclerViewArticle.adapter.notifyDataSetChanged()
+    }
+
+    /**
+     * @desc 隐藏正文加载进度条
+     * @author ll
+     * @time 2018-07-10 15:17
+     */
+    private fun hideProgressbar() {
+        //隐藏进度条
+        this.pb_loadArticle.visibility = View.GONE
+    }
+
+    /**
+     * @desc 显示正文加载进度条
+     * @author ll
+     * @time 2018-07-10 17:48
+     */
+    private fun showProgressbar() {
+        this.pb_loadArticle.visibility = View.VISIBLE
     }
 
     /**
