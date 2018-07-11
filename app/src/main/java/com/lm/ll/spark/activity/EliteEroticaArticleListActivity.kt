@@ -1,6 +1,5 @@
 package com.lm.ll.spark.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -42,7 +41,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
 
         supportActionBar!!.title = getString(R.string.action_eliteArea)
 
-        swipeRefreshEliteList.setColorSchemeResources(R.color.colorPrimary, R.color.yellow, R.color.green)
+        swipeRefreshEliteList.setColorSchemeResources(R.color.colorPrimary, R.color.md_orange_500, R.color.md_teal_400)
         swipeRefreshEliteList.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
 
         swipeRefreshEliteList.setOnRefreshListener {
