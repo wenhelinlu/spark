@@ -4,8 +4,11 @@ import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.Spider
 import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.querySortedAsFlowable
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
+import io.realm.Sort
 import org.jsoup.Jsoup
 
 
@@ -28,6 +31,15 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
                     val list = Spider.scratchArticleList(document)
                     Observable.just(list)
                 }
+    }
+
+    /**
+     * @desc 获取已收藏的文章列表
+     * @author lm
+     * @time 2018-07-12 21:46
+     */
+    fun getFavoriteArticleList(): Flowable<List<Article>> {
+        return Article().querySortedAsFlowable("insertTime", Sort.DESCENDING)
     }
 
 
