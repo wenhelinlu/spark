@@ -335,7 +335,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
                             .setAction("重试") { loadData() }.show()
                 })
     }
-    
+
     /**
      * @desc 更新Recyclerview的Adapter
      * @author ll
