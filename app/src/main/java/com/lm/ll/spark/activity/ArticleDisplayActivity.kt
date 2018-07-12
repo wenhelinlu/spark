@@ -301,12 +301,13 @@ class ArticleDisplayActivity : AppCompatActivity() {
      */
     private fun loadData() {
 
-        //经典书库的文章直接使用Jsoup解析（因为使用Retrofit的时候，如果请求的结果过长，返回是分块的（trunked），则会乱码）
-        if (isClassic) {
-            loadText()
-        } else {
-            loadTextWithRx()
-        }
+//        //经典书库的文章直接使用Jsoup解析（因为使用Retrofit的时候，如果请求的结果过长，返回是分块的（trunked），则会乱码）
+//        if (isClassic) {
+//            loadText()
+//        } else {
+//            loadTextWithRx()
+//        }
+        loadTextWithRx()
     }
 
     /**
