@@ -18,7 +18,6 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
-import com.lm.ll.spark.util.Spider
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import com.vicpin.krealmextensions.delete
@@ -29,9 +28,6 @@ import io.reactivex.schedulers.Schedulers
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.article_display.*
 import kotlinx.android.synthetic.main.bottom_toolbar_text.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -300,13 +296,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
      * @time 2018-07-10 17:23
      */
     private fun loadData() {
-
-//        //经典书库的文章直接使用Jsoup解析（因为使用Retrofit的时候，如果请求的结果过长，返回是分块的（trunked），则会乱码）
-//        if (isClassic) {
-//            loadText()
-//        } else {
-//            loadTextWithRx()
-//        }
         loadTextWithRx()
     }
 
@@ -346,32 +335,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
                             .setAction("重试") { loadData() }.show()
                 })
     }
-
-    /**
-     * @desc 加载文章正文和评论
-     * @author ll
-     * @time 2018-05-29 19:40
-     */
-    private fun loadText() {
-        @Suppress("DeferredResultUnused")
-        async(UI) {
-
-            //如果正文有内容，则说明是从本地读取（我的收藏）的，不需要再从网上抓取
-            if (currentArticle.text.isNullOrEmpty()) {
-
-                //注意：如果此协程定义在if外部，则它一定会运行，不受if判断的限制，并不是调用await才运行（要理解协程的概念）
-                val deferredLoad = async(CommonPool) {
-                    currentArticle = Spider.scratchClassicEroticaArticleText(currentArticle)
-                }
-
-                deferredLoad.await()
-            }
-
-            updateAdapter()
-            hideProgressbar()
-        }
-    }
-
+    
     /**
      * @desc 更新Recyclerview的Adapter
      * @author ll

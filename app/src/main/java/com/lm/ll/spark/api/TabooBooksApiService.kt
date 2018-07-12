@@ -28,9 +28,6 @@ interface TabooBooksApiService {
     @GET
     fun getArticle(@Url url: String): Observable<String>
 
-    @GET
-    fun getArticleBody(@Url url: String): Observable<ResponseBody>
-
     companion object Factory {
         private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
         private const val TIMEOUT: Long = 50000 //超时时长
