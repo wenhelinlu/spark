@@ -48,7 +48,11 @@ interface TabooBooksApiService {
             return retrofit.create(TabooBooksApiService::class.java)
         }
 
-        //配置okHttpCient
+        /**
+         * @desc 配置okHttpCient
+         * @author lm
+         * @time 2018-07-13 20:59
+         */
         private fun genericClient(): OkHttpClient {
             return OkHttpClient.Builder()
                     .retryOnConnectionFailure(true)

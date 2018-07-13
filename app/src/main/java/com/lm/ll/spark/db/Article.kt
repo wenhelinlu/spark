@@ -78,5 +78,3 @@ data class Article(
         }
     }
 }
-
-//TODO: 在Wiki中记录将RealmList数据Parcelable化的方法

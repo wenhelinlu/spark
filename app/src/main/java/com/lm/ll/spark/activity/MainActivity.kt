@@ -66,16 +66,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-//        fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show()
-//        }
-
-
         //若函数参数对应的函数只有一个参数，在使用时，可以省略参数定义，直接使用“it”代替参数
         fab.setOnClickListener {
-            Snackbar.make(it, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
+                    .setAction("刷新") { loadContent() }.show()
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -332,7 +326,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 }
 
 //TODO: 首页显示论坛列表
-//TODO：增加启动Splash
 //TODO: 检测网络状态，不通时通过Toast提示
 //TODO: 学习Gradle
 //TODO：使用MVVM模式
