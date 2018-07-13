@@ -84,21 +84,30 @@ interface TabooBooksApiService {
                          */
                         val response = chain.proceed(chain.request())
 
-                        /**
-                         * 注意：response.body().string(); 方法只能被调用一次，如果多次调用 response.body().string();
-                         * 则会抛出异常Java.lang.IllegalStateException:closed
-                         * 因为在执行完读取数据之后，IO 流被关闭，如果再次调用此方法，就会抛出上面的异常。
-                         * 而且此方法将响应报文中的主体全部都读到了内存中，如果响应报文主体较大，可能会导致 OOM 异常。
-                         * 所以更推荐使用流的方式获取响应体的内容
-                         */
-                        val source = response.body()!!.source()
-                        source.request(java.lang.Long.MAX_VALUE)
-                        val buffer = source.buffer()
-                        val content = buffer.clone().readString(Charset.forName("gbk"))  //将ResponseBody中的字符以gbk编码解析，重新组装（解决经典文库中文章显示乱码的问题）
-
+                        //获取Response Headers中的ContentType信息
                         val contentType = response.body()!!.contentType()
-                        val body = ResponseBody.create(contentType,content)
-                        response.newBuilder().body(body).build()
+                        //获取ContentType中的charset
+                        var charset = contentType!!.charset()
+                        //如果charset为null，即Response Headers中的Content-Type信息不包含字符编码信息，则以gbk解析
+                        if (charset == null) {
+                            /**
+                             * 注意：response.body().string(); 方法只能被调用一次，如果多次调用 response.body().string();
+                             * 则会抛出异常Java.lang.IllegalStateException:closed
+                             * 因为在执行完读取数据之后，IO 流被关闭，如果再次调用此方法，就会抛出上面的异常。
+                             * 而且此方法将响应报文中的主体全部都读到了内存中，如果响应报文主体较大，可能会导致 OOM 异常。
+                             * 所以更推荐使用流的方式获取响应体的内容
+                             */
+                            val source = response.body()!!.source()
+                            source.request(java.lang.Long.MAX_VALUE)
+                            val buffer = source.buffer()
+                            val content = buffer.clone().readString(Charset.forName("gbk"))  //将ResponseBody中的字符以gbk编码解析，重新组装（解决经典文库中文章显示乱码的问题）
+
+                            //重新生成ResponseBody
+                            val body = ResponseBody.create(contentType, content)
+                            response.newBuilder().body(body).build()
+                        } else {
+                            chain.proceed(chain.request())
+                        }
                     }
                     .addInterceptor(getLoggingInterceptor())
                     .build()
