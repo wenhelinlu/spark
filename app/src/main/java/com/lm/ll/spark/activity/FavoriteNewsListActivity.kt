@@ -1,23 +1,30 @@
 package com.lm.ll.spark.activity
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
+import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
+import com.lm.ll.spark.repository.TabooArticlesRepository
+import com.lm.ll.spark.util.PULL_REFRESH_DISTANCE
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.vicpin.krealmextensions.querySorted
-import io.realm.Sort
+import com.uber.autodispose.kotlin.autoDisposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
+import retrofit2.HttpException
+import java.net.ConnectException
+import java.util.concurrent.TimeoutException
+import javax.net.ssl.SSLHandshakeException
 
 /**
  * 作者：Created by ll on 2018-06-07 17:15.
@@ -42,36 +49,17 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
 
         supportActionBar!!.title = this.getString(R.string.action_favorite)
 
+        //下拉刷新进度条颜色
+        swipeRefreshEliteList.setColorSchemeResources(R.color.md_teal_500, R.color.md_orange_500, R.color.md_light_blue_500)
+        //触发刷新的下拉距离
+        swipeRefreshEliteList.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
+
         val linearLayoutManager = LinearLayoutManager(this@FavoriteNewsListActivity)
 
         this.recyclerViewEliteList.addItemDecoration(SolidLineItemDecoration(this@FavoriteNewsListActivity))
         this.recyclerViewEliteList.layoutManager = linearLayoutManager
 
-        loadContent()
-//        loadDataWithRx()
-    }
-
-    /**
-     * @desc 加载文章列表
-     * @author ll
-     * @time 2018-05-29 19:40
-     */
-    private fun loadContent() {
-        val deferredLoad = async(CommonPool) {
-            //按插入时间降序排列
-            articleList = Article().querySorted("insertTime", Sort.DESCENDING) as ArrayList<Article>
-        }
-
-        async(UI) {
-            swipeRefreshEliteList.isRefreshing = true
-            deferredLoad.await()
-            adapter = ArticleListAdapter(this@FavoriteNewsListActivity, articleList)
-            this@FavoriteNewsListActivity.recyclerViewEliteList.adapter = adapter
-            this@FavoriteNewsListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
-
-            //停止刷新
-            swipeRefreshEliteList.isRefreshing = false
-        }
+        loadDataWithRx()
     }
 
     /**
@@ -80,34 +68,34 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
      * @time 2018-07-12 21:50
      */
     private fun loadDataWithRx() {
-//        val repository = TabooArticlesRepository(TabooBooksApiService.create())
-//        repository.getFavoriteArticleList()
-//                .subscribeOn(Schedulers.io())
-//                .doOnSubscribe {
-//                    showProgressbar()
-//                }
-//                .subscribeOn(AndroidSchedulers.mainThread())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .doAfterTerminate {
-//                    hideProgressbar()
-//                }
-////                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-//                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
-//                .subscribe({ result ->
-//                    articleList = result
-//                    updateAdapter()
-//                }, { error ->
-//                    //异常处理
-//                    val msg =
-//                            when (error) {
-//                                is HttpException, is SSLHandshakeException,is ConnectException -> "网络连接异常"
-//                                is TimeoutException -> "网络连接超时"
-//                                is IndexOutOfBoundsException -> "解析异常"
-//                                else -> error.toString()
-//                            }
-//                    Snackbar.make(articleLayout, msg, Snackbar.LENGTH_LONG)
-//                            .setAction("重试") { loadDataWithRx() }.show()
-//                })
+        val repository = TabooArticlesRepository(TabooBooksApiService.create())
+        repository.getFavoriteArticleList()
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe {
+                    showProgressbar()
+                }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally {
+                    hideProgressbar()
+                }
+                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
+                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
+                .subscribe({ result ->
+                    articleList = ArrayList(result)
+                    updateAdapter()
+                }, { error ->
+                    //异常处理
+                    val msg =
+                            when (error) {
+                                is HttpException, is SSLHandshakeException,is ConnectException -> "网络连接异常"
+                                is TimeoutException -> "网络连接超时"
+                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
+                                else -> error.toString()
+                            }
+                    Snackbar.make(elite_layout, msg, Snackbar.LENGTH_LONG)
+                            .setAction("重试") { loadDataWithRx() }.show()
+                })
     }
 
     /**

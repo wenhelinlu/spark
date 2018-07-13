@@ -328,7 +328,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
                             when (error) {
                                 is HttpException, is SSLHandshakeException,is ConnectException -> "网络连接异常"
                                 is TimeoutException -> "网络连接超时"
-                                is IndexOutOfBoundsException -> "解析异常"
+                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
                                 else -> error.toString()
                             }
                     Snackbar.make(articleLayout, msg, Snackbar.LENGTH_LONG)

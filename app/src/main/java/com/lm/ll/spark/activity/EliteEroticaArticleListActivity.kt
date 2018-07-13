@@ -41,7 +41,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
 
         supportActionBar!!.title = getString(R.string.action_eliteArea)
 
-        swipeRefreshEliteList.setColorSchemeResources(R.color.colorPrimary, R.color.md_orange_500, R.color.md_teal_400)
+        swipeRefreshEliteList.setColorSchemeResources(R.color.md_teal_500, R.color.md_orange_500, R.color.md_teal_400)
         swipeRefreshEliteList.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
 
         swipeRefreshEliteList.setOnRefreshListener {

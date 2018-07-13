@@ -380,7 +380,7 @@ class Spider {
                 val elements = doc.getElementsByTag("p")
                 val stringBuilder = StringBuilder()
                 for (e in elements) {
-                    if (e.childNodeSize() == 2) {
+                    if (e.childNodeSize() == 2 && e.childNodes()[0] is TextNode) {
                         stringBuilder.appendln((e.childNodes()[0] as TextNode).text())
                     }
                 }
