@@ -22,7 +22,7 @@ class Spider {
         private const val paragraphFlagPattern = "\\r\\n\\s*?\\r\\n" //匹配段落标记符的正则表达式模式串，可匹配\r\n\r\n,\r\n \r\n, \r\n   \r\n等两个\r\n之间包含0到多个空格的情况
         private const val paragraphFlag = "\r\n\r\n" //段落标记符
         private const val newlineFlagPattern = "\\s*?\\r\\n\\s*?" //匹配换行标记符的正则表达式的模式串，可匹配\r\n, \r\n ,\r\n 等\r\n两边有0到多个空格的情况
-        private const val emptylineFlagPattern = " ^(\\s*)\\n" //匹配空行标记符的正则表达式的模式串
+        private const val emptyLineFlagPattern = " (\\s*)\\n" //匹配空行标记符的正则表达式的模式串
         private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
 
         //region 使用Jsoup直接解析网页
@@ -130,10 +130,12 @@ class Spider {
                  */
 
                 val originalText = parseText(body[0])
-                val containsParagraphFlag = Regex(paragraphFlagPattern).containsMatchIn(originalText) //是否包含段落标记（\r\n\r\n）
+                //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
+                val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(originalText, "")
+                val containsParagraphFlag = Regex(paragraphFlagPattern).containsMatchIn(removedEmptyLineText) //是否包含段落标记（\r\n\r\n）
                 //如果包含段落标记，则按照规则清除换行标记，保留段落标记
                 if (containsParagraphFlag) {
-                    val text = Regex(paragraphFlagPattern).replace(parseText(body[0]), replacerWord)
+                    val text = Regex(paragraphFlagPattern).replace(removedEmptyLineText, replacerWord)
                     //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
                     article.text = Regex(newlineFlagPattern).replace(text, "").replace(replacerWord, paragraphFlag, false)
                 } else {
@@ -336,9 +338,10 @@ class Spider {
                  */
 
                 val originalText = parseText(body[0])
-                //先去除空行标记
-                val removedEmptyLineText = Regex(emptylineFlagPattern).replace(parseText(body[0]), "")
-                val containsParagraphFlag = Regex(paragraphFlagPattern).containsMatchIn(removedEmptyLineText) //是否包含段落标记（\r\n\r\n）
+                //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
+                val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(originalText, "")
+                //判断是否包含段落标记（\r\n\r\n）
+                val containsParagraphFlag = Regex(paragraphFlagPattern).containsMatchIn(removedEmptyLineText)
                 //如果包含段落标记，则按照规则清除换行标记，保留段落标记
                 if (containsParagraphFlag) {
                     val text = Regex(paragraphFlagPattern).replace(removedEmptyLineText, replacerWord)
@@ -347,7 +350,6 @@ class Spider {
                 } else {
                     article.text = originalText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
                 }
-
 
                 val commentList = RealmList<Comment>()
                 //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
@@ -379,7 +381,6 @@ class Spider {
          */
         fun scratchClassicEroticaArticleText(doc: Document, article: Article): Article {
             try {
-//                val doc1 = getDocument(article.url!!)
                 val elements = doc.getElementsByTag("p")
                 val stringBuilder = StringBuilder()
                 for (e in elements) {
