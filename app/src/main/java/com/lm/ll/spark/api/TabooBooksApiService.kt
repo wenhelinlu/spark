@@ -78,7 +78,7 @@ interface TabooBooksApiService {
                          *
                          *
                          *  经典文库中的文字返回的Response Headers中的Content-Type信息不包含字符编码信息（实际应该是gb2312或者是gbk）
-                         *  okhttp3没有检测到字符编码信息，自动以utf-8方式解析，导致最终结果是乱码。
+                         *  okhttp3没有检测到字符编码信息，自动以UTF-8方式解析，导致最终结果是乱码。
                          *  所以添加此interceptor，将responsebody中的字符以gbk编码解析，然后重新组装成新的Response                     *
                          *
                          */

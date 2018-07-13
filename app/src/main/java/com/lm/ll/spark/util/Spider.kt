@@ -254,12 +254,10 @@ class Spider {
                 val children: Elements = doc.getElementsByClass("dc_bar")
 
                 val element = children[1].childNodes()[1]
-                for (node in element.childNodes()) {
-                    val efficientNode = node.childNodes()[1]
-                    val link = efficientNode.childNodes()[1].childNodes()[0] as Element
-
+                val links = (element as Element).getElementsByTag("a")
+                for (link in links) {
                     val article = Article()
-                    article.url = "${efficientNode.baseUri().substringBefore("md")}${link.attr("href")}"
+                    article.url = "${link.baseUri().substringBefore("md")}${link.attr("href")}"
                     article.title = link.text().convertToSimplifiedChinese()
                     article.isClassical = 1
 
