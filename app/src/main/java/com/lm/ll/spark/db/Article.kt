@@ -26,6 +26,8 @@ data class Article(
         var isFavorite: Int = 0,  //是否被收藏, 1表示已收藏，0表示未收藏
         var isArticle: Int = 0, //是否是Article，0表示Article，1表示Comment
         var isClassical: Int = 0, //是否是经典书库文章，0表示否，1表示是（解析正文方式不同）
+        var leavePosition: Int = 0, //当前RecycelrView中第一个可见的item的位置
+        var offset: Int = 0, //与该view的顶部的偏移量
         var comments: RealmList<Comment> = RealmList() //此文章的评论列表
 ) : Parcelable, RealmObject() {
 
@@ -41,6 +43,8 @@ data class Article(
         isFavorite = parcel.readInt()
         isArticle = parcel.readInt()
         isClassical = parcel.readInt()
+        leavePosition = parcel.readInt()
+        offset = parcel.readInt()
 
         //实现RealmList的Parcelable处理
         val mList = RealmList<Comment>()
@@ -60,6 +64,8 @@ data class Article(
         dest.writeInt(isFavorite)
         dest.writeInt(isArticle)
         dest.writeInt(isClassical)
+        dest.writeInt(leavePosition)
+        dest.writeInt(offset)
         dest.writeTypedList(comments) //实现RealmList的Parcelable处理
     }
 

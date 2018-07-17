@@ -53,6 +53,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
     //使用AutoDispose解除Rxjava2订阅
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
+    private val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
+
     /**
      * @desc 用于延迟触发隐藏状态栏、导航栏等操作
      * @author ll
@@ -124,6 +126,21 @@ class ArticleDisplayActivity : AppCompatActivity() {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(0)  //default is 100
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val position = linearLayoutManager.findFirstVisibleItemPosition()
+
+        //获取与该view的顶部的偏移量
+        var offset = 0
+        val currentView = linearLayoutManager.findViewByPosition(position)
+        if (currentView != null) {
+            offset = currentView.top
+        }
+        currentArticle.leavePosition = position
+        currentArticle.offset = offset
+        currentArticle.save()
     }
 
     /**
@@ -284,7 +301,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
         //评论列表添加点线分隔线
         this.recyclerViewArticle.addItemDecoration(DashLineItemDecoration(10f, 2))
         this.recyclerViewArticle.layoutManager = linearLayoutManager
@@ -326,7 +342,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
                     //异常处理
                     val msg =
                             when (error) {
-                                is HttpException, is SSLHandshakeException,is ConnectException -> "网络连接异常"
+                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
                                 is TimeoutException -> "网络连接超时"
                                 is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
                                 else -> error.toString()
@@ -352,7 +368,10 @@ class ArticleDisplayActivity : AppCompatActivity() {
         //如果存在，说明此文章已被收藏并存入数据库中
         if (find != null) {
             currentArticle.isFavorite = 1
+            currentArticle.leavePosition = find.leavePosition
+            currentArticle.offset = find.offset
         }
+        linearLayoutManager.scrollToPositionWithOffset(currentArticle.leavePosition, currentArticle.offset)
 
         //根据文章收藏状态显示不同的图标
         if (currentArticle.isFavorite == 1) {
