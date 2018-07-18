@@ -295,7 +295,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         //滚动到正文结束位置
         iv_scrollDown.setOnClickListener {
-            this.linearLayoutManager.scrollToPositionWithOffset(1, 0)
+            this.linearLayoutManager.scrollToPositionWithOffset(this.recyclerViewArticle.adapter.itemCount - 1, 0)
         }
 
         //在浏览器中打开
