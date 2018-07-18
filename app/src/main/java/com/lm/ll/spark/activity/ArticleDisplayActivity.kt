@@ -288,14 +288,14 @@ class ArticleDisplayActivity : AppCompatActivity() {
             Toast.makeText(this, if (currentArticle.isFavorite == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
         }
 
-        //滚动到最顶端
+        //滚动到正文开始位置
         iv_scrollUp.setOnClickListener {
-            this.recyclerViewArticle.scrollToPosition(0)
+            this.linearLayoutManager.scrollToPositionWithOffset(0,0)
         }
 
-        //滚动到最底端
+        //滚动到正文结束位置
         iv_scrollDown.setOnClickListener {
-            this.recyclerViewArticle.scrollToPosition(adapter.itemCount - 1)
+            this.linearLayoutManager.scrollToPositionWithOffset(1, 0)
         }
 
         //在浏览器中打开
