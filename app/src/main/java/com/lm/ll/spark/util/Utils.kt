@@ -96,5 +96,11 @@ const val TIME_OUT = 50000
 //存储夜间模式设置的键
 const val NIGHT_MODE = "NIGHT_MODE"
 
+//常规Log的tag
+const val LOG_TAG_COMMON = "SPARK_LOG_COMMON"
+
+//okhttp3的log tag
+const val LOG_TAG_OKHTTP3 = "SPARK_LOG_OKHTTP3"
+
 
 //endregion

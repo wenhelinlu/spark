@@ -52,7 +52,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private lateinit var adapter: ArticleAdapter
     //使用AutoDispose解除Rxjava2订阅
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
-
+    //recyclerview的layoutmanager
     private val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
 
     /**
@@ -128,6 +128,11 @@ class ArticleDisplayActivity : AppCompatActivity() {
         delayedHide(0)  //default is 100
     }
 
+    /**
+     * @desc 覆写此方法，退出阅读时保存阅读位置到数据库中
+     * @author ll
+     * @time 2018-07-18 11:45
+     */
     override fun onPause() {
         super.onPause()
         val position = linearLayoutManager.findFirstVisibleItemPosition()
@@ -371,6 +376,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             currentArticle.leavePosition = find.leavePosition
             currentArticle.offset = find.offset
         }
+
         linearLayoutManager.scrollToPositionWithOffset(currentArticle.leavePosition, currentArticle.offset)
 
         //根据文章收藏状态显示不同的图标

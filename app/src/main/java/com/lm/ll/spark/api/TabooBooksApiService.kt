@@ -2,6 +2,7 @@ package com.lm.ll.spark.api
 
 import android.util.Log
 import com.lm.ll.spark.BuildConfig
+import com.lm.ll.spark.util.LOG_TAG_OKHTTP3
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -115,7 +116,7 @@ interface TabooBooksApiService {
 
         private fun getLoggingInterceptor(): HttpLoggingInterceptor {
             val interceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
-                Log.d("SPARK_LOG", it)
+                Log.d(LOG_TAG_OKHTTP3, it)
             })
             interceptor.level =
                     if (BuildConfig.DEBUG) {

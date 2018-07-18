@@ -44,6 +44,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:background="@color/transparent"
+            android:descendantFocusability="blocksDescendants"
             android:clipToPadding="true" />
     </LinearLayout>
 
