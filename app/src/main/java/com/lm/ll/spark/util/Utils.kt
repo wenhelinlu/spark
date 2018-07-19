@@ -1,8 +1,12 @@
 package com.lm.ll.spark.util
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.support.v7.app.AppCompatDelegate
-import com.hankcs.hanlp.HanLP
+import android.widget.Toast
+import com.lm.ll.spark.application.InitApplication
+import com.zqc.opencc.android.lib.ChineseConverter
+import com.zqc.opencc.android.lib.ConversionType
 import java.text.SimpleDateFormat
 
 
@@ -33,11 +37,14 @@ fun String.convertToSimplifiedChinese(): String {
     return if (this.isBlank()) {
         this
     } else {
-        HanLP.convertToSimplifiedChinese(this)
+        ChineseConverter.convert(this, ConversionType.T2S, InitApplication.getInstance())
     }
 }
 
-
+//简化的Toast方法
+fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT){
+    Toast.makeText(this,message,duration).show()
+}
 
 //endregion
 

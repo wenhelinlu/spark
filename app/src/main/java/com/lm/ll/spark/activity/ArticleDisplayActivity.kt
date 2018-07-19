@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
@@ -18,6 +17,7 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
+import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import com.vicpin.krealmextensions.delete
@@ -285,7 +285,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             }
 
             iv_favorite.setImageResource(if (currentArticle.isFavorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite)
-            Toast.makeText(this, if (currentArticle.isFavorite == 1) "收藏成功" else "取消收藏", Toast.LENGTH_SHORT).show()
+            toast(if (currentArticle.isFavorite == 1) "收藏成功" else "取消收藏")
         }
 
         //滚动到正文开始位置
