@@ -23,6 +23,7 @@ data class Comment(
         var textLength: String? = null, //文章字数
         var readCount: String? = null, //阅读数
         var text: String? = null, //文章正文
+        var depth: Int = 0, //评论深度（用于缩进显示）
         var insertTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) //文章收藏入库时间
 ) : Parcelable, RealmObject() {
 
@@ -34,6 +35,7 @@ data class Comment(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
+            parcel.readInt(),
             parcel.readString())
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
@@ -44,6 +46,7 @@ data class Comment(
         dest.writeString(textLength)
         dest.writeString(readCount)
         dest.writeString(text)
+        dest.writeInt(depth)
         dest.writeString(insertTime)
     }
 
