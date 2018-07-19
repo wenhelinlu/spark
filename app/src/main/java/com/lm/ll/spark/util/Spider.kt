@@ -284,7 +284,7 @@ class Spider {
                         stringBuilder.appendln((e.childNodes()[0] as TextNode).text())
                     }
                 }
-                article.text = stringBuilder.toString()
+                article.text = stringBuilder.toString().convertToSimplifiedChinese()
                 return article
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
@@ -386,7 +386,7 @@ class Spider {
                         stringBuilder.appendln((e.childNodes()[0] as TextNode).text())
                     }
                 }
-                article.text = stringBuilder.toString()
+                article.text = stringBuilder.toString().convertToSimplifiedChinese()
                 return article
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
