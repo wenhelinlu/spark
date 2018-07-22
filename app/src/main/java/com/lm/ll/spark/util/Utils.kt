@@ -10,7 +10,6 @@ import com.zqc.opencc.android.lib.ConversionType
 import java.text.SimpleDateFormat
 
 
-
 //region 扩展方法
 
 
@@ -42,8 +41,8 @@ fun String.convertToSimplifiedChinese(): String {
 }
 
 //简化的Toast方法
-fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT){
-    Toast.makeText(this,message,duration).show()
+fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
+    Toast.makeText(this, message, duration).show()
 }
 
 //endregion
@@ -66,6 +65,15 @@ fun switchDayNightMode(isNightMode: Boolean) {
     } else {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
+}
+
+fun getPlaceholder(length: Int): String {
+    val l = (if (length == 1) 0 else length) * 10
+    val sb = StringBuilder()
+    for (i in 0..l) {
+        sb.append(" ")
+    }
+    return sb.toString()
 }
 
 

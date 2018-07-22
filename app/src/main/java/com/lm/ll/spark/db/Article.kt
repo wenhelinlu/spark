@@ -28,6 +28,7 @@ data class Article(
         var isClassical: Int = 0, //是否是经典书库文章，0表示否，1表示是（解析正文方式不同）
         var leavePosition: Int = 0, //当前RecycelrView中第一个可见的item的位置
         var offset: Int = 0, //与该view的顶部的偏移量
+        var depth: Int = 0, //列表层级，控制评论列表的缩进
         var comments: RealmList<Comment> = RealmList() //此文章的评论列表
 ) : Parcelable, RealmObject() {
 

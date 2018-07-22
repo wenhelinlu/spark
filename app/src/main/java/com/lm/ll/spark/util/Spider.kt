@@ -1,6 +1,5 @@
 package com.lm.ll.spark.util
 
-import android.util.Log
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import io.reactivex.exceptions.Exceptions
@@ -8,6 +7,7 @@ import io.realm.RealmList
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
 
@@ -24,6 +24,9 @@ class Spider {
         private const val newlineFlagPattern = "\\s*?\\r\\n\\s*?" //匹配换行标记符的正则表达式的模式串，可匹配\r\n, \r\n ,\r\n 等\r\n两边有0到多个空格的情况
         private const val emptyLineFlagPattern = " (\\s*)\\n" //匹配空行标记符的正则表达式的模式串
         private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
+
+        private var depth = 0
+        private var depth_tmp = 0
 
         //region 使用Jsoup直接解析网页
         /**
@@ -50,7 +53,6 @@ class Spider {
         fun scratchArticleList(webUrl: String): ArrayList<Article> {
             try {
                 val mList = ArrayList<Article>()
-                Log.d("加载列表", webUrl)
                 val doc = getDocument(webUrl)
                 val titleLinks: Elements = doc.select("div#d_list")
                 for (e: Element in titleLinks) {
@@ -191,25 +193,50 @@ class Spider {
             try {
                 val list = RealmList<Comment>()
                 for (child in ul.childNodes()) {
-                    val childNodes = child.childNodes()
-                    val comment = Comment()
-                    val link: Element = childNodes[0] as Element
-                    val uri = link.attr("href")
-                    comment.url = "$BASE_URL$uri"
-                    comment.title = link.text().convertToSimplifiedChinese()
-                    val authorStr = (childNodes[1] as TextNode).text()
-                    val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
-                    val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
-                    comment.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
-                    comment.author = "作者:$author"
-                    comment.date = (childNodes[2] as Element).text() //日期
+                    depth = 0
+                    depth_tmp = 0
 
-                    list.add(comment)
+                    val subList = RealmList<Comment>()
+                    parseCommentsRecursive(child, subList)
+                    subList.reverse()
+                    list.addAll(subList)
                 }
                 return list
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }
+        }
+
+        /**
+         * @desc 递归解析文章评论
+         * @author lm
+         * @time 2018-07-21 22:20
+         */
+        private fun parseCommentsRecursive(ul: Node, list: RealmList<Comment>) {
+            if (ul.childNodes()[3].childNodes().count() > 0) {
+                for (sub in ul.childNodes()[3].childNodes()) {
+                    depth++
+                    parseCommentsRecursive(sub, list)
+                    depth--
+                }
+            }
+
+
+            val childNodes = ul.childNodes()
+            val comment = Comment()
+            val link: Element = childNodes[0] as Element
+            val uri = link.attr("href")
+            comment.url = "$BASE_URL$uri"
+            comment.title = link.text().convertToSimplifiedChinese()
+            val authorStr = (childNodes[1] as TextNode).text()
+            val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
+            val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
+            comment.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
+            comment.author = "作者:$author"
+            comment.date = (childNodes[2] as Element).text() //日期
+            comment.depth = depth
+
+            list.add(comment)
         }
 
         /**

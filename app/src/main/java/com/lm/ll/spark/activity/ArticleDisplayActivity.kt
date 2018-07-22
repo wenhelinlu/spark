@@ -436,6 +436,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             temp.readCount = comment.readCount
             temp.text = comment.text
             temp.isArticle = 1
+            temp.depth = comment.depth
 
             list.add(temp) // 评论布局数据
         }

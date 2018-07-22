@@ -13,6 +13,7 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
+import com.lm.ll.spark.util.getPlaceholder
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.article_item.view.*
 
@@ -38,6 +39,7 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
         val vh = holder as ArticleCommentViewHolder
         with(vh) {
             items[position]?.let {
+                commentPlaceholder.text = getPlaceholder(it.depth)
                 commentTitle.text = it.title
 
                 commentAuthor.text = it.author
@@ -57,6 +59,7 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
     companion object {
         class ArticleCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val commentItem: ConstraintLayout = itemView.article_item
+            var commentPlaceholder: TextView = itemView.article_placeholder
             val commentTitle: TextView = itemView.article_title
             val commentAuthor: TextView = itemView.article_author
             val commentDate: TextView = itemView.article_date
