@@ -68,7 +68,7 @@ fun switchDayNightMode(isNightMode: Boolean) {
 }
 
 fun getPlaceholder(length: Int): String {
-    val l = (if (length == 1) 0 else length) * 10
+    val l = length * 10
     val sb = StringBuilder()
     for (i in 0..l) {
         sb.append(" ")

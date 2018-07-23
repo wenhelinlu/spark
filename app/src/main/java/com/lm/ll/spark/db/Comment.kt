@@ -64,22 +64,4 @@ data class Comment(
             return arrayOfNulls(size)
         }
     }
-
-    /**
-     * @desc 将Comment转换成Article，在打开评论链接时使用
-     * @author ll
-     * @time 2018-06-22 12:31
-     */
-    fun toArticle(): Article{
-        val article = Article()
-        article.url = this.url
-        article.author = this.author
-        article.insertTime = this.insertTime
-        article.text = this.text
-        article.textLength = this.textLength
-        article.readCount = this.readCount
-        article.date = this.date
-
-        return article
-    }
 }

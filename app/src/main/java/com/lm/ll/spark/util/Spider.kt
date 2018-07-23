@@ -26,7 +26,6 @@ class Spider {
         private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
 
         private var depth = 0
-        private var depth_tmp = 0
 
         //region 使用Jsoup直接解析网页
         /**
@@ -193,8 +192,7 @@ class Spider {
             try {
                 val list = RealmList<Comment>()
                 for (child in ul.childNodes()) {
-                    depth = 0
-                    depth_tmp = 0
+                    depth = 0  //每个评论初始层级都置为0
 
                     val subList = RealmList<Comment>()
                     parseCommentsRecursive(child, subList)
@@ -215,12 +213,11 @@ class Spider {
         private fun parseCommentsRecursive(ul: Node, list: RealmList<Comment>) {
             if (ul.childNodes()[3].childNodes().count() > 0) {
                 for (sub in ul.childNodes()[3].childNodes()) {
-                    depth++
+                    depth++   //子评论层级加1
                     parseCommentsRecursive(sub, list)
-                    depth--
+                    depth--  //从子评论返回上一级评论时，层级减1
                 }
             }
-
 
             val childNodes = ul.childNodes()
             val comment = Comment()
@@ -235,6 +232,8 @@ class Spider {
             comment.author = "作者:$author"
             comment.date = (childNodes[2] as Element).text() //日期
             comment.depth = depth
+
+//            Log.d(LOG_TAG_COMMON,"depth = $depth , ${getPlaceholder(depth)}${comment.title}")
 
             list.add(comment)
         }

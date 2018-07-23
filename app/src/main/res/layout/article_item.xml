@@ -13,7 +13,7 @@
         android:background="@color/transparent"
         android:maxLines="2"
         android:textAlignment="viewStart"
-        android:textColor="?attr/textColor"
+        android:textColor="?attr/dividerColor"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
