@@ -86,7 +86,7 @@ class Spider {
                     article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
                     val authorStr = (childNodes[1] as TextNode).text()
                     val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
-                    val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
+                    val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).lastOrNull() //字节数
                     article.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
                     article.author = "作者:$author"
                     article.date = (childNodes[2] as Element).text() //日期
@@ -227,7 +227,10 @@ class Spider {
             comment.title = link.text().convertToSimplifiedChinese()
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(') //作者名称
-            val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).firstOrNull() //字节数
+
+            //某些author名称中带有数字，所以使用Regex筛选出的数字有多组，取最后一组数字为字节数（例如authorStr：  - frost1224 (0 bytes)，字节数为0，而不是前面的1224）
+            val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).lastOrNull()
+//            Log.d(LOG_TAG_COMMON,"wordCount = $wordCount , authorStr = $authorStr")
             comment.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
             comment.author = "作者:$author"
             comment.date = (childNodes[2] as Element).text() //日期
