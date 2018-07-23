@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.activity.ArticleDisplayActivity
+import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.getPlaceholder
@@ -39,8 +40,12 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
         val vh = holder as ArticleCommentViewHolder
         with(vh) {
             items[position]?.let {
+                //根据层级设置缩进效果
                 commentPlaceholder.text = getPlaceholder(it.depth)
                 commentTitle.text = it.title
+
+                //设置评论标题颜色
+                commentTitle.setTextColor(InitApplication.getInstance().getColor(R.color.md_blue_grey_700))
 
                 commentAuthor.text = it.author
                 commentDate.text = it.date

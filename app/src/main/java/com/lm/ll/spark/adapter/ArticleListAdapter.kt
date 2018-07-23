@@ -37,7 +37,7 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
         if (text.isEmpty()) {
             items.addAll(listBackup)
         } else {
-            items.addAll(listBackup.filter { x -> (x.title!!.contains(text, true) || x.author!!.contains(text, true)) } as ArrayList<Article>)
+            items.addAll(listBackup.filter { x -> (x.title!!.contains(text, true) || x.author.contains(text, true)) } as ArrayList<Article>)
         }
         notifyDataSetChanged()
     }

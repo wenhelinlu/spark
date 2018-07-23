@@ -17,12 +17,12 @@ import java.time.format.DateTimeFormatter
 @Poko
 data class Comment(
         @PrimaryKey var url: String? = null, //url链接
-        var title: String? = null, //标题
-        var author: String? = null, //作者
-        var date: String? = null, //文章发表日期
-        var textLength: String? = null, //文章字数
-        var readCount: String? = null, //阅读数
-        var text: String? = null, //文章正文
+        var title: String = "", //标题
+        var author: String = "", //作者
+        var date: String = "", //文章发表日期
+        var textLength: String = "", //文章字数
+        var readCount: String = "", //阅读数
+        var text: String = "", //文章正文
         var depth: Int = 0, //评论深度（用于缩进显示）
         var insertTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) //文章收藏入库时间
 ) : Parcelable, RealmObject() {

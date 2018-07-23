@@ -17,11 +17,11 @@ import java.time.format.DateTimeFormatter
 data class Article(
         @PrimaryKey var url: String? = null, //url链接
         var title: String? = null, //标题
-        var author: String? = null, //作者
-        var date: String? = null, //文章发表日期
-        var textLength: String? = null, //文章字数
-        var readCount: String? = null, //阅读数
-        var text: String? = null, //文章正文
+        var author: String = "", //作者
+        var date: String = "", //文章发表日期
+        var textLength: String = "", //文章字数
+        var readCount: String = "", //阅读数
+        var text: String = "", //文章正文
         var insertTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), //文章收藏入库时间
         var isFavorite: Int = 0,  //是否被收藏, 1表示已收藏，0表示未收藏
         var isArticle: Int = 0, //是否是Article，0表示Article，1表示Comment
