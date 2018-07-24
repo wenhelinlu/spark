@@ -10,8 +10,6 @@ apply plugin: 'kotlin-noarg'
 
 apply plugin: 'kotlin-allopen'
 
-apply plugin: 'realm-android'
-
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -54,9 +52,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'org.jsoup:jsoup:1.11.3'
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     //注意：如果是Java工程则使用kotlinx-coroutines-core
-    implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+
     implementation 'com.android.support:design:27.1.1'
 
     //opencc-android库，简繁转换
@@ -71,8 +69,11 @@ dependencies {
     //带有加载效果的TextView和ImageView控件
 //    implementation 'com.elyeproj.libraries:loaderviewlibrary:1.4.1'
 
-    //realm数据库的kotlin插件
-    implementation "com.github.vicpinm:krealmextensions:2.2.0"
+
+    //objectbox
+    debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectbox_version"
+    releaseImplementation "io.objectbox:objectbox-android:$objectbox_version"
+    releaseImplementation "io.objectbox:objectbox-kotlin:$objectbox_version"
 
     //ReactiveX series
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
@@ -99,6 +100,10 @@ dependencies {
     implementation "com.uber.autodispose:autodispose-android-archcomponents-test-kotlin:$uber_autodispose_version"
     implementation "com.uber.autodispose:autodispose-rxlifecycle:$uber_autodispose_version"
 }
+
+//这个要放在dependencies块的后面，不然build时会报"More than one file was found with OS independent path 'lib/armeabi-v7a/libobjectbox.so'"错误
+apply plugin: 'io.objectbox'
+
 
 noArg {
     annotation("com.lm.ll.spark.annotation.Poko")

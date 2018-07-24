@@ -15,7 +15,6 @@ import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.getPlaceholder
-import io.realm.RealmList
 import kotlinx.android.synthetic.main.article_item.view.*
 
 /**
@@ -23,7 +22,7 @@ import kotlinx.android.synthetic.main.article_item.view.*
  * 作者：Created by ll on 2018-07-06 17:34.
  * 邮箱：wenhelinlu@gmail.com
  */
-class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<RealmList<Article>>() {
+class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
     private val inflater: LayoutInflater = activity.layoutInflater
     private val context = activity.applicationContext
 
@@ -31,15 +30,15 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
         return ArticleCommentViewHolder(inflater.inflate(R.layout.article_item, parent, false))
     }
 
-    override fun isForViewType(items: RealmList<Article>, position: Int): Boolean {
+    override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {
         //是评论（即isArticle=1）且author有值时使用此布局
-        return items[position] != null && items[position]!!.isArticle == 1 && !items[position]!!.author.isNullOrEmpty()
+        return items[position].articleFlag == 1 && !items[position].author.isEmpty()
     }
 
-    override fun onBindViewHolder(items: RealmList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(items: ArrayList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val vh = holder as ArticleCommentViewHolder
         with(vh) {
-            items[position]?.let {
+            items[position].let {
                 //根据层级设置缩进效果
                 commentPlaceholder.text = getPlaceholder(it.depth)
                 commentTitle.text = it.title
@@ -54,7 +53,7 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
 
                 commentItem.setOnClickListener {
                     val intent = Intent(context, ArticleDisplayActivity::class.java)
-                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position]!!)
+                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
                     context.startActivity(intent)
                 }
             }

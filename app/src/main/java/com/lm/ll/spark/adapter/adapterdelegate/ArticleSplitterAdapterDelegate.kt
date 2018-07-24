@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
-import io.realm.RealmList
 
 
 /**
@@ -16,18 +15,18 @@ import io.realm.RealmList
  * 作者：Created by ll on 2018-07-06 17:33.
  * 邮箱：wenhelinlu@gmail.com
  */
-class ArticleSplitterAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<RealmList<Article>>() {
+class ArticleSplitterAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
     private var inflater: LayoutInflater = activity.layoutInflater
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
         return ArticleSplitterViewHolder(inflater.inflate(R.layout.article_item_splitter, parent, false))
     }
 
-    override fun isForViewType(items: RealmList<Article>, position: Int): Boolean {
+    override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {
         return items[position] == null
     }
 
-    override fun onBindViewHolder(items: RealmList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(items: ArrayList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
 
     }
 

@@ -2,9 +2,8 @@ package com.lm.ll.spark.db
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.lm.ll.spark.annotation.Poko
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
+import io.objectbox.annotation.Entity
+import io.objectbox.annotation.Id
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -14,9 +13,11 @@ import java.time.format.DateTimeFormatter
  * 作者：Created by ll on 2018-06-22 10:42.
  * 邮箱：wenhelinlu@gmail.com
  */
-@Poko
+
+@Entity
 data class Comment(
-        @PrimaryKey var url: String? = null, //url链接
+        @Id var id: Long = 0, //objectbox内部主键
+        var url: String? = null, //url链接
         var title: String = "", //标题
         var author: String = "", //作者
         var date: String = "", //文章发表日期
@@ -25,9 +26,10 @@ data class Comment(
         var text: String = "", //文章正文
         var depth: Int = 0, //评论深度（用于缩进显示）
         var insertTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) //文章收藏入库时间
-) : Parcelable, RealmObject() {
+) : Parcelable{
 
     constructor(parcel: Parcel) : this(
+            parcel.readLong(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -39,6 +41,7 @@ data class Comment(
             parcel.readString())
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeLong(id)
         dest.writeString(url)
         dest.writeString(title)
         dest.writeString(author)

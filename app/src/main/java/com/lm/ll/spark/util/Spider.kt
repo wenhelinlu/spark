@@ -3,7 +3,6 @@ package com.lm.ll.spark.util
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import io.reactivex.exceptions.Exceptions
-import io.realm.RealmList
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -144,7 +143,7 @@ class Spider {
                 }
 
 
-                val commentList = RealmList<Comment>()
+                val commentList = ArrayList<Comment>()
                 //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
                 val links: Elements = body[0].getElementsByTag("a")
                 for (link in links) {
@@ -173,7 +172,7 @@ class Spider {
          * @author ll
          * @time 2018-06-04 15:06
          */
-        private fun scratchComments(article: Article): RealmList<Comment> {
+        private fun scratchComments(article: Article): ArrayList<Comment> {
             try {
                 val doc: Document = Jsoup.connect(article.url).get()
                 val comments: Elements = doc.getElementsByTag("ul")
@@ -188,13 +187,13 @@ class Spider {
          * @author ll
          * @time 2018-06-04 16:34
          */
-        private fun parseComments(ul: Element): RealmList<Comment> {
+        private fun parseComments(ul: Element): ArrayList<Comment> {
             try {
-                val list = RealmList<Comment>()
+                val list = ArrayList<Comment>()
                 for (child in ul.childNodes()) {
                     depth = 0  //每个评论初始层级都置为0
 
-                    val subList = RealmList<Comment>()
+                    val subList = ArrayList<Comment>()
                     parseCommentsRecursive(child, subList)
                     subList.reverse()
                     list.addAll(subList)
@@ -210,7 +209,7 @@ class Spider {
          * @author lm
          * @time 2018-07-21 22:20
          */
-        private fun parseCommentsRecursive(ul: Node, list: RealmList<Comment>) {
+        private fun parseCommentsRecursive(ul: Node, list: ArrayList<Comment>) {
             if (ul.childNodes()[3].childNodes().count() > 0) {
                 for (sub in ul.childNodes()[3].childNodes()) {
                     depth++   //子评论层级加1
@@ -288,7 +287,7 @@ class Spider {
                     val article = Article()
                     article.url = "${link.baseUri().substringBefore("md")}${link.attr("href")}"
                     article.title = link.text().convertToSimplifiedChinese()
-                    article.isClassical = 1
+                    article.classicalFlag = 1
 
                     mList.add(article)
                 }
@@ -378,7 +377,7 @@ class Spider {
                     article.text = originalText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
                 }
 
-                val commentList = RealmList<Comment>()
+                val commentList = ArrayList<Comment>()
                 //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
                 val links: Elements = body[0].getElementsByTag("a")
                 for (link in links) {
@@ -427,7 +426,7 @@ class Spider {
          * @author ll
          * @time 2018-06-04 15:06
          */
-        private fun scratchComments(doc: Document): RealmList<Comment> {
+        private fun scratchComments(doc: Document): ArrayList<Comment> {
             try {
                 val comments: Elements = doc.getElementsByTag("ul")
                 return parseComments(comments[0])

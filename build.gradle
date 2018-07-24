@@ -2,11 +2,11 @@
 
 buildscript {
     ext.kotlin_version = '1.2.51'
-    ext.anko_version='0.10.5'
     ext.retrofit2_version = '2.4.0'
     ext.rxkotlin_version = '2.2.0'
     ext.rxandroid_version = '2.0.2'
     ext.uber_autodispose_version = '0.8.0'
+    ext.objectbox_version = '1.5.0'
 
     repositories {
         mavenCentral()
@@ -20,7 +20,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
 
-        classpath "io.realm:realm-gradle-plugin:5.4.0"
+        classpath "io.objectbox:objectbox-gradle-plugin:$objectbox_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

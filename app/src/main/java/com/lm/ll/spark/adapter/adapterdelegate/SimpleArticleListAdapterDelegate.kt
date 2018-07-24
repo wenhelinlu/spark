@@ -43,7 +43,7 @@ class SimpleArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDel
                 articleItem.setOnClickListener {
                     val intent = Intent(context, ArticleDisplayActivity::class.java)
                     intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
-                    if (items[position].isClassical == 1) {
+                    if (items[position].classicalFlag == 1) {
                         intent.putExtra(IS_CLASSIC_ARTICLE, true)
                     }
                     context.startActivity(intent)

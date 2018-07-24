@@ -5,19 +5,18 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import com.lm.ll.spark.adapter.adapterdelegate.CommentListAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleSplitterAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleTextAdapterDelegate
+import com.lm.ll.spark.adapter.adapterdelegate.CommentListAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.SimpleCommentListAdapterDelegate
 import com.lm.ll.spark.db.Article
-import io.realm.RealmList
 
 
 /**
  * 作者：Created by ll on 2018-07-06 17:35.
  * 邮箱：wenhelinlu@gmail.com
  */
-class ArticleAdapter(activity: AppCompatActivity, items: RealmList<Article>) : ListDelegationAdapter<RealmList<Article>>() {
+class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : ListDelegationAdapter<ArrayList<Article>>() {
 
     //Recyclerview内部item的自定义单击事件，用于通过点击正文显示或隐藏状态栏和底部工具栏
     lateinit var mItemClickListener: ArticleAdapter.Companion.OnItemClickListener
