@@ -6,6 +6,7 @@ import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.Spider
 import io.objectbox.Box
+import io.objectbox.kotlin.boxFor
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import org.jsoup.Jsoup

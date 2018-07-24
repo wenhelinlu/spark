@@ -21,6 +21,7 @@ import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
+import io.objectbox.kotlin.boxFor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.article_display.*

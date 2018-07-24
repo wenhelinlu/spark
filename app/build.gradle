@@ -73,7 +73,7 @@ dependencies {
     //objectbox
     debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectbox_version"
     releaseImplementation "io.objectbox:objectbox-android:$objectbox_version"
-    releaseImplementation "io.objectbox:objectbox-kotlin:$objectbox_version"
+    implementation "io.objectbox:objectbox-kotlin:$objectbox_version"
 
     //ReactiveX series
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
@@ -88,7 +88,7 @@ dependencies {
     // 字符串依赖
     implementation "com.squareup.retrofit2:converter-scalars:$retrofit2_version"
     //gson依赖
-//    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
 
     //使用Delegate设计模式的Recyclerview.Adapter框架
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'

@@ -2,6 +2,7 @@ package com.lm.ll.spark.application
 
 import android.app.Application
 import android.preference.PreferenceManager
+import com.lm.ll.spark.BuildConfig
 import com.lm.ll.spark.util.NIGHT_MODE
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.switchDayNightMode
@@ -28,7 +29,10 @@ class InitApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         ObjectBox.build(this)
-        AndroidObjectBrowser(ObjectBox.boxStore).start(this)
+        if (BuildConfig.DEBUG) {
+            AndroidObjectBrowser(ObjectBox.boxStore).start(this)
+        }
+
 
         singleton = this
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(this)

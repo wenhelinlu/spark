@@ -1,0 +1,139 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:5171091627223607668",
+      "lastPropertyId": "15:3269112451254953653",
+      "name": "Article",
+      "properties": [
+        {
+          "id": "1:2869380839076502765",
+          "name": "id"
+        },
+        {
+          "id": "2:4102579885750073836",
+          "name": "url"
+        },
+        {
+          "id": "3:739729639111012103",
+          "name": "title"
+        },
+        {
+          "id": "4:3432611627126844177",
+          "name": "author"
+        },
+        {
+          "id": "5:2742824205852875783",
+          "name": "date"
+        },
+        {
+          "id": "6:7284447227959992471",
+          "name": "textLength"
+        },
+        {
+          "id": "7:6200738788956336155",
+          "name": "readCount"
+        },
+        {
+          "id": "8:2952698715045154554",
+          "name": "text"
+        },
+        {
+          "id": "9:4702207196511403409",
+          "name": "insertTime"
+        },
+        {
+          "id": "10:1653750524805413401",
+          "name": "favorite"
+        },
+        {
+          "id": "11:3715086654587267097",
+          "name": "articleFlag"
+        },
+        {
+          "id": "12:343405244504065544",
+          "name": "classicalFlag"
+        },
+        {
+          "id": "13:2558134997653926844",
+          "name": "leavePosition"
+        },
+        {
+          "id": "14:5539203450262359330",
+          "name": "offset"
+        },
+        {
+          "id": "15:3269112451254953653",
+          "name": "depth"
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:120272016332455052",
+          "name": "comments"
+        }
+      ]
+    },
+    {
+      "id": "2:5916760128986399421",
+      "lastPropertyId": "10:5637708671461158888",
+      "name": "Comment",
+      "properties": [
+        {
+          "id": "1:7822888640138408007",
+          "name": "id"
+        },
+        {
+          "id": "2:4563071083742721221",
+          "name": "url"
+        },
+        {
+          "id": "3:2017014544235122896",
+          "name": "title"
+        },
+        {
+          "id": "4:3169715114661051323",
+          "name": "author"
+        },
+        {
+          "id": "5:8156409950493304699",
+          "name": "date"
+        },
+        {
+          "id": "6:4024030596028383207",
+          "name": "textLength"
+        },
+        {
+          "id": "7:3756328340276928682",
+          "name": "readCount"
+        },
+        {
+          "id": "8:1722959095322602307",
+          "name": "text"
+        },
+        {
+          "id": "9:2438929001981270683",
+          "name": "depth"
+        },
+        {
+          "id": "10:5637708671461158888",
+          "name": "insertTime"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "2:5916760128986399421",
+  "lastIndexId": "0:0",
+  "lastRelationId": "1:120272016332455052",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}
