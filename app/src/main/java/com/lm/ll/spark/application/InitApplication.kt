@@ -32,7 +32,7 @@ class InitApplication : Application() {
 
         //删除默认的数据库和自定义的数据库
 //        val userAddressConfig = RealmConfiguration.Builder().name("spark-db").schemaVersion(1).deleteRealmIfMigrationNeeded().build()
-//        Realm.deleteRealm(Realm.getDefaultConfiguration())
+//        deleteRealm(Realm.getDefaultConfiguration())
 //        Realm.deleteRealm(userAddressConfig)
 
         singleton = this

@@ -46,6 +46,7 @@ data class Article(
         isClassical = parcel.readInt()
         leavePosition = parcel.readInt()
         offset = parcel.readInt()
+        depth = parcel.readInt()
 
         //实现RealmList的Parcelable处理
         val mList = RealmList<Comment>()
@@ -67,6 +68,7 @@ data class Article(
         dest.writeInt(isClassical)
         dest.writeInt(leavePosition)
         dest.writeInt(offset)
+        dest.writeInt(depth)
         dest.writeTypedList(comments) //实现RealmList的Parcelable处理
     }
 
