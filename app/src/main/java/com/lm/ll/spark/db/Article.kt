@@ -1,6 +1,5 @@
 package com.lm.ll.spark.db
 
-import com.lm.ll.spark.annotation.Poko
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.relation.ToMany
@@ -11,7 +10,6 @@ import java.time.format.DateTimeFormatter
 /**
  * Created by ll on 2018-05-24 17:23.
  */
-@Poko
 @Entity
 data class Article(
         @Id var id: Long = 0, //objectbox内部主键

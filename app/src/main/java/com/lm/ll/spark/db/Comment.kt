@@ -1,6 +1,5 @@
 package com.lm.ll.spark.db
 
-import com.lm.ll.spark.annotation.Poko
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import java.time.LocalDateTime
@@ -12,7 +11,6 @@ import java.time.format.DateTimeFormatter
  * 作者：Created by ll on 2018-06-22 10:42.
  * 邮箱：wenhelinlu@gmail.com
  */
-@Poko
 @Entity
 data class Comment(
         @Id var id: Long = 0, //objectbox内部主键

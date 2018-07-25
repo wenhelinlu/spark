@@ -102,7 +102,6 @@ apply plugin: 'io.objectbox'
 
 apply plugin: 'kotlin-noarg'
 apply plugin: 'kotlin-allopen'
-apply plugin: 'kotlin-jpa'
 
 noArg {
     annotation("com.lm.ll.spark.annotation.Poko")
