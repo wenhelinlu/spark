@@ -136,17 +136,21 @@ class ArticleDisplayActivity : AppCompatActivity() {
      */
     override fun onPause() {
         super.onPause()
-        val position = linearLayoutManager.findFirstVisibleItemPosition()
 
-        //获取与该view的顶部的偏移量
-        var offset = 0
-        val currentView = linearLayoutManager.findViewByPosition(position)
-        if (currentView != null) {
-            offset = currentView.top
+        //被收藏的文章在退出阅读时才存入阅读位置，因为这段代码，以为是Realm的问题导致无法取消收藏
+        if (currentArticle.favorite == 1) {
+            val position = linearLayoutManager.findFirstVisibleItemPosition()
+
+            //获取与该view的顶部的偏移量
+            var offset = 0
+            val currentView = linearLayoutManager.findViewByPosition(position)
+            if (currentView != null) {
+                offset = currentView.top
+            }
+            currentArticle.leavePosition = position
+            currentArticle.offset = offset
+            articleBox.put(currentArticle)
         }
-        currentArticle.leavePosition = position
-        currentArticle.offset = offset
-        articleBox.put(currentArticle)
     }
 
     /**
@@ -280,7 +284,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             if (currentArticle.favorite == 1) {
                 currentArticle.favorite = 0
                 //从数据库中删除此条数据
-                articleBox.remove(currentArticle)
+                articleBox.remove(currentArticle.id)
             } else {
                 currentArticle.favorite = 1
                 //将数据插入表中

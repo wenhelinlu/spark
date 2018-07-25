@@ -84,7 +84,7 @@ dependencies {
     // 字符串依赖
     implementation "com.squareup.retrofit2:converter-scalars:$retrofit2_version"
     //gson依赖
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
+//    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
 
     //使用Delegate设计模式的Recyclerview.Adapter框架
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
@@ -101,9 +101,7 @@ dependencies {
 apply plugin: 'io.objectbox'
 
 apply plugin: 'kotlin-noarg'
-
 apply plugin: 'kotlin-allopen'
-
 apply plugin: 'kotlin-jpa'
 
 noArg {
