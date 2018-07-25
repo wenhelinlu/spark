@@ -3,6 +3,7 @@ package com.lm.ll.spark.application
 import android.app.Application
 import android.preference.PreferenceManager
 import com.lm.ll.spark.BuildConfig
+import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.NIGHT_MODE
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.switchDayNightMode
@@ -17,6 +18,7 @@ class InitApplication : Application() {
 
     companion object {
         private var singleton: InitApplication? = null
+        public var curArticle:Article? = null
 
         fun getInstance(): InitApplication {
             if (singleton == null) {

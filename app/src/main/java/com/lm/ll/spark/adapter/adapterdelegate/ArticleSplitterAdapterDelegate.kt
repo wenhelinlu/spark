@@ -23,7 +23,7 @@ class ArticleSplitterAdapterDelegate(activity: AppCompatActivity) : AdapterDeleg
     }
 
     override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {
-        return items[position] == null
+        return items[position].articleFlag == 2 && !items[position].url.isNullOrEmpty()
     }
 
     override fun onBindViewHolder(items: ArrayList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

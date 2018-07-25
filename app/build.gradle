@@ -6,10 +6,6 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
-apply plugin: 'kotlin-noarg'
-
-apply plugin: 'kotlin-allopen'
-
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -104,6 +100,11 @@ dependencies {
 //这个要放在dependencies块的后面，不然build时会报"More than one file was found with OS independent path 'lib/armeabi-v7a/libobjectbox.so'"错误
 apply plugin: 'io.objectbox'
 
+apply plugin: 'kotlin-noarg'
+
+apply plugin: 'kotlin-allopen'
+
+apply plugin: 'kotlin-jpa'
 
 noArg {
     annotation("com.lm.ll.spark.annotation.Poko")

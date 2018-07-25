@@ -158,7 +158,7 @@ class Spider {
 
                 //抓取对正文的评论列表
                 commentList.addAll(scratchComments(article))
-                article.comments = commentList
+                article.comments.addAll(commentList)
 
                 return article
             } catch (t: Throwable) {
@@ -392,7 +392,7 @@ class Spider {
 
                 //抓取对正文的评论列表
                 commentList.addAll(scratchComments(doc))
-                article.comments = commentList
+                article.comments.addAll(commentList)
 
                 return article
             } catch (t: Throwable) {

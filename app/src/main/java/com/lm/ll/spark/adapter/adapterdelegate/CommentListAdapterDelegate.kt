@@ -13,7 +13,6 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.getPlaceholder
 import kotlinx.android.synthetic.main.article_item.view.*
 
@@ -53,7 +52,8 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
 
                 commentItem.setOnClickListener {
                     val intent = Intent(context, ArticleDisplayActivity::class.java)
-                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
+                    InitApplication.curArticle = items[position]
+//                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
                     context.startActivity(intent)
                 }
             }

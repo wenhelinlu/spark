@@ -13,10 +13,11 @@ import android.view.animation.AnimationUtils
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
+import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
-import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
@@ -52,6 +53,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
     //recyclerview的layoutmanager
     private val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
+
+    private val articleBox = ObjectBox.boxStore.boxFor<Article>()
 
     /**
      * @desc 用于延迟触发隐藏状态栏、导航栏等操作
@@ -143,7 +146,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
         }
         currentArticle.leavePosition = position
         currentArticle.offset = offset
-//        currentArticle.save()
+        articleBox.put(currentArticle)
     }
 
     /**
@@ -231,10 +234,10 @@ class ArticleDisplayActivity : AppCompatActivity() {
      */
     private fun initData() {
         //从列表中传来的点击的标题
-        currentArticle = this.intent.getParcelableExtra(ARTICLE_TEXT_INTENT_KEY)
+        currentArticle = InitApplication.curArticle!!
         currentArticle.articleFlag = 0  //适用正文item布局
 
-        if (currentArticle.text.isNullOrEmpty()) {
+        if (currentArticle.text.isEmpty()) {
             isForceRefresh = true
         }
 
@@ -276,11 +279,12 @@ class ArticleDisplayActivity : AppCompatActivity() {
             //收藏或取消收藏
             if (currentArticle.favorite == 1) {
                 currentArticle.favorite = 0
-//                Article().delete { equalTo("url", currentArticle.url) } //从数据库中删除此条数据
+                //从数据库中删除此条数据
+                articleBox.remove(currentArticle)
             } else {
                 currentArticle.favorite = 1
-//                currentArticle.save() //将数据插入表中
-                ObjectBox.boxStore.boxFor<Article>().put(currentArticle)
+                //将数据插入表中
+                articleBox.put(currentArticle)
             }
 
             iv_favorite.setImageResource(if (currentArticle.favorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite)
@@ -366,15 +370,14 @@ class ArticleDisplayActivity : AppCompatActivity() {
         //查询此文章是否已收藏（在数据库中存在）
         //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
         //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
-//        val find = query<Article> {
-//            equalTo("url", currentArticle.url)
-//        }.firstOrNull()
-//        //如果存在，说明此文章已被收藏并存入数据库中
-//        if (find != null) {
-//            currentArticle.favorite = 1
-//            currentArticle.leavePosition = find.leavePosition
-//            currentArticle.offset = find.offset
-//        }
+        val find = articleBox.query().equal(Article_.url,currentArticle.url).build().findFirst()
+        //如果存在，说明此文章已被收藏并存入数据库中
+        if (find != null) {
+            currentArticle.id = find.id
+            currentArticle.favorite = 1
+            currentArticle.leavePosition = find.leavePosition
+            currentArticle.offset = find.offset
+        }
 
         linearLayoutManager.scrollToPositionWithOffset(currentArticle.leavePosition, currentArticle.offset)
 
@@ -423,7 +426,11 @@ class ArticleDisplayActivity : AppCompatActivity() {
         val list = ArrayList<Article>()
 
         list.add(article) // 正文布局数据
-//        list.add(null) // 分割条布局数据
+        val spliter = Article()
+        spliter.url = null
+        spliter.articleFlag = 2
+
+        list.add(spliter) // 分割条布局数据
         for (comment in article.comments) {
             val temp = Article()
 

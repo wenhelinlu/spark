@@ -11,8 +11,8 @@ import android.widget.TextView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.activity.ArticleDisplayActivity
+import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.ARTICLE_TEXT_INTENT_KEY
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
 import kotlinx.android.synthetic.main.article_item.view.*
 
@@ -48,7 +48,8 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
 
                 articleItem.setOnClickListener {
                     val intent = Intent(context, ArticleDisplayActivity::class.java)
-                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
+                    InitApplication.curArticle = items[position]
+//                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
                     if (items[position].classicalFlag == 1) {
                         intent.putExtra(IS_CLASSIC_ARTICLE, true)
                     }
