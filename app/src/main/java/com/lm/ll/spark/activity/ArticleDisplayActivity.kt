@@ -18,11 +18,10 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
-import com.lm.ll.spark.util.ObjectBox
+import com.lm.ll.spark.util.ObjectBox.getArticleBox
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
-import io.objectbox.kotlin.boxFor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.article_display.*
@@ -53,8 +52,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
     //recyclerview的layoutmanager
     private val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
-
-    private val articleBox = ObjectBox.boxStore.boxFor<Article>()
 
     /**
      * @desc 用于延迟触发隐藏状态栏、导航栏等操作
@@ -130,14 +127,14 @@ class ArticleDisplayActivity : AppCompatActivity() {
     }
 
     /**
-     * @desc 覆写此方法，退出阅读时保存阅读位置到数据库中
+     * @desc 覆写此方法，已收藏的文章退出阅读时保存阅读位置到数据库中
      * @author ll
      * @time 2018-07-18 11:45
      */
     override fun onPause() {
         super.onPause()
 
-        //被收藏的文章在退出阅读时才存入阅读位置，因为这段代码，以为是Realm的问题导致无法取消收藏
+        //被收藏的文章在退出阅读时才存入阅读位置，之前因为这段代码，以为是Realm的问题导致无法取消收藏
         if (currentArticle.favorite == 1) {
             val position = linearLayoutManager.findFirstVisibleItemPosition()
 
@@ -149,7 +146,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             }
             currentArticle.leavePosition = position
             currentArticle.offset = offset
-            articleBox.put(currentArticle)
+            getArticleBox().put(currentArticle)  //更新数据也是put方法
         }
     }
 
@@ -284,11 +281,11 @@ class ArticleDisplayActivity : AppCompatActivity() {
             if (currentArticle.favorite == 1) {
                 currentArticle.favorite = 0
                 //从数据库中删除此条数据
-                articleBox.remove(currentArticle.id)
+                getArticleBox().remove(currentArticle.id)
             } else {
                 currentArticle.favorite = 1
                 //将数据插入表中
-                articleBox.put(currentArticle)
+                getArticleBox().put(currentArticle)
             }
 
             iv_favorite.setImageResource(if (currentArticle.favorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite)
@@ -374,10 +371,10 @@ class ArticleDisplayActivity : AppCompatActivity() {
         //查询此文章是否已收藏（在数据库中存在）
         //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
         //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
-        val find = articleBox.query().equal(Article_.url,currentArticle.url).build().findFirst()
+        val find = getArticleBox().query().equal(Article_.url,currentArticle.url!!).build().findFirst()
         //如果存在，说明此文章已被收藏并存入数据库中
         if (find != null) {
-            currentArticle.id = find.id
+            currentArticle.id = find.id  //id为Long类型，由ObjectBox自动生成
             currentArticle.favorite = 1
             currentArticle.leavePosition = find.leavePosition
             currentArticle.offset = find.offset

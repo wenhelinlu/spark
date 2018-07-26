@@ -43,7 +43,6 @@ class SimpleCommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDel
                 articleItem.setOnClickListener {
                     val intent = Intent(context, ArticleDisplayActivity::class.java)
                     InitApplication.curArticle = items[position]
-//                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
                     if (items[position].classicalFlag == 1) {
                         intent.putExtra(IS_CLASSIC_ARTICLE, true)
                     }

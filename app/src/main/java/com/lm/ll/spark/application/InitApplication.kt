@@ -18,7 +18,9 @@ class InitApplication : Application() {
 
     companion object {
         private var singleton: InitApplication? = null
-        public var curArticle:Article? = null
+
+        //用于不同Activity间数据的传递，这样不需要对Article和Comment进行Parcelable处理
+        var curArticle:Article? = null
 
         fun getInstance(): InitApplication {
             if (singleton == null) {
@@ -30,11 +32,13 @@ class InitApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        //初始化ObjectBox
         ObjectBox.build(this)
+        //如果是DEBUG模式，则app运行时在状态栏显示data browser提示，可以通过手机浏览器查看数据库数据
         if (BuildConfig.DEBUG) {
             AndroidObjectBrowser(ObjectBox.boxStore).start(this)
         }
-
 
         singleton = this
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(this)

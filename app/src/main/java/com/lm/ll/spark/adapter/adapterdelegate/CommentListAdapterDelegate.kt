@@ -53,7 +53,6 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
                 commentItem.setOnClickListener {
                     val intent = Intent(context, ArticleDisplayActivity::class.java)
                     InitApplication.curArticle = items[position]
-//                    intent.putExtra(ARTICLE_TEXT_INTENT_KEY, items[position])
                     context.startActivity(intent)
                 }
             }

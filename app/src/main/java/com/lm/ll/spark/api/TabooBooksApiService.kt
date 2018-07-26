@@ -88,7 +88,7 @@ interface TabooBooksApiService {
                         //获取Response Headers中的ContentType信息
                         val contentType = response.body()!!.contentType()
                         //获取ContentType中的charset
-                        var charset = contentType!!.charset()
+                        val charset = contentType!!.charset()
                         //如果charset为null，即Response Headers中的Content-Type信息不包含字符编码信息，则以gbk解析
                         if (charset == null) {
                             /**

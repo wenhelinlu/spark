@@ -23,7 +23,7 @@ class ArticleSplitterAdapterDelegate(activity: AppCompatActivity) : AdapterDeleg
     }
 
     override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {
-        return items[position].articleFlag == 2
+        return items[position].articleFlag == 2  //2表示正文和评论列表间的分隔栏布局
     }
 
     override fun onBindViewHolder(items: ArrayList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
@@ -31,6 +31,6 @@ class ArticleSplitterAdapterDelegate(activity: AppCompatActivity) : AdapterDeleg
     }
 
     inner class ArticleSplitterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        //分割条固定内容，不需要显示
+        //分隔栏固定内容，不需要显示
     }
 }
