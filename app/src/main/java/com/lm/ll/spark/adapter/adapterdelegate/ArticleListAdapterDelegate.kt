@@ -13,7 +13,9 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
+import com.lm.ll.spark.util.ObjectBox.getArticleBox
 import kotlinx.android.synthetic.main.article_item.view.*
 
 /**
@@ -26,6 +28,9 @@ import kotlinx.android.synthetic.main.article_item.view.*
 class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
     private val inflater: LayoutInflater = activity.layoutInflater
     private val context = activity.applicationContext
+
+    //列表中已收藏文章标题颜色（区分日、夜间模式）
+    private val favoriteColor = if (InitApplication.getInstance().isNightModeEnabled()) InitApplication.getInstance().getColor(R.color.md_blue_grey_700) else InitApplication.getInstance().getColor(R.color.md_blue_grey_400)
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
         return ArticleListViewHolder(inflater.inflate(R.layout.article_item, parent, false))
@@ -53,6 +58,12 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
                         intent.putExtra(IS_CLASSIC_ARTICLE, true)
                     }
                     context.startActivity(intent)
+                }
+
+                //如果文章已收藏，则单独设置颜色
+                val favorite = getArticleBox().query().equal(Article_.url,it.url!!).build().findFirst()
+                if(favorite != null){
+                    articleTitle.setTextColor(favoriteColor)
                 }
             }
         }

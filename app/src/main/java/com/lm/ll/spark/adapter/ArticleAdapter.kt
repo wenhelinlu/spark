@@ -37,7 +37,7 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
         const val VIEW_TYPE_TEXT = 0 //标识正文item
         const val VIEW_TYPE_SPLITTER = 1 //标识分割条item
         const val VIEW_TYPE_COMMENT = 2 //标识评论item
-        const val VIEW_TYPE_COMMENT_SIMPLE = 3
+        const val VIEW_TYPE_COMMENT_SIMPLE = 3  //只有标题的评论项
 
         interface OnItemClickListener {
             fun onItemClick(view: View)
