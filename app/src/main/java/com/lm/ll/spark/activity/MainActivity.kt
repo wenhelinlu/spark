@@ -52,9 +52,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
     private lateinit var adapter: ArticleListAdapter
-
     //当前加载的页数
     private var currentPage: Int = 1
+    //recyclerview的layoutmanager
+    private val linearLayoutManager = LinearLayoutManager(this@MainActivity)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,8 +91,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         //recyclerview设置
-        val linearLayoutManager = LinearLayoutManager(this@MainActivity)
-//        this.recyclerViewTitles.addItemDecoration(DashLineItemDecoration())
         this.recyclerViewTitles.addItemDecoration(SolidLineItemDecoration(this@MainActivity))
         this.recyclerViewTitles.layoutManager = linearLayoutManager
 
@@ -239,7 +238,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
             if (isLoadMore) {
-                this@MainActivity.recyclerViewTitles.layoutManager.scrollToPosition(currentPos - 1)
+                linearLayoutManager.scrollToPositionWithOffset(currentPos - 1, 0)
             }
 
             hideProgressbar()
