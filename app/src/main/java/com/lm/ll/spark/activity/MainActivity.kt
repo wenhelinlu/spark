@@ -35,7 +35,6 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import retrofit2.HttpException
 import java.net.ConnectException
-import java.util.*
 import java.util.concurrent.TimeoutException
 import javax.net.ssl.SSLHandshakeException
 
@@ -196,10 +195,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val deferredLoad = async(CommonPool) {
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
             val pageIndex = if (isLoadMore) currentPage else 1
-            val list = Spider.scratchArticleList("$BASE_URL$CURRENT_BASE_URL$pageIndex")
+            Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex")
+            val list = getArticleList(pageIndex)
 
             if (isLoadMore) {
                 articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
+                Log.d(LOG_TAG_COMMON, " list's size = ${list.size}, articleList's size = ${articleList.size}")
             } else {
                 /**
                  *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
@@ -222,7 +223,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
                     while (articleList.size < LIST_MIN_COUNT) {
                         currentPage++
-                        val tmpList = Spider.scratchArticleList("$BASE_URL$CURRENT_BASE_URL$currentPage")
+                        val tmpList = getArticleList(pageIndex)
                         articleList.addAll(tmpList)
                     }
                 }
@@ -243,6 +244,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             hideProgressbar()
         }
+    }
+
+    /**
+     * @desc 根据页码获取文章列表
+     * @author lm
+     * @time 2018-07-28 15:50
+     * @param pageIndex 页码
+     */
+    private fun getArticleList(pageIndex: Int): ArrayList<Article> {
+        return Spider.scratchArticleList("${BASE_URL}index.php?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764")
     }
 
     /**

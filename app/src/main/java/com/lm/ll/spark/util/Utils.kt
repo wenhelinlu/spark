@@ -87,14 +87,9 @@ const val LIST_MIN_COUNT = 25
 
 //禁忌书屋基地址
 const val BASE_URL = "https://www.cool18.com/bbs4/"
-//当前列表数据源URL地址（未附加页数）
-const val CURRENT_BASE_URL = "index.php?app=forum&act=cachepage&cp=tree" //禁忌书屋
 
 //禁忌书屋精华区数据源URL地址（未附加页数）
 const val CURRENT_ELITEAREA_BASE_URL = "index.php?app=forum&act=gold&p="
-
-//正文接收的intent传递内容的key
-const val ARTICLE_TEXT_INTENT_KEY = "article"
 
 //是否是情色经典书库中的文章
 const val IS_CLASSIC_ARTICLE = "classic"
