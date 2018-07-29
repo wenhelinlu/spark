@@ -5,7 +5,7 @@
     <color name="colorAccent">@color/md_teal_500</color>
 
     <!-- Night Mode -->
-    <color name="colorText">#B3FFFFFF</color>
+    <color name="colorText">@color/colorTextNight</color>
     <color name="colorSecondaryText">#80FFFFFF</color>
     <color name="colorBg">@color/md_black_1000</color>
     <color name="colorDivider">@color/md_grey_900</color>
