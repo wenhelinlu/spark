@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.v7.app.AppCompatDelegate
 import android.widget.Toast
-import com.lm.ll.spark.application.InitApplication
-import com.zqc.opencc.android.lib.ChineseConverter
-import com.zqc.opencc.android.lib.ConversionType
+import com.hankcs.hanlp.HanLP
 import java.text.SimpleDateFormat
 
 
@@ -36,8 +34,10 @@ fun String.convertToSimplifiedChinese(): String {
     return if (this.isBlank()) {
         this
     } else {
-        ChineseConverter.convert(this, ConversionType.T2S, InitApplication.getInstance())
+//        ChineseConverter.convert(this, ConversionType.T2S, InitApplication.getInstance())
+        HanLP.convertToSimplifiedChinese(this)
     }
+//    return this
 }
 
 //简化的Toast方法

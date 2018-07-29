@@ -195,12 +195,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val deferredLoad = async(CommonPool) {
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
             val pageIndex = if (isLoadMore) currentPage else 1
-            Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex")
             val list = getArticleList(pageIndex)
 
             if (isLoadMore) {
                 articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
-                Log.d(LOG_TAG_COMMON, " list's size = ${list.size}, articleList's size = ${articleList.size}")
             } else {
                 /**
                  *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
@@ -239,7 +237,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
             if (isLoadMore) {
-                linearLayoutManager.scrollToPositionWithOffset(currentPos - 1, 0)
+                linearLayoutManager.scrollToPosition(currentPos - 1)
             }
 
             hideProgressbar()

@@ -53,8 +53,8 @@ dependencies {
 
     implementation 'com.android.support:design:27.1.1'
 
-    //opencc-android库，简繁转换
-    implementation 'com.zqc.opencc.android.lib:lib-opencc-android:0.8.0@aar'
+    //HanLP库
+    implementation 'com.hankcs:hanlp:portable-1.6.6'
 
     //图文混排库
 //    implementation 'com.github.sendtion:XRichText:1.3'
