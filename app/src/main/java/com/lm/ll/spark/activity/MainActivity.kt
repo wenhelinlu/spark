@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .doAfterTerminate {
                     hideProgressbar()
                 }
-                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
+                .doOnDispose { Log.d("AutoDispose", "Disposing subscription from onCreate()") }
                 .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
                 .subscribe({ result ->
                     val currentPos: Int = articleList.size
