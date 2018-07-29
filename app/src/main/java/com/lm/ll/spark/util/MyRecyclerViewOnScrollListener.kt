@@ -2,7 +2,6 @@ package com.lm.ll.spark.util
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 
 abstract class MyRecyclerViewOnScrollListener(private var linearLayoutManager: LinearLayoutManager) : RecyclerView.OnScrollListener() {
     //屏幕上可见的item数量
@@ -15,19 +14,6 @@ abstract class MyRecyclerViewOnScrollListener(private var linearLayoutManager: L
     private var isLoadingMore: Boolean = false
     //记录之前的数据总数
     private var oldTotal: Int = 0
-
-    /**
-     * 滑动状态改变
-     *
-     * @param recyclerView 当前滚动的 RecyclerView
-     * @param newState     当前滚动的状态，有三个值
-     *                     public static final int SCROLL_STATE_IDLE = 0;静止没滚动
-     *                     public static final int SCROLL_STATE_DRAGGING = 1;用户正在用手指滚动
-     *                     public static final int SCROLL_STATE_SETTLING = 2;自动滚动
-     */
-    override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-        super.onScrollStateChanged(recyclerView, newState)
-    }
 
     /**
      * 正在滑动

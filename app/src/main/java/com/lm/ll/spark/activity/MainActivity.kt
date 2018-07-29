@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -189,13 +190,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @param isLoadMore 是否是加载更多操作
      */
     private fun loadContent(isLoadMore: Boolean = false) {
-
         val currentPos: Int = articleList.size
 
-        val deferredLoad = async(CommonPool) {
+        async(UI) {
+            showProgressbar()
+            withContext(CommonPool) {
             //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
             val pageIndex = if (isLoadMore) currentPage else 1
             val list = getArticleList(pageIndex)
+//            Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex, list'size = ${list.size}")
 
             if (isLoadMore) {
                 articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
@@ -221,23 +224,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     //如果此时获取的集合数据不超过预定值，则继续加载数据
                     while (articleList.size < LIST_MIN_COUNT) {
                         currentPage++
-                        val tmpList = getArticleList(pageIndex)
+                        val tmpList = getArticleList(currentPage)
                         articleList.addAll(tmpList)
                     }
                 }
             }
         }
-
-        async(UI) {
-            showProgressbar()
-            deferredLoad.await()
             adapter = ArticleListAdapter(this@MainActivity, articleList)
             this@MainActivity.recyclerViewTitles.adapter = adapter
             this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
 
             //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
             if (isLoadMore) {
-                linearLayoutManager.scrollToPosition(currentPos - 1)
+                linearLayoutManager.scrollToPositionWithOffset(currentPos - 1, 0)
             }
 
             hideProgressbar()
@@ -245,13 +244,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     /**
-     * @desc 根据页码获取文章列表
+     * @desc 根据页码获取文章列表，注意：11页之前（不包含第11页）的url和第11页及之后的url不同
      * @author lm
      * @time 2018-07-28 15:50
      * @param pageIndex 页码
      */
     private fun getArticleList(pageIndex: Int): ArrayList<Article> {
-        return Spider.scratchArticleList("${BASE_URL}index.php?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764")
+
+        //11页之前（不包含第11页）的url和第11页及之后的url不同
+        val url = if (pageIndex <= 10) {
+            "$BASE_URL$CURRENT_BASE_URL$pageIndex"
+        } else {
+            "${BASE_URL}index.php?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764"
+        }
+//        Log.d(LOG_TAG_COMMON, url)
+        return Spider.scratchArticleList(url)
     }
 
     /**
