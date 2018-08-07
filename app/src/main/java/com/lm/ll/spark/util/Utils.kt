@@ -2,9 +2,12 @@ package com.lm.ll.spark.util
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.ConnectivityManager
 import android.support.v7.app.AppCompatDelegate
 import android.widget.Toast
 import com.hankcs.hanlp.HanLP
+import com.lm.ll.spark.application.InitApplication
+import java.io.IOException
 import java.text.SimpleDateFormat
 
 
@@ -76,6 +79,34 @@ fun getPlaceholder(length: Int): String {
     return sb.toString()
 }
 
+/**
+ * 判断网络是否连接
+ */
+fun isNetworkConnected(): Boolean {
+    val connMgr = InitApplication.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networkInfo = connMgr.activeNetworkInfo
+    return networkInfo != null && networkInfo.isConnected
+}
+
+/**
+ *
+ * 判断网络是否连通（通过ping google网站判断）
+ */
+fun isNetworkOnline(): Boolean {
+    val runtime = Runtime.getRuntime()
+    try {
+        val ipProcess = runtime.exec("ping -c 3 www.baidu.com")
+        val exitValue = ipProcess.waitFor()
+        return exitValue == 0
+    } catch (e: IOException) {
+        e.printStackTrace()
+    } catch (e: InterruptedException) {
+        e.printStackTrace()
+    }
+
+    return false
+}
+
 
 //endregion
 
@@ -114,6 +145,9 @@ const val LOG_TAG_COMMON = "SPARK_LOG_COMMON"
 
 //okhttp3的log tag
 const val LOG_TAG_OKHTTP3 = "SPARK_LOG_OKHTTP3"
+
+//如果文本中段落标记（\r\n\r\n）个数大于此值，则按照规则清除换行标记，保留段落标记
+const val PARAGRAPH_FLAG_COUNT_LIMIT = 20
 
 
 //endregion

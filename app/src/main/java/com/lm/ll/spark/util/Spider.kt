@@ -366,10 +366,11 @@ class Spider {
                 val originalText = parseText(body[0])
                 //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
                 val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(originalText, "")
-                //判断是否包含段落标记（\r\n\r\n）
-                val containsParagraphFlag = Regex(paragraphFlagPattern).containsMatchIn(removedEmptyLineText)
-                //如果包含段落标记，则按照规则清除换行标记，保留段落标记
-                if (containsParagraphFlag) {
+                //判断文本中段落标记（\r\n\r\n）个数，大于某个值，则处理，否则不处理
+                val pCount = Regex(paragraphFlagPattern).findAll(removedEmptyLineText).count()
+//                Log.d(LOG_TAG_COMMON,"段落标记数量 = $pCount")
+                //判断是否需要按照规则清除换行标记，保留段落标记
+                if (pCount > PARAGRAPH_FLAG_COUNT_LIMIT) {
                     val text = Regex(paragraphFlagPattern).replace(removedEmptyLineText, replacerWord)
                     //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
                     article.text = Regex(newlineFlagPattern).replace(text, "").replace(replacerWord, paragraphFlag, false)

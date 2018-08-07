@@ -65,6 +65,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
 
         //从网络中抓取文章
         val fromNetwork = tabooBooksApiService.getArticle(article.url!!)
+                .retry(1)
                 .flatMap {
                     val doc = Jsoup.parse(it)
                     val item = if (isClassicalArticle) {
