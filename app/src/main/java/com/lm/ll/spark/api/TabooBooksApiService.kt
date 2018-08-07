@@ -72,38 +72,6 @@ interface TabooBooksApiService {
                                 .build()
                         chain.proceed(request)
                     }
-//                    .addInterceptor { chain ->
-//                        var request = chain.request()
-//                        //如果网络不通，则使用缓存
-//                        if (!isNetworkConnected() || !isNetworkOnline()) {
-//                            request = request.newBuilder()
-//                                    .cacheControl(CacheControl.FORCE_CACHE)
-//                                    .build()
-//                        }
-//
-//                        chain.proceed(request)
-//                    }
-//                    .addNetworkInterceptor { chain ->
-//                        val response = chain.proceed(chain.request())
-//
-//                        // 有网络时 设置缓存超时时间0个小时
-//                        if (isNetworkConnected() && isNetworkOnline()) {
-//                            val maxAge = 0 * 60
-//                            response.newBuilder()
-//                                    .header("Cache-Control", "public, max-age=" + maxAge)
-//                                    .removeHeader("Pragma")
-//                                    .build()
-//                        } else {
-//                            // 无网络时，设置超时为1周
-//                            val maxStale = 60 * 60 * 24 * 7
-//                            response
-//                                    .newBuilder()
-//                                    .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
-//                                    .removeHeader("Pragma")
-//                                    .build()
-//                        }
-//
-//                    }
                     .addInterceptor { chain ->
 
                         /**
