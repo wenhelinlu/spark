@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
@@ -34,9 +35,9 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
-import org.jsoup.Jsoup
 import retrofit2.HttpException
 import java.net.ConnectException
+import java.net.URLEncoder
 import java.util.concurrent.TimeoutException
 import javax.net.ssl.SSLHandshakeException
 
@@ -57,6 +58,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var currentPage: Int = 1
     //recyclerview的layoutmanager
     private val linearLayoutManager = LinearLayoutManager(this@MainActivity)
+
+    private val repository = TabooArticlesRepository(TabooBooksApiService.create())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,20 +112,63 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loadContent()
     }
 
-    private fun queryArticle(){
-//        val repository = TabooArticlesRepository(TabooBooksApiService.create())
-//        repository.queryArticle("慧慧")
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe {result ->
-//                    Log.d(LOG_TAG_COMMON,"查询文章")
-//                }
-        Spider.scratchQueryArticles(Jsoup.connect("https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=%D1%EE%BC%D2%CD%DD&submit=%B2%E9%D1%AF").get())
+    /**
+     * @desc 根据关键词检索文章
+     * @author ll
+     * @time 2018-08-13 20:23
+     */
+    private fun queryArticleWithRx(keyword: String) {
+        repository.queryArticle(keyword)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe {
+                    //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
+                    showProgressbar()
+                }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doAfterTerminate {
+                    hideProgressbar()
+                }
+                .doOnDispose { Log.d("AutoDispose", "Disposing subscription from onCreate()") }
+                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
+                .subscribe({ result ->
+                    articleList = result
+                    this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+                }, { error ->
+                    //异常处理
+                    val msg =
+                            when (error) {
+                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
+                                is TimeoutException -> "网络连接超时"
+                                is IndexOutOfBoundsException -> "解析异常"
+                                else -> error.toString()
+                            }
+                    Snackbar.make(this.fab, msg, Snackbar.LENGTH_LONG)
+                            .setAction("重试") { loadListWithRx() }.show()
+                })
+//        Spider.scratchQueryArticles(Jsoup.connect("https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=%D1%EE%BC%D2%CD%DD&submit=%B2%E9%D1%AF").get())
+    }
+
+    /**
+     * @desc 根据关键词检索文章
+     * @author ll
+     * @time 2018-08-13 20:59
+     */
+    private fun queryArticle(keyword: String) {
+        async(UI) {
+            showProgressbar()
+            withContext(CommonPool) {
+                articleList = queryArticleList(keyword)
+            }
+
+            adapter = ArticleListAdapter(this@MainActivity, articleList)
+            this@MainActivity.recyclerViewTitles.adapter = adapter
+            this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+            hideProgressbar()
+        }
     }
 
     private fun loadListWithRx(isLoadMore: Boolean = false) {
-        val repository = TabooArticlesRepository(TabooBooksApiService.create())
-
         val getListRx = when {
             currentPage == 1 -> {
                 val firstPage = repository.getArticleList("tree$currentPage")
@@ -211,8 +257,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val list = getArticleList(pageIndex)
 //            Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex, list'size = ${list.size}")
 
-                queryArticle()
-
                 if (isLoadMore) {
                     articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
                 } else {
@@ -275,6 +319,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     /**
+     * @desc 获取查询结果
+     * @author ll
+     * @time 2018-08-13 20:57
+     */
+    private fun queryArticleList(keyword: String):ArrayList<Article>{
+        //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
+        val key = URLEncoder.encode(keyword,"gb2312")
+        val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$key&submit=%B2%E9%D1%AF"
+        return Spider.scratchQueryArticles(url)
+    }
+
+    /**
      * @desc 隐藏加载进度条
      * @author ll
      * @time 2018-07-10 15:17
@@ -305,6 +361,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+
+        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                queryArticle(query)
+                return true
+            }
+
+            override fun onQueryTextChange(s: String): Boolean {
+//                (this@MainActivity.recyclerViewEliteList.adapter as ArticleListAdapter).filter(s)
+                return true
+            }
+        })
+
         return true
     }
 
@@ -323,8 +393,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return true
             }
             R.id.action_search -> {
-//                val repository = TabooArticlesRepository(TabooBooksApiService.create())
-//                repository.queryArticle("慧慧")
                 return true
             }
             else -> super.onOptionsItemSelected(item)
