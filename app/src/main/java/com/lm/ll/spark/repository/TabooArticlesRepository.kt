@@ -8,6 +8,7 @@ import com.lm.ll.spark.util.Spider
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import org.jsoup.Jsoup
+import java.net.URLEncoder
 
 
 /**
@@ -27,6 +28,22 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
                 .flatMap {
                     val document = Jsoup.parse(it)
                     val list = Spider.scratchArticleList(document)
+                    Observable.just(list)
+                }
+    }
+
+    /**
+     * @desc 查询文章
+     * @author ll
+     * @time 2018-08-13 17:27
+     */
+    fun queryArticle(keywords: String): Observable<ArrayList<Article>>{
+        //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
+        val key = URLEncoder.encode(keywords,"gb2312")
+        return tabooBooksApiService.queryArticle(key)
+                .flatMap {
+                    val document = Jsoup.parse(it)
+                    val list = Spider.scratchQueryArticles(document)
                     Observable.just(list)
                 }
     }

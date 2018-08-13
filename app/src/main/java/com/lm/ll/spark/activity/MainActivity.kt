@@ -34,6 +34,7 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
+import org.jsoup.Jsoup
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -108,6 +109,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loadContent()
     }
 
+    private fun queryArticle(){
+//        val repository = TabooArticlesRepository(TabooBooksApiService.create())
+//        repository.queryArticle("慧慧")
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe {result ->
+//                    Log.d(LOG_TAG_COMMON,"查询文章")
+//                }
+        Spider.scratchQueryArticles(Jsoup.connect("https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=%D1%EE%BC%D2%CD%DD&submit=%B2%E9%D1%AF").get())
+    }
 
     private fun loadListWithRx(isLoadMore: Boolean = false) {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
@@ -172,7 +183,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     //异常处理
                     val msg =
                             when (error) {
-                                is HttpException, is SSLHandshakeException,is ConnectException -> "网络连接异常"
+                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
                                 is TimeoutException -> "网络连接超时"
                                 is IndexOutOfBoundsException -> "解析异常"
                                 else -> error.toString()
@@ -195,41 +206,43 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         async(UI) {
             showProgressbar()
             withContext(CommonPool) {
-            //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
-            val pageIndex = if (isLoadMore) currentPage else 1
-            val list = getArticleList(pageIndex)
+                //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
+                val pageIndex = if (isLoadMore) currentPage else 1
+                val list = getArticleList(pageIndex)
 //            Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex, list'size = ${list.size}")
 
-            if (isLoadMore) {
-                articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
-            } else {
-                /**
-                 *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
-                 *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
-                 *  这个位置之前的数据添加到已有集合中
-                 */
-                if (articleList.count() > 0) {
-                    val firstNews = list.findLast { x -> x.url == articleList[0].url }
-                    if (firstNews != null) {
-                        val firstIndex = list.indexOf(firstNews)
-                        if (firstIndex > 0) {
-                            val latest = list.take(firstIndex)
-                            articleList.addAll(latest)
+                queryArticle()
+
+                if (isLoadMore) {
+                    articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
+                } else {
+                    /**
+                     *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
+                     *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
+                     *  这个位置之前的数据添加到已有集合中
+                     */
+                    if (articleList.count() > 0) {
+                        val firstNews = list.findLast { x -> x.url == articleList[0].url }
+                        if (firstNews != null) {
+                            val firstIndex = list.indexOf(firstNews)
+                            if (firstIndex > 0) {
+                                val latest = list.take(firstIndex)
+                                articleList.addAll(latest)
+                            } else {
+                            }
                         } else {
                         }
                     } else {
-                    }
-                } else {
-                    articleList = list
-                    //如果此时获取的集合数据不超过预定值，则继续加载数据
-                    while (articleList.size < LIST_MIN_COUNT) {
-                        currentPage++
-                        val tmpList = getArticleList(currentPage)
-                        articleList.addAll(tmpList)
+                        articleList = list
+                        //如果此时获取的集合数据不超过预定值，则继续加载数据
+                        while (articleList.size < LIST_MIN_COUNT) {
+                            currentPage++
+                            val tmpList = getArticleList(currentPage)
+                            articleList.addAll(tmpList)
+                        }
                     }
                 }
             }
-        }
             adapter = ArticleListAdapter(this@MainActivity, articleList)
             this@MainActivity.recyclerViewTitles.adapter = adapter
             this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
@@ -309,7 +322,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 return true
             }
-            R.id.action_search -> true
+            R.id.action_search -> {
+//                val repository = TabooArticlesRepository(TabooBooksApiService.create())
+//                repository.queryArticle("慧慧")
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

@@ -26,6 +26,9 @@ interface TabooBooksApiService {
     @GET("index.php?app=forum&act=cachepage")
     fun getArticleList(@Query("cp") pageNo: String): Observable<String>
 
+    @GET("index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&submit=%B2%E9%D1%AF")
+    fun queryArticle(@Query("keywords") keywords: String): Observable<String>
+
     @GET
     fun getArticle(@Url url: String): Observable<String>
 

@@ -436,6 +436,31 @@ class Spider {
             }
         }
 
+        /**
+         * @desc 抓取并解析根据关键词查询到的文章列表
+         * @author ll
+         * @time 2018-08-13 20:16
+         */
+        fun scratchQueryArticles(doc:Document):ArrayList<Article>{
+             try {
+                 val articles:Elements = doc.getElementsByClass("t_l")
+                 val list = ArrayList<Article>()
+                 for (e in articles){
+                     val article = Article()
+                     val link = e.getElementsByTag("a").first()
+                     article.title = link.text().convertToSimplifiedChinese()
+                     article.url = "$BASE_URL${link.attr("href")}"
+                     article.author = e.getElementsByClass("t_author").first().text()
+                     article.date = e.getElementsByTag("i").first().text()
+
+                     list.add(article)
+                 }
+                 return list
+             }catch (t:Throwable){
+                 throw Exceptions.propagate(t)
+             }
+        }
+
 
         //endregion
     }
