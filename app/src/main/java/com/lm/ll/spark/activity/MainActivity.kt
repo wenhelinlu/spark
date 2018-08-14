@@ -20,10 +20,13 @@ import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.db.QueryRecord
+import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.LoadDataType
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
+import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Observable
@@ -118,9 +121,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
                 Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
                         .setAction("刷新") { loadContent() }.show()
-            }else{
+            } else {
                 Snackbar.make(it, "当前处于查询状态，此操作不可用", Snackbar.LENGTH_LONG)
-                        .setAction("了解") {  }.show()
+                        .setAction("了解") { }.show()
             }
         }
 
@@ -427,6 +430,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
     }
 
+    /**
+     * @desc 保存查询记录
+     * @author ll
+     * @time 2018-08-14 15:52
+     */
+    private fun saveQueryRecord(keyword: String) {
+        //如果查询记录在数据库中不存在，则插入数据库中
+        val f = getQueryRecordBox().find(QueryRecord_.keyword, keyword)
+        if (f == null || f.count() == 0) {
+            val record = QueryRecord()
+            record.keyword = keyword
+            record.queryType = 0
+            getQueryRecordBox().put(record)
+        }
+    }
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -450,6 +468,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onQueryTextSubmit(query: String): Boolean {
                 //关键词不为空时执行查询操作
                 if (!query.isBlank()) {
+
+                    saveQueryRecord(query)
+
                     currentLoadType = LoadDataType.QUERY_ARTICLE_LIST
                     articleListBackup.clear()
                     articleListBackup.addAll(articleList)

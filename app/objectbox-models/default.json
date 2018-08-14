@@ -123,9 +123,33 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "3:3242899752442388658",
+      "lastPropertyId": "4:2910143538229743969",
+      "name": "QueryRecord",
+      "properties": [
+        {
+          "id": "1:1366892905471894512",
+          "name": "id"
+        },
+        {
+          "id": "2:8990218613088183545",
+          "name": "keyword"
+        },
+        {
+          "id": "3:3915499655884979978",
+          "name": "queryType"
+        },
+        {
+          "id": "4:2910143538229743969",
+          "name": "insertTime"
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "2:5916760128986399421",
+  "lastEntityId": "3:3242899752442388658",
   "lastIndexId": "0:0",
   "lastRelationId": "1:120272016332455052",
   "lastSequenceId": "0:0",

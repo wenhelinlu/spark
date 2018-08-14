@@ -3,6 +3,7 @@ package com.lm.ll.spark.util
 import android.content.Context
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.MyObjectBox
+import com.lm.ll.spark.db.QueryRecord
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.kotlin.boxFor
@@ -28,6 +29,15 @@ object ObjectBox {
      * @time 2018-07-26 15:45
      */
     fun getArticleBox():Box<Article>{
+        return boxStore.boxFor()
+    }
+
+    /**
+     * @desc QueryRecord的Box实例，用于ObjectBox数据库中QueryRecord表的相关操作
+     * @author ll
+     * @time 2018-08-14 15:46
+     */
+    fun getQueryRecordBox():Box<QueryRecord>{
         return boxStore.boxFor()
     }
 }
