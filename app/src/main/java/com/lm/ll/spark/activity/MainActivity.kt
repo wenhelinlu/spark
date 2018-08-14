@@ -21,6 +21,7 @@ import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
+import com.lm.ll.spark.enum.LoadDataType
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
@@ -48,18 +49,59 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.swipeRefreshTitles.isRefreshing = false
     }
 
-    //使用AutoDispose解除Rxjava2订阅
+    /**
+     * @desc 使用AutoDispose解除Rxjava2订阅
+     * @author ll
+     * @time 2018-08-14 9:54
+     */
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
-    //文章列表数据源
+    /**
+     * @desc 文章列表数据源
+     * @author ll
+     * @time 2018-08-14 9:53
+     */
     private var articleList: ArrayList<Article> = ArrayList()
-    //文章列表adapter
+
+    /**
+     * @desc 文章列表数据源备份（用于在查询前将articleList备份，然后退出查询时恢复原有的文章列表数据）
+     * @author ll
+     * @time 2018-08-14 9:53
+     */
+    private var articleListBackup: ArrayList<Article> = ArrayList()
+    /**
+     * @desc recyclerview的adapter
+     * @author ll
+     * @time 2018-08-14 9:53
+     */
     private lateinit var adapter: ArticleListAdapter
-    //当前加载的页数
+
+    /**
+     * @desc 当前加载的页数
+     * @author ll
+     * @time 2018-08-14 9:53
+     */
     private var currentPage: Int = 1
-    //recyclerview的layoutmanager
+
+    /**
+     * @desc recyclerview的layoutmanager
+     * @author ll
+     * @time 2018-08-14 9:52
+     */
     private val linearLayoutManager = LinearLayoutManager(this@MainActivity)
 
+    /**
+     * @desc ApiService实例
+     * @author ll
+     * @time 2018-08-14 9:52
+     */
     private val repository = TabooArticlesRepository(TabooBooksApiService.create())
+
+    /**
+     * @desc 当前数据加载类型
+     * @author ll
+     * @time 2018-08-14 9:52
+     */
+    private var currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +114,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
 
         //若函数参数对应的函数只有一个参数，在使用时，可以省略参数定义，直接使用“it”代替参数
-        fab.setOnClickListener {
+        fab.setOnClickListener { it ->
             Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
                     .setAction("刷新") { loadContent() }.show()
         }
@@ -90,8 +132,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         swipeRefreshTitles.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
         //下拉刷新监听
         swipeRefreshTitles.setOnRefreshListener {
-            loadContent()
+            if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
+                loadContent()
 //            loadListWithRx()
+            } else {
+                hideProgressbar()
+            }
         }
 
         //recyclerview设置
@@ -101,9 +147,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //上拉加载更多
         recyclerViewTitles.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
             override fun loadMoreData() {
-                currentPage++
-                loadContent(true)
+                if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
+                    currentPage++
+                    loadContent(true)
 //                loadListWithRx(true)
+                }
             }
         })
 
@@ -133,7 +181,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
                 .subscribe({ result ->
                     articleList = result
-                    this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+                    refreshData()
                 }, { error ->
                     //异常处理
                     val msg =
@@ -146,7 +194,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     Snackbar.make(this.fab, msg, Snackbar.LENGTH_LONG)
                             .setAction("重试") { loadListWithRx() }.show()
                 })
-//        Spider.scratchQueryArticles(Jsoup.connect("https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=%D1%EE%BC%D2%CD%DD&submit=%B2%E9%D1%AF").get())
     }
 
     /**
@@ -160,10 +207,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             withContext(CommonPool) {
                 articleList = queryArticleList(keyword)
             }
-
-            adapter = ArticleListAdapter(this@MainActivity, articleList)
-            this@MainActivity.recyclerViewTitles.adapter = adapter
-            this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+            refreshData()
             hideProgressbar()
         }
     }
@@ -218,9 +262,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             articleList = result
                         }
                     }
-                    adapter = ArticleListAdapter(this@MainActivity, articleList)
-                    this@MainActivity.recyclerViewTitles.adapter = adapter
-                    this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+                    refreshData()
                     //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
                     if (isLoadMore) {
                         this@MainActivity.recyclerViewTitles.layoutManager.scrollToPosition(currentPos - 1)
@@ -287,9 +329,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
             }
-            adapter = ArticleListAdapter(this@MainActivity, articleList)
-            this@MainActivity.recyclerViewTitles.adapter = adapter
-            this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+            refreshData()
 
             //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
             if (isLoadMore) {
@@ -323,9 +363,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @author ll
      * @time 2018-08-13 20:57
      */
-    private fun queryArticleList(keyword: String):ArrayList<Article>{
+    private fun queryArticleList(keyword: String): ArrayList<Article> {
         //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
-        val key = URLEncoder.encode(keyword,"gb2312")
+        val key = URLEncoder.encode(keyword, "gb2312")
         val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$key&submit=%B2%E9%D1%AF"
         return Spider.scratchQueryArticles(url)
     }
@@ -349,6 +389,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         swipeRefreshTitles.isRefreshing = true
     }
 
+    /**
+     * @desc 刷新数据
+     * @author ll
+     * @time 2018-08-14 9:44
+     */
+    private fun refreshData() {
+        adapter = ArticleListAdapter(this@MainActivity, articleList)
+        this@MainActivity.recyclerViewTitles.adapter = adapter
+        this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+    }
+
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -364,13 +415,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            /**
+             * @desc 提交查询事件
+             * @author ll
+             * @time 2018-08-14 9:50
+             */
             override fun onQueryTextSubmit(query: String): Boolean {
-                queryArticle(query)
+                //关键词不为空时执行查询操作
+                if (!query.isBlank()) {
+                    currentLoadType = LoadDataType.QUERY_ARTICLE_LIST
+                    articleListBackup = articleList
+                    queryArticle(query)
+                }
+
                 return true
             }
 
+            /**
+             * @desc 查询文本改变事件
+             * @author ll
+             * @time 2018-08-14 9:50
+             */
             override fun onQueryTextChange(s: String): Boolean {
-//                (this@MainActivity.recyclerViewEliteList.adapter as ArticleListAdapter).filter(s)
+                //关键词清空时恢复原有数据列表
+                if (s.isBlank()) {
+                    currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
+                    articleList = articleListBackup
+                    refreshData()
+                }
                 return true
             }
         })
@@ -390,9 +462,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 switchDayNightMode(isNightMode)
                 recreate() //在onCreate方法中设置日、夜间模式后，不需要调用recreate()方法，但是，在其他方法中切换后，需要调用此方法
 
-                return true
-            }
-            R.id.action_search -> {
                 return true
             }
             else -> super.onOptionsItemSelected(item)
