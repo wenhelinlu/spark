@@ -143,6 +143,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //recyclerview设置
         this.recyclerViewTitles.addItemDecoration(SolidLineItemDecoration(this@MainActivity))
         this.recyclerViewTitles.layoutManager = linearLayoutManager
+        adapter = ArticleListAdapter(this@MainActivity, articleList)
+        this.recyclerViewTitles.adapter = adapter
 
         //上拉加载更多
         recyclerViewTitles.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
@@ -180,7 +182,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .doOnDispose { Log.d("AutoDispose", "Disposing subscription from onCreate()") }
                 .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
                 .subscribe({ result ->
-                    articleList = result
+                    articleList.clear()
+                    articleList.addAll(result)
                     refreshData()
                 }, { error ->
                     //异常处理
@@ -205,7 +208,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         async(UI) {
             showProgressbar()
             withContext(CommonPool) {
-                articleList = queryArticleList(keyword)
+                val list = queryArticleList(keyword)
+                articleList.clear()
+                articleList.addAll(list)
             }
             refreshData()
             hideProgressbar()
@@ -259,7 +264,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             } else {
                             }
                         } else {
-                            articleList = result
+                            articleList.clear()
+                            articleList.addAll(result)
                         }
                     }
                     refreshData()
@@ -319,7 +325,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         } else {
                         }
                     } else {
-                        articleList = list
+                        articleList.clear()
+                        articleList.addAll(list)
                         //如果此时获取的集合数据不超过预定值，则继续加载数据
                         while (articleList.size < LIST_MIN_COUNT) {
                             currentPage++
@@ -395,8 +402,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-08-14 9:44
      */
     private fun refreshData() {
-        adapter = ArticleListAdapter(this@MainActivity, articleList)
-        this@MainActivity.recyclerViewTitles.adapter = adapter
+        //注意，如果此adapter绑定的数据源articleList重新赋值了，则表示此数据源在内存中的地址改变，adapter会认为原数据源没有改变，
+        //此时调用notifyDataSetChanged()方法不起作用，必须重新绑定数据源才可以。
+        //解决方法是不直接给articleList赋新值，而是调用articleList的addAll()方法（视情况而定，可以先clear），这样adapter的
+        //notifyDataSetChanged()方法就会起作用，列表可以正常刷新
         this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
     }
 
@@ -424,7 +433,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 //关键词不为空时执行查询操作
                 if (!query.isBlank()) {
                     currentLoadType = LoadDataType.QUERY_ARTICLE_LIST
-                    articleListBackup = articleList
+                    articleListBackup.clear()
+                    articleListBackup.addAll(articleList)
                     queryArticle(query)
                 }
 
@@ -440,7 +450,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 //关键词清空时恢复原有数据列表
                 if (s.isBlank()) {
                     currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
-                    articleList = articleListBackup
+                    articleList.clear()
+                    articleList.addAll(articleListBackup)
                     refreshData()
                 }
                 return true
