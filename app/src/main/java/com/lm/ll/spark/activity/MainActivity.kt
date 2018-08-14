@@ -115,8 +115,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //若函数参数对应的函数只有一个参数，在使用时，可以省略参数定义，直接使用“it”代替参数
         fab.setOnClickListener { it ->
-            Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
-                    .setAction("刷新") { loadContent() }.show()
+            if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
+                Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
+                        .setAction("刷新") { loadContent() }.show()
+            }else{
+                Snackbar.make(it, "当前处于查询状态，此操作不可用", Snackbar.LENGTH_LONG)
+                        .setAction("了解") {  }.show()
+            }
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -366,15 +371,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     /**
-     * @desc 获取查询结果
+     * @desc 获取全部查询结果
      * @author ll
      * @time 2018-08-13 20:57
      */
     private fun queryArticleList(keyword: String): ArrayList<Article> {
         //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
         val key = URLEncoder.encode(keyword, "gb2312")
-        val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$key&submit=%B2%E9%D1%AF"
-        return Spider.scratchQueryArticles(url)
+        var page = 1
+        val queryResult = ArrayList<Article>()
+        var hasNextPage = true
+        do {
+            val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$key&submit=%B2%E9%D1%AF&p=$page"
+            val list = Spider.scratchQueryArticles(url)
+            if (list.count() == 0) {
+                hasNextPage = false
+            } else {
+                queryResult.addAll(list)
+                page++
+            }
+        } while (hasNextPage)
+
+        return queryResult
     }
 
     /**
