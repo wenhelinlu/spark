@@ -1,10 +1,12 @@
 package com.lm.ll.spark.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
+import android.support.v4.widget.SimpleCursorAdapter
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -454,11 +456,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
 
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        val mSearchAutoComplete = searchView.findViewById(R.id.search_src_text) as SearchView.SearchAutoComplete
+        //设置触发查询的最少字符数（默认2个字符才会触发查询）
+        mSearchAutoComplete.threshold = 0
+
+        //初始状态下显示全部查询历史记录
+        var list = getQueryRecord()
+        var cursor = getQueryRecordCursor(list)
+        searchView.suggestionsAdapter = SimpleCursorAdapter(this@MainActivity, R.layout.search_item, cursor, arrayOf("text"), intArrayOf(R.id.searchKeyword), SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
+
+        //查询记录项事件监听
+        searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+            override fun onSuggestionSelect(position: Int): Boolean {
+                return false
+            }
+
+            //点击事件，触发查询操作
+            override fun onSuggestionClick(position: Int): Boolean {
+                searchView.setQuery(list[position].keyword,true)
+                searchView.clearFocus()
+                return true
+            }
+        })
+
+        //查询关键词事件监听
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             /**
              * @desc 提交查询事件
@@ -493,6 +520,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     articleList.addAll(articleListBackup)
                     refreshData()
                 }
+
+                list = getQueryRecord(s)
+                //根据输入的文本过滤查询历史记录
+                cursor = getQueryRecordCursor(list)
+                // 如果适配器已经存在，则只需要更新适配器中的cursor对象即可。
+                searchView.suggestionsAdapter.changeCursor(cursor)
+
                 return true
             }
         })
