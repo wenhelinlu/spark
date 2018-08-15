@@ -1,5 +1,6 @@
 package com.lm.ll.spark.db
 
+import com.lm.ll.spark.enum.ForumType
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import java.time.LocalDateTime
@@ -16,6 +17,6 @@ data class QueryRecord(
         @Id
         var id: Long = 0, //objectbox内部主键
         var keyword: String? = null, //查询关键词
-        var queryType: Int = 0, //查询类型（区分以后区分不同论坛内容）
+        var queryType: Int = ForumType.TABOO_BOOK.ordinal, //查询类型（区分不同论坛内容）
         var insertTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) //文章收藏入库时间
 )

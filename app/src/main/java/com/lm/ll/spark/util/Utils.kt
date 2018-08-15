@@ -10,6 +10,7 @@ import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
+import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -127,29 +128,13 @@ fun getQueryRecordCursor(records: List<QueryRecord>):MatrixCursor{
 }
 
 /**
- * @desc 根据条件获取查询记录，并将查询记录转换成SearchView需要的Cursor
- * @author ll
- * @time 2018-08-15 10:52
- * @param keyword 查询条件
- */
-fun getQueryRecordCursor(keyword: String = ""):MatrixCursor{
-    val cursor = MatrixCursor(arrayOf("_id","text"))
-    val records = if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query().contains(QueryRecord_.keyword,keyword).orderDesc(QueryRecord_.insertTime).build().find()
-    for (r in records){
-        val row = arrayOf(r.id,r.keyword)
-        cursor.addRow(row)
-    }
-    return cursor
-}
-
-/**
  * @desc 根据条件获取查询记录
  * @author ll
  * @time 2018-08-15 15:19
  * @param keyword 查询条件
  */
-fun getQueryRecord(keyword: String = ""): List<QueryRecord>{
-    return if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query().contains(QueryRecord_.keyword,keyword).orderDesc(QueryRecord_.insertTime).build().find()
+fun getQueryRecord(keyword: String = "", forumType: ForumType = ForumType.TABOO_BOOK): List<QueryRecord>{
+    return if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query().equal(QueryRecord_.queryType,forumType.ordinal.toLong()).contains(QueryRecord_.keyword,keyword).orderDesc(QueryRecord_.insertTime).build().find()
 }
 
 //endregion

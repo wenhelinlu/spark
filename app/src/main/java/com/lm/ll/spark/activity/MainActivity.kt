@@ -25,6 +25,7 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
+import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.enum.LoadDataType
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
@@ -443,7 +444,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (f == null || f.count() == 0) {
             val record = QueryRecord()
             record.keyword = keyword
-            record.queryType = 0
+            record.queryType = ForumType.TABOO_BOOK.ordinal
             getQueryRecordBox().put(record)
         }
     }
