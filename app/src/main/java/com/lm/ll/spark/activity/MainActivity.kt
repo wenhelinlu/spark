@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -31,10 +30,6 @@ import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -42,11 +37,7 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
-import retrofit2.HttpException
-import java.net.ConnectException
 import java.net.URLEncoder
-import java.util.concurrent.TimeoutException
-import javax.net.ssl.SSLHandshakeException
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
@@ -109,6 +100,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private var currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
 
+    /**
+     * @desc 查询结果页码
+     * @author ll
+     * @time 2018-08-16 9:29
+     */
+    private var queryPage = 1
+    /**
+     * @desc 加密后的get请求查询参数
+     * @author ll
+     * @time 2018-08-16 10:27
+     */
+    private var encodedKeyword = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -123,7 +127,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.setOnClickListener { it ->
             if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
                 Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
-                        .setAction("刷新") { loadContent() }.show()
+                        .setAction("刷新") { loadArticleList() }.show()
             } else {
                 Snackbar.make(it, "当前处于查询状态，此操作不可用", Snackbar.LENGTH_LONG)
                         .setAction("了解") { }.show()
@@ -144,8 +148,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //下拉刷新监听
         swipeRefreshTitles.setOnRefreshListener {
             if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
-                loadContent()
-//            loadListWithRx()
+                loadArticleList()
             } else {
                 hideProgressbar()
             }
@@ -162,52 +165,46 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun loadMoreData() {
                 if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
                     currentPage++
-                    loadContent(true)
-//                loadListWithRx(true)
+                    loadArticleList(true)
+                } else {
+                    queryPage++
+                    loadQueryResult(true)
                 }
             }
         })
 
-//        loadListWithRx()
-
-        loadContent()
+        loadArticleList()
     }
 
     /**
-     * @desc 根据关键词检索文章
+     * @desc 查询操作
      * @author ll
-     * @time 2018-08-13 20:23
+     * @time 2018-08-16 10:33
      */
-    private fun queryArticleWithRx(keyword: String) {
-        repository.queryArticle(keyword)
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe {
-                    //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
-                    showProgressbar()
-                }
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doAfterTerminate {
-                    hideProgressbar()
-                }
-                .doOnDispose { Log.d("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
-                .subscribe({ result ->
-                    articleList.clear()
-                    articleList.addAll(result)
-                    refreshData()
-                }, { error ->
-                    //异常处理
-                    val msg =
-                            when (error) {
-                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
-                                is TimeoutException -> "网络连接超时"
-                                is IndexOutOfBoundsException -> "解析异常"
-                                else -> error.toString()
-                            }
-                    Snackbar.make(this.fab, msg, Snackbar.LENGTH_LONG)
-                            .setAction("重试") { loadListWithRx() }.show()
-                })
+    private fun queryArticle(keyword: String) {
+        //初始化查询状态及备份原有数据
+        currentLoadType = LoadDataType.QUERY_ARTICLE_LIST
+        articleListBackup.clear()
+        articleListBackup.addAll(articleList)
+
+        articleList.clear()
+        //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
+        encodedKeyword = URLEncoder.encode(keyword, "gb2312")
+        //查询结果页码重置为1
+        queryPage = 1
+        loadQueryResult()
+    }
+
+    /**
+     * @desc 退出查询状态，恢复原有数据
+     * @author ll
+     * @time 2018-08-16 10:58
+     */
+    private fun quitQueryStatus(){
+        currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
+        articleList.clear()
+        articleList.addAll(articleListBackup)
+        refreshData()
     }
 
     /**
@@ -215,89 +212,57 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @author ll
      * @time 2018-08-13 20:59
      */
-    private fun queryArticle(keyword: String) {
+    private fun loadQueryResult(isLoadMore: Boolean = false) {
+        val currentPos: Int = articleList.size
+
         async(UI) {
             showProgressbar()
             withContext(CommonPool) {
-                val list = queryArticleList(keyword)
-                articleList.clear()
-                articleList.addAll(list)
-            }
-            refreshData()
-            hideProgressbar()
-        }
-    }
+                //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
+                val pageIndex = if (isLoadMore) queryPage else 1
+                val list = queryArticleList(encodedKeyword, pageIndex)
 
-    private fun loadListWithRx(isLoadMore: Boolean = false) {
-        val getListRx = when {
-            currentPage == 1 -> {
-                val firstPage = repository.getArticleList("tree$currentPage")
-                val secondPage = repository.getArticleList("tree${++currentPage}")
-                val thirdPage = repository.getArticleList("tree${++currentPage}")
-                Observable.concat(firstPage, secondPage, thirdPage)
-            }
-            isLoadMore -> repository.getArticleList("tree${++currentPage}")
-            else -> repository.getArticleList("tree1") //如果下拉刷新，则只抓取第一页内容
-        }
-
-        getListRx
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe {
-                    //默认情况下，doOnSubscribe执行在subscribe发生的线程，而如果在doOnSubscribe()之后有subscribeOn()的话，它将执行在离它最近的subscribeOn()所指定的线程，所以可以利用此特点，在线程开始前显示进度条等UI操作
-                    showProgressbar()
-                }
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doAfterTerminate {
-                    hideProgressbar()
-                }
-                .doOnDispose { Log.d("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
-                .subscribe({ result ->
-                    val currentPos: Int = articleList.size
-                    if (isLoadMore) {
-                        articleList.addAll(result) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
-                    } else {
-                        /**
-                         *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
-                         *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
-                         *  这个位置之前的数据添加到已有集合中
-                         */
-                        if (articleList.count() > 0) {
-                            val firstNews = result.findLast { x -> x.url == articleList[0].url }
-                            if (firstNews != null) {
-                                val firstIndex = result.indexOf(firstNews)
-                                if (firstIndex > 0) {
-                                    val latest = result.take(firstIndex)
-                                    articleList.addAll(latest)
-                                } else {
-                                }
+                if (isLoadMore) {
+                    articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
+                } else {
+                    /**
+                     *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
+                     *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
+                     *  这个位置之前的数据添加到已有集合中
+                     */
+                    if (articleList.count() > 0) {
+                        val firstNews = list.findLast { x -> x.url == articleList[0].url }
+                        if (firstNews != null) {
+                            val firstIndex = list.indexOf(firstNews)
+                            if (firstIndex > 0) {
+                                val latest = list.take(firstIndex)
+                                articleList.addAll(latest)
                             } else {
                             }
                         } else {
-                            articleList.clear()
-                            articleList.addAll(result)
+                        }
+                    } else {
+                        articleList.clear()
+                        articleList.addAll(list)
+                        //如果此时获取的集合数据不超过预定值，则继续加载数据
+                        while (articleList.size < LIST_MIN_COUNT) {
+                            queryPage++
+                            val tmpList = queryArticleList(encodedKeyword, queryPage)
+                            articleList.addAll(tmpList)
                         }
                     }
-                    refreshData()
-                    //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
-                    if (isLoadMore) {
-                        this@MainActivity.recyclerViewTitles.layoutManager.scrollToPosition(currentPos - 1)
-                    }
-                }, { error ->
-                    //异常处理
-                    val msg =
-                            when (error) {
-                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
-                                is TimeoutException -> "网络连接超时"
-                                is IndexOutOfBoundsException -> "解析异常"
-                                else -> error.toString()
-                            }
-                    Snackbar.make(this.fab, msg, Snackbar.LENGTH_LONG)
-                            .setAction("重试") { loadListWithRx() }.show()
-                })
-    }
+                }
+            }
+            refreshData()
 
+            //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
+            if (isLoadMore) {
+                linearLayoutManager.scrollToPositionWithOffset(currentPos - 1, 0)
+            }
+
+            hideProgressbar()
+        }
+    }
 
     /**
      * @desc 加载文章列表
@@ -305,7 +270,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-05-29 19:40
      * @param isLoadMore 是否是加载更多操作
      */
-    private fun loadContent(isLoadMore: Boolean = false) {
+    private fun loadArticleList(isLoadMore: Boolean = false) {
         val currentPos: Int = articleList.size
 
         async(UI) {
@@ -377,28 +342,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     /**
-     * @desc 获取全部查询结果
+     * @desc 根据关键词和页码获取查询结果
      * @author ll
      * @time 2018-08-13 20:57
+     * @param keyword 查询关键词
+     * @param pageIndex 查询结果页码
      */
-    private fun queryArticleList(keyword: String): ArrayList<Article> {
-        //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
-        val key = URLEncoder.encode(keyword, "gb2312")
-        var page = 1
-        val queryResult = ArrayList<Article>()
-        var hasNextPage = true
-        do {
-            val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$key&submit=%B2%E9%D1%AF&p=$page"
-            val list = Spider.scratchQueryArticles(url)
-            if (list.count() == 0) {
-                hasNextPage = false
-            } else {
-                queryResult.addAll(list)
-                page++
-            }
-        } while (hasNextPage)
-
-        return queryResult
+    private fun queryArticleList(keyword: String, pageIndex: Int): ArrayList<Article> {
+        val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$keyword&submit=%B2%E9%D1%AF&p=$pageIndex"
+        return Spider.scratchQueryArticles(url)
     }
 
     /**
@@ -426,15 +378,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-08-14 9:44
      */
     private fun refreshData() {
-        //注意，如果此adapter绑定的数据源articleList重新赋值了，则表示此数据源在内存中的地址改变，adapter会认为原数据源没有改变，
-        //此时调用notifyDataSetChanged()方法不起作用，必须重新绑定数据源才可以。
-        //解决方法是不直接给articleList赋新值，而是调用articleList的addAll()方法（视情况而定，可以先clear），这样adapter的
-        //notifyDataSetChanged()方法就会起作用，列表可以正常刷新
+        /**
+         * 注意，如果此adapter绑定的数据源articleList重新赋值了，则表示此数据源在内存中的地址改变，adapter会认为原数据源没有改变，
+         * 此时调用notifyDataSetChanged()方法不起作用，必须重新绑定数据源才可以。
+         * 解决方法是不直接给articleList赋新值，而是调用articleList的addAll()方法（视情况而定，可以先clear），这样adapter的
+         * notifyDataSetChanged()方法就会起作用，列表可以正常刷新
+         */
         this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
     }
 
     /**
-     * @desc 保存查询记录
+     * @desc 保存查询记录到数据库中
      * @author ll
      * @time 2018-08-14 15:52
      */
@@ -480,7 +434,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             //点击事件，触发查询操作
             override fun onSuggestionClick(position: Int): Boolean {
-                searchView.setQuery(list[position].keyword,true)
+                searchView.setQuery(list[position].keyword, true)
                 searchView.clearFocus()
                 return true
             }
@@ -496,12 +450,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onQueryTextSubmit(query: String): Boolean {
                 //关键词不为空时执行查询操作
                 if (!query.isBlank()) {
-
                     saveQueryRecord(query)
-
-                    currentLoadType = LoadDataType.QUERY_ARTICLE_LIST
-                    articleListBackup.clear()
-                    articleListBackup.addAll(articleList)
                     queryArticle(query)
                 }
 
@@ -516,10 +465,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onQueryTextChange(s: String): Boolean {
                 //关键词清空时恢复原有数据列表
                 if (s.isBlank()) {
-                    currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
-                    articleList.clear()
-                    articleList.addAll(articleListBackup)
-                    refreshData()
+                    quitQueryStatus()
                 }
 
                 list = getQueryRecord(s)
