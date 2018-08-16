@@ -30,7 +30,7 @@ import javax.net.ssl.SSLHandshakeException
  * 作者：Created by ll on 2018-06-07 17:15.
  * 邮箱：wenhelinlu@gmail.com
  */
-class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+class FavoriteArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
         this.swipeRefreshEliteList.isRefreshing = false
     }
@@ -40,7 +40,7 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
     //文章列表adapter
     private lateinit var adapter: ArticleListAdapter
 
-    //使用AutoDispose解除Rxjava2订阅
+    //使用AutoDispose解除RxJava2订阅
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,16 +54,19 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
         //触发刷新的下拉距离
         swipeRefreshEliteList.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
 
-        val linearLayoutManager = LinearLayoutManager(this@FavoriteNewsListActivity)
+        val linearLayoutManager = LinearLayoutManager(this@FavoriteArticleListActivity)
 
-        this.recyclerViewEliteList.addItemDecoration(SolidLineItemDecoration(this@FavoriteNewsListActivity))
+        this.recyclerViewEliteList.addItemDecoration(SolidLineItemDecoration(this@FavoriteArticleListActivity))
         this.recyclerViewEliteList.layoutManager = linearLayoutManager
+
+        adapter = ArticleListAdapter(this@FavoriteArticleListActivity, articleList)
+        this@FavoriteArticleListActivity.recyclerViewEliteList.adapter = adapter
 
         loadDataWithRx()
     }
 
     /**
-     * @desc 使用Rxjava2从数据库中加载数据
+     * @desc 使用RxJava2从数据库中加载数据
      * @author lm
      * @time 2018-07-12 21:50
      */
@@ -80,10 +83,11 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
                     hideProgressbar()
                 }
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
+                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
-                    articleList = ArrayList(result)
-                    updateAdapter()
+                    articleList.clear()
+                    articleList.addAll(ArrayList(result))
+                    refreshData()
                 }, { error ->
                     //异常处理
                     val msg =
@@ -99,14 +103,12 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
     }
 
     /**
-     * @desc 更新Recyclerview的Adapter
+     * @desc 更新RecyclerView的Adapter
      * @author ll
      * @time 2018-07-10 15:23
      */
-    private fun updateAdapter() {
-        adapter = ArticleListAdapter(this@FavoriteNewsListActivity, articleList)
-        this@FavoriteNewsListActivity.recyclerViewEliteList.adapter = adapter
-        this@FavoriteNewsListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
+    private fun refreshData() {
+        this@FavoriteArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
     }
 
 
@@ -137,12 +139,12 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
         val searchView = menu.findItem(R.id.action_search_favorite).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                (this@FavoriteNewsListActivity.recyclerViewEliteList.adapter as ArticleListAdapter).filter(query)
+                (this@FavoriteArticleListActivity.recyclerViewEliteList.adapter as ArticleListAdapter).filter(query)
                 return true
             }
 
             override fun onQueryTextChange(s: String): Boolean {
-                (this@FavoriteNewsListActivity.recyclerViewEliteList.adapter as ArticleListAdapter).filter(s)
+                (this@FavoriteArticleListActivity.recyclerViewEliteList.adapter as ArticleListAdapter).filter(s)
                 return true
             }
         })
@@ -157,17 +159,17 @@ class FavoriteNewsListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefre
         return when (item.itemId) {
             R.id.action_sort_author -> {
                 articleList.sortBy { x -> x.author }
-                this.recyclerViewEliteList.adapter.notifyDataSetChanged()
+                refreshData()
                 return true
             }
             R.id.action_sort_title -> {
                 articleList.sortBy { x -> x.title }
-                this.recyclerViewEliteList.adapter.notifyDataSetChanged()
+                refreshData()
                 return true
             }
             R.id.action_sort_insertDate -> {
-                articleList.sortBy { x -> x.insertTime }
-                this.recyclerViewEliteList.adapter.notifyDataSetChanged()
+                articleList.sortByDescending { x -> x.insertTime } //按插入时间降序排列
+                refreshData()
                 return true
             }
             else -> super.onOptionsItemSelected(item)

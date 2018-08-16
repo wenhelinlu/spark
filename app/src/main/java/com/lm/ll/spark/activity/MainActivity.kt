@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
@@ -24,7 +23,6 @@ import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.ForumType
-import com.lm.ll.spark.enum.LoadDataType
 import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import kotlinx.android.synthetic.main.activity_main.*
@@ -71,25 +69,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var currentPage: Int = 1
 
     /**
-     * @desc RecyclerView的layoutmanager
+     * @desc RecyclerView的LayoutManager
      * @author ll
      * @time 2018-08-14 9:52
      */
     private val linearLayoutManager = LinearLayoutManager(this@MainActivity)
 
     /**
-     * @desc 当前数据加载类型
+     * @desc 标识是否处于查询状态中
      * @author ll
-     * @time 2018-08-14 9:52
+     * @time 2018-08-16 15:20
      */
-    private var currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
+    private var isQueryStatus = false
 
     /**
-     * @desc 查询结果页码
+     * @desc 查询结果当前页码
      * @author ll
      * @time 2018-08-16 9:29
      */
-    private var queryPage = 1
+    private var queryCurrentPage = 1
     /**
      * @desc 加密后的get请求查询参数
      * @author ll
@@ -104,17 +102,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val layoutParams = window.attributes
         layoutParams.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or layoutParams.flags
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         //若函数参数对应的函数只有一个参数，在使用时，可以省略参数定义，直接使用“it”代替参数
         fab.setOnClickListener { it ->
-            if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
-                Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
-                        .setAction("刷新") { loadData(::getArticleList) }.show()
-            } else {
+            if (isQueryStatus) {
                 Snackbar.make(it, "当前处于查询状态，此操作不可用", Snackbar.LENGTH_LONG)
                         .setAction("了解") { }.show()
+            } else {
+                Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
+                        .setAction("刷新") { loadData(::getArticleList) }.show()
             }
         }
 
@@ -131,10 +128,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         swipeRefreshTitles.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
         //下拉刷新监听
         swipeRefreshTitles.setOnRefreshListener {
-            if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
-                loadData(::getArticleList)
-            } else {
+            if (isQueryStatus) {
+                //查询过程中屏蔽下拉刷新操作
                 hideProgressbar()
+            } else {
+                loadData(::getArticleList)
             }
         }
 
@@ -147,12 +145,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //上拉加载更多
         recyclerViewTitles.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
             override fun loadMoreData() {
-                if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
+                if (isQueryStatus) {
+                    queryCurrentPage++
+                    loadData(::queryArticleList, true)
+                } else {
                     currentPage++
                     loadData(::getArticleList, true)
-                } else {
-                    queryPage++
-                    loadData(::queryArticleList, true)
                 }
             }
         })
@@ -173,7 +171,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             showProgressbar()
             withContext(CommonPool) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
-                var pageIndex = if (isLoadMore) if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) currentPage else queryPage else 1
+                var pageIndex = if (isLoadMore) if (isQueryStatus) queryCurrentPage else currentPage else 1
                 val list = download(pageIndex)
 
                 //Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex, list'size = ${list.size}")
@@ -202,7 +200,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         articleList.addAll(list)
                         //如果此时获取的集合数据不超过预定值，则继续加载数据
                         while (articleList.size < LIST_MIN_COUNT) {
-                            pageIndex = if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) ++currentPage else ++queryPage
+                            pageIndex = if (isQueryStatus) ++queryCurrentPage else ++currentPage
                             val tmpList = download(pageIndex)
                             articleList.addAll(tmpList)
                         }
@@ -290,7 +288,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private fun queryArticle(keyword: String) {
         //初始化查询状态及备份原有数据
-        currentLoadType = LoadDataType.QUERY_ARTICLE_LIST
+        isQueryStatus = true
         articleListBackup.clear()
         articleListBackup.addAll(articleList)
 
@@ -298,7 +296,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
         encodedKeyword = URLEncoder.encode(keyword, "gb2312")
         //查询结果页码重置为1
-        queryPage = 1
+        queryCurrentPage = 1
         loadData(::queryArticleList)
     }
 
@@ -308,7 +306,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-08-16 10:58
      */
     private fun quitQueryStatus() {
-        currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
+        isQueryStatus = false
         articleList.clear()
         articleList.addAll(articleListBackup)
         refreshData()
@@ -431,7 +429,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_favorite -> {
-                val intent = Intent(this@MainActivity, FavoriteNewsListActivity::class.java)
+                val intent = Intent(this@MainActivity, FavoriteArticleListActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
             R.id.nav_elite -> {

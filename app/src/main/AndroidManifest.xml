@@ -32,7 +32,7 @@
             android:name=".activity.EliteEroticaArticleListActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
-            android:name=".activity.FavoriteNewsListActivity"
+            android:name=".activity.FavoriteArticleListActivity"
             android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.ClassicEroticaArticleListActivity"

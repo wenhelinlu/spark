@@ -8,7 +8,6 @@ import com.lm.ll.spark.util.Spider
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import org.jsoup.Jsoup
-import java.net.URLEncoder
 
 
 /**
@@ -16,38 +15,6 @@ import java.net.URLEncoder
  * 邮箱：wenhelinlu@gmail.com
  */
 class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiService) {
-
-
-    /**
-     * @desc 获取文章列表
-     * @author ll
-     * @time 2018-06-26 20:51
-     */
-    fun getArticleList(pageNo: String): Observable<ArrayList<Article>> {
-        return tabooBooksApiService.getArticleList(pageNo)
-                .flatMap {
-                    val document = Jsoup.parse(it)
-                    val list = Spider.scratchArticleList(document)
-                    Observable.just(list)
-                }
-    }
-
-    /**
-     * @desc 查询文章
-     * @author ll
-     * @time 2018-08-13 17:27
-     */
-    fun queryArticle(keywords: String): Observable<ArrayList<Article>>{
-        //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
-        val key = URLEncoder.encode(keywords,"gb2312")
-        return tabooBooksApiService.queryArticle(key)
-                .flatMap {
-                    val document = Jsoup.parse(it)
-                    val list = Spider.scratchQueryArticles(document)
-                    Observable.just(list)
-                }
-    }
-
     /**
      * @desc 获取已收藏的文章列表
      * @author lm
@@ -55,7 +22,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      */
     fun getFavoriteArticleList(): Observable<List<Article>> {
         //注意：Article_.comments中的下划线，这个Article_是ObjectBox内部生成的properties class,即属性类，通过它可以直接获取Article类的各个属性
-        val articles = getArticleBox().query().order(Article_.insertTime).build().find()
+        val articles = getArticleBox().query().orderDesc(Article_.insertTime).build().find()
         return Observable.just(articles)
     }
 
