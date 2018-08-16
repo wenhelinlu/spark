@@ -18,7 +18,6 @@ import android.view.MenuItem
 import android.view.WindowManager
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
-import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.QueryRecord
@@ -26,10 +25,8 @@ import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.enum.LoadDataType
-import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -47,12 +44,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     /**
-     * @desc 使用AutoDispose解除Rxjava2订阅
-     * @author ll
-     * @time 2018-08-14 9:54
-     */
-    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
-    /**
      * @desc 文章列表数据源
      * @author ll
      * @time 2018-08-14 9:53
@@ -66,7 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private var articleListBackup: ArrayList<Article> = ArrayList()
     /**
-     * @desc recyclerview的adapter
+     * @desc RecyclerView的adapter
      * @author ll
      * @time 2018-08-14 9:53
      */
@@ -80,18 +71,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var currentPage: Int = 1
 
     /**
-     * @desc recyclerview的layoutmanager
+     * @desc RecyclerView的layoutmanager
      * @author ll
      * @time 2018-08-14 9:52
      */
     private val linearLayoutManager = LinearLayoutManager(this@MainActivity)
-
-    /**
-     * @desc ApiService实例
-     * @author ll
-     * @time 2018-08-14 9:52
-     */
-    private val repository = TabooArticlesRepository(TabooBooksApiService.create())
 
     /**
      * @desc 当前数据加载类型
@@ -127,7 +111,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.setOnClickListener { it ->
             if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
                 Snackbar.make(it, "获取最新文章？", Snackbar.LENGTH_LONG)
-                        .setAction("刷新") { loadArticleList() }.show()
+                        .setAction("刷新") { loadData(::getArticleList) }.show()
             } else {
                 Snackbar.make(it, "当前处于查询状态，此操作不可用", Snackbar.LENGTH_LONG)
                         .setAction("了解") { }.show()
@@ -148,13 +132,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //下拉刷新监听
         swipeRefreshTitles.setOnRefreshListener {
             if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
-                loadArticleList()
+                loadData(::getArticleList)
             } else {
                 hideProgressbar()
             }
         }
 
-        //recyclerview设置
+        //RecyclerView设置
         this.recyclerViewTitles.addItemDecoration(SolidLineItemDecoration(this@MainActivity))
         this.recyclerViewTitles.layoutManager = linearLayoutManager
         adapter = ArticleListAdapter(this@MainActivity, articleList)
@@ -165,62 +149,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun loadMoreData() {
                 if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) {
                     currentPage++
-                    loadArticleList(true)
+                    loadData(::getArticleList, true)
                 } else {
                     queryPage++
-                    loadQueryResult(true)
+                    loadData(::queryArticleList, true)
                 }
             }
         })
-
-        loadArticleList()
+        loadData(::getArticleList)
     }
 
     /**
-     * @desc 查询操作
-     * @author ll
-     * @time 2018-08-16 10:33
-     */
-    private fun queryArticle(keyword: String) {
-        //初始化查询状态及备份原有数据
-        currentLoadType = LoadDataType.QUERY_ARTICLE_LIST
-        articleListBackup.clear()
-        articleListBackup.addAll(articleList)
-
-        articleList.clear()
-        //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
-        encodedKeyword = URLEncoder.encode(keyword, "gb2312")
-        //查询结果页码重置为1
-        queryPage = 1
-        loadQueryResult()
-    }
-
-    /**
-     * @desc 退出查询状态，恢复原有数据
-     * @author ll
-     * @time 2018-08-16 10:58
-     */
-    private fun quitQueryStatus(){
-        currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
-        articleList.clear()
-        articleList.addAll(articleListBackup)
-        refreshData()
-    }
-
-    /**
-     * @desc 根据关键词检索文章
+     * @desc 加载数据
      * @author ll
      * @time 2018-08-13 20:59
+     * @param download 函数类型参数，实际的下载方法
+     * @param isLoadMore 是否是加载更多数据
      */
-    private fun loadQueryResult(isLoadMore: Boolean = false) {
+    private fun loadData(download: (page: Int) -> ArrayList<Article>, isLoadMore: Boolean = false) {
         val currentPos: Int = articleList.size
 
         async(UI) {
             showProgressbar()
             withContext(CommonPool) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
-                val pageIndex = if (isLoadMore) queryPage else 1
-                val list = queryArticleList(encodedKeyword, pageIndex)
+                var pageIndex = if (isLoadMore) if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) currentPage else queryPage else 1
+                val list = download(pageIndex)
+
+                //Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex, list'size = ${list.size}")
 
                 if (isLoadMore) {
                     articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
@@ -246,67 +202,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         articleList.addAll(list)
                         //如果此时获取的集合数据不超过预定值，则继续加载数据
                         while (articleList.size < LIST_MIN_COUNT) {
-                            queryPage++
-                            val tmpList = queryArticleList(encodedKeyword, queryPage)
-                            articleList.addAll(tmpList)
-                        }
-                    }
-                }
-            }
-            refreshData()
-
-            //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
-            if (isLoadMore) {
-                linearLayoutManager.scrollToPositionWithOffset(currentPos - 1, 0)
-            }
-
-            hideProgressbar()
-        }
-    }
-
-    /**
-     * @desc 加载文章列表
-     * @author ll
-     * @time 2018-05-29 19:40
-     * @param isLoadMore 是否是加载更多操作
-     */
-    private fun loadArticleList(isLoadMore: Boolean = false) {
-        val currentPos: Int = articleList.size
-
-        async(UI) {
-            showProgressbar()
-            withContext(CommonPool) {
-                //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
-                val pageIndex = if (isLoadMore) currentPage else 1
-                val list = getArticleList(pageIndex)
-//            Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex, list'size = ${list.size}")
-
-                if (isLoadMore) {
-                    articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
-                } else {
-                    /**
-                     *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
-                     *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
-                     *  这个位置之前的数据添加到已有集合中
-                     */
-                    if (articleList.count() > 0) {
-                        val firstNews = list.findLast { x -> x.url == articleList[0].url }
-                        if (firstNews != null) {
-                            val firstIndex = list.indexOf(firstNews)
-                            if (firstIndex > 0) {
-                                val latest = list.take(firstIndex)
-                                articleList.addAll(latest)
-                            } else {
-                            }
-                        } else {
-                        }
-                    } else {
-                        articleList.clear()
-                        articleList.addAll(list)
-                        //如果此时获取的集合数据不超过预定值，则继续加载数据
-                        while (articleList.size < LIST_MIN_COUNT) {
-                            currentPage++
-                            val tmpList = getArticleList(currentPage)
+                            pageIndex = if (currentLoadType == LoadDataType.COMMON_ARTICLE_LIST) ++currentPage else ++queryPage
+                            val tmpList = download(pageIndex)
                             articleList.addAll(tmpList)
                         }
                     }
@@ -345,11 +242,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @desc 根据关键词和页码获取查询结果
      * @author ll
      * @time 2018-08-13 20:57
-     * @param keyword 查询关键词
      * @param pageIndex 查询结果页码
      */
-    private fun queryArticleList(keyword: String, pageIndex: Int): ArrayList<Article> {
-        val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$keyword&submit=%B2%E9%D1%AF&p=$pageIndex"
+    private fun queryArticleList(pageIndex: Int): ArrayList<Article> {
+        val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$encodedKeyword&submit=%B2%E9%D1%AF&p=$pageIndex"
         return Spider.scratchQueryArticles(url)
     }
 
@@ -386,6 +282,38 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
          */
         this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
     }
+
+    /**
+     * @desc 查询操作
+     * @author ll
+     * @time 2018-08-16 10:33
+     */
+    private fun queryArticle(keyword: String) {
+        //初始化查询状态及备份原有数据
+        currentLoadType = LoadDataType.QUERY_ARTICLE_LIST
+        articleListBackup.clear()
+        articleListBackup.addAll(articleList)
+
+        articleList.clear()
+        //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
+        encodedKeyword = URLEncoder.encode(keyword, "gb2312")
+        //查询结果页码重置为1
+        queryPage = 1
+        loadData(::queryArticleList)
+    }
+
+    /**
+     * @desc 退出查询状态，恢复原有数据
+     * @author ll
+     * @time 2018-08-16 10:58
+     */
+    private fun quitQueryStatus() {
+        currentLoadType = LoadDataType.COMMON_ARTICLE_LIST
+        articleList.clear()
+        articleList.addAll(articleListBackup)
+        refreshData()
+    }
+
 
     /**
      * @desc 保存查询记录到数据库中
