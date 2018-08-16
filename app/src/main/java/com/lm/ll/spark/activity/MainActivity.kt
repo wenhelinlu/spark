@@ -38,7 +38,7 @@ import java.net.URLEncoder
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
 
     override fun onRefresh() {
-        this.swipeRefreshTitles.isRefreshing = false
+        hideProgressbar()
     }
 
     /**

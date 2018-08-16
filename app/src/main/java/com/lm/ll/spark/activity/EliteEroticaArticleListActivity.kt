@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 
 /**
  * 说明：禁忌书屋精华区
@@ -23,7 +24,7 @@ import kotlinx.coroutines.experimental.async
  */
 class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
-        this.swipeRefreshEliteList.isRefreshing = false
+        hideProgressbar()
     }
 
     //文章列表数据源
@@ -41,7 +42,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
 
         supportActionBar!!.title = getString(R.string.action_eliteArea)
 
-        swipeRefreshEliteList.setColorSchemeResources(R.color.md_teal_500, R.color.md_orange_500, R.color.md_teal_400)
+        swipeRefreshEliteList.setColorSchemeResources(R.color.md_teal_500, R.color.md_orange_500, R.color.md_light_blue_500)
         swipeRefreshEliteList.setDistanceToTriggerSync(PULL_REFRESH_DISTANCE)
 
         swipeRefreshEliteList.setOnRefreshListener {
@@ -52,6 +53,9 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
 
         this.recyclerViewEliteList.addItemDecoration(SolidLineItemDecoration(this@EliteEroticaArticleListActivity))
         this.recyclerViewEliteList.layoutManager = linearLayoutManager
+
+        adapter = ArticleListAdapter(this@EliteEroticaArticleListActivity, articleList)
+        this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter = adapter
 
         //上拉加载更多
         recyclerViewEliteList.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
@@ -74,58 +78,89 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
 
         val currentPos: Int = articleList.size
 
-        val deferredLoad = async(CommonPool) {
-            //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
-            val pageIndex = if (isLoadMore) currentPage else 1
-            val list = Spider.scratchEliteArticleList("$BASE_URL$CURRENT_ELITEAREA_BASE_URL$pageIndex")
+        async(UI) {
+            showProgressbar()
+            withContext(CommonPool) {
+                //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
+                val pageIndex = if (isLoadMore) currentPage else 1
+                val list = Spider.scratchEliteArticleList("$BASE_URL$CURRENT_ELITEAREA_BASE_URL$pageIndex")
 
-            if (isLoadMore) {
-                articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
-            } else {
-                /**
-                 *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
-                 *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
-                 *  这个位置之前的数据添加到已有集合中
-                 */
-                if (articleList.count() > 0) {
-                    val firstNews = list.findLast { x -> x.url == articleList[0].url }
-                    if (firstNews != null) {
-                        val firstIndex = list.indexOf(firstNews)
-                        if (firstIndex > 0) {
-                            val latest = list.take(firstIndex)
-                            articleList.addAll(latest)
+                if (isLoadMore) {
+                    articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
+                } else {
+                    /**
+                     *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
+                     *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
+                     *  这个位置之前的数据添加到已有集合中
+                     */
+                    /**
+                     *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
+                     *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
+                     *  这个位置之前的数据添加到已有集合中
+                     */
+                    if (articleList.count() > 0) {
+                        val firstNews = list.findLast { x -> x.url == articleList[0].url }
+                        if (firstNews != null) {
+                            val firstIndex = list.indexOf(firstNews)
+                            if (firstIndex > 0) {
+                                val latest = list.take(firstIndex)
+                                articleList.addAll(latest)
+                            } else {
+                            }
                         } else {
                         }
                     } else {
-                    }
-                } else {
-                    articleList = list
-                    //如果此时获取的集合数据不超过预定值，则继续加载数据
-                    while (articleList.size < LIST_MIN_COUNT) {
-                        currentPage++
-                        val tmpList = Spider.scratchEliteArticleList("$BASE_URL$CURRENT_ELITEAREA_BASE_URL$currentPage")
-                        articleList.addAll(tmpList)
+                        articleList.clear()
+                        articleList.addAll(list)
+                        //如果此时获取的集合数据不超过预定值，则继续加载数据
+                        while (articleList.size < LIST_MIN_COUNT) {
+                            currentPage++
+                            val tmpList = Spider.scratchEliteArticleList("$BASE_URL$CURRENT_ELITEAREA_BASE_URL$currentPage")
+                            articleList.addAll(tmpList)
+                        }
                     }
                 }
             }
-        }
 
-        async(UI) {
-            swipeRefreshEliteList.isRefreshing = true
-            deferredLoad.await()
-
-            adapter = ArticleListAdapter(this@EliteEroticaArticleListActivity, articleList)
-            this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter = adapter
-            this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
+            refreshData()
 
             if (isLoadMore) {
                 this@EliteEroticaArticleListActivity.recyclerViewEliteList.layoutManager.scrollToPosition(currentPos - 1)
             }
 
-            //停止刷新
-            swipeRefreshEliteList.isRefreshing = false
+            hideProgressbar()
         }
     }
+
+
+    /**
+     * @desc 刷新数据
+     * @author ll
+     * @time 2018-08-16 17:25
+     */
+    private fun refreshData(){
+        this@EliteEroticaArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
+    }
+
+    /**
+     * @desc 隐藏加载进度条
+     * @author ll
+     * @time 2018-07-10 15:17
+     */
+    private fun hideProgressbar() {
+        //停止刷新
+        this.swipeRefreshEliteList.isRefreshing = false
+    }
+
+    /**
+     * @desc 显示加载进度条
+     * @author ll
+     * @time 2018-07-10 17:48
+     */
+    private fun showProgressbar() {
+        swipeRefreshEliteList.isRefreshing = true
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
