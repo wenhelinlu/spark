@@ -2,7 +2,7 @@
 
 ### 简介 ###
 
-使用Kotlin语言编写的[留园网](https://www.6park.com)Android客户端，。
+使用Kotlin语言编写的[留园网](https://www.6park.com)Android客户端。
 
 ---
 ### 主要功能 ###
