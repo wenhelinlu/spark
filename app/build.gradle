@@ -10,7 +10,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.lm.ll.spark"
-        minSdkVersion 27
+        minSdkVersion 22
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
