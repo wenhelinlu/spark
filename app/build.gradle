@@ -86,7 +86,7 @@ dependencies {
     //gson依赖
 //    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
 
-    //使用Delegate设计模式的Recyclerview.Adapter框架
+    //使用Delegate设计模式的RecyclerView.Adapter框架
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
 
     //Automatic binding+disposal of RxJava 2 streams.
