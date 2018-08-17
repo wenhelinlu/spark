@@ -2,7 +2,7 @@
 
 ### 简介 ###
 
-此应用为[留园网](https://www.6park.com)的Android客户端，使用Kotlin语言。
+使用Kotlin语言编写的[留园网](https://www.6park.com)Android客户端，。
 
 ---
 ### 主要功能 ###
@@ -22,7 +22,7 @@
 + 发表评论
 
 ---
-### 使用到的开源组件 ###
+### 使用到的部分开源组件 ###
 
 + [Retrofit2](https://github.com/square/retrofit)
 + 繁简转换 [HanLP](https://github.com/hankcs/HanLP)
