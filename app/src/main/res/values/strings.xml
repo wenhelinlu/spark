@@ -35,4 +35,5 @@
     <string name="article_date">article_date</string>
     <string name="article_readcount">article_readCount</string>
     <string name="article_textlength">article_textLength</string>
+    <string name="nightMode">夜间模式</string>
 </resources>

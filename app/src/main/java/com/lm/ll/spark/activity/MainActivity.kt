@@ -15,6 +15,7 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.Switch
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.application.InitApplication
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @author ll
      * @time 2018-08-14 9:53
      */
-    private lateinit var adapter: ArticleListAdapter
+    private lateinit var mAdapter: ArticleListAdapter
 
     /**
      * @desc 当前加载的页数
@@ -122,6 +123,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        initNightMode()
+
         //下拉刷新进度条颜色
         swipeRefreshTitles.setColorSchemeResources(R.color.md_teal_500, R.color.md_orange_500, R.color.md_light_blue_500)
         //触发刷新的下拉距离
@@ -139,8 +142,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //RecyclerView设置
         this.recyclerViewTitles.addItemDecoration(SolidLineItemDecoration(this@MainActivity))
         this.recyclerViewTitles.layoutManager = linearLayoutManager
-        adapter = ArticleListAdapter(this@MainActivity, articleList)
-        this.recyclerViewTitles.adapter = adapter
+        mAdapter = ArticleListAdapter(this@MainActivity, articleList)
+        this.recyclerViewTitles.adapter = mAdapter
 
         //上拉加载更多
         recyclerViewTitles.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
@@ -155,6 +158,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
         loadData(::getArticleList)
+    }
+
+
+    private fun initNightMode(){
+        val switchItem = nav_view.menu.findItem(R.id.nav_nightMode_switch)
+        val switch = switchItem.actionView.findViewById<Switch>(R.id.switchNightMode)
+        var isNightMode = InitApplication.getInstance().isNightModeEnabled()
+        switch.isChecked = isNightMode
+
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            InitApplication.getInstance().setIsNightModeEnabled(isChecked)
+            switchDayNightMode(isChecked)
+            recreate() //在onCreate方法中设置日、夜间模式后，不需要调用recreate()方法，但是，在其他方法中切换后，需要调用此方法
+        }
     }
 
     /**
@@ -407,24 +424,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_nightMode -> {
-                var isNightMode = InitApplication.getInstance().isNightModeEnabled()
-                isNightMode = !isNightMode
-                InitApplication.getInstance().setIsNightModeEnabled(isNightMode)
-                switchDayNightMode(isNightMode)
-                recreate() //在onCreate方法中设置日、夜间模式后，不需要调用recreate()方法，但是，在其他方法中切换后，需要调用此方法
-
-                return true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
@@ -438,10 +437,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_classic -> {
                 val intent = Intent(this@MainActivity, ClassicEroticaArticleListActivity::class.java)
-                this@MainActivity.startActivity(intent)
-            }
-            R.id.nav_forum -> {
-                val intent = Intent(this@MainActivity, ArticleDisplayActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
         }

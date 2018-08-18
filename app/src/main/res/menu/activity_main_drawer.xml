@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
     <group
         android:id="@+id/nav_group_forum"
         android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_forum"
-            android:title="@string/ic_menu_forum"
-            android:icon="@drawable/ic_menu_forum" />
         <item
             android:id="@+id/nav_favorite"
             android:icon="@drawable/ic_menu_favorite"
@@ -28,8 +25,9 @@
         android:id="@+id/nav_group_tools"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_settings"
-            android:title="@string/action_settings" />
+            android:id="@+id/nav_nightMode_switch"
+            android:icon="@drawable/ic_menu_nightmode"
+            android:title="@string/nightMode"
+            app:actionLayout="@layout/switch_item" />
     </group>
 </menu>

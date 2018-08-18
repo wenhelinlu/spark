@@ -11,3 +11,4 @@ app/libs/
 .idea/
 app/src/main/gen/
 src/main/gen/
+/app/objectbox-models/default.json.bak
