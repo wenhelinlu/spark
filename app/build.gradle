@@ -28,7 +28,6 @@ android {
         }
     }
 
-
     //如果没有此设置，在Generate Signed Apk时会报“Could not download lint-checks.jar”等错误
     lintOptions {
         checkReleaseBuilds false
@@ -72,7 +71,6 @@ dependencies {
 
     //带有加载效果的TextView和ImageView控件
 //    implementation 'com.elyeproj.libraries:loaderviewlibrary:1.4.1'
-
 
     //objectbox
     debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectbox_version"
