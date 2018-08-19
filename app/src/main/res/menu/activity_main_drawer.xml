@@ -28,6 +28,14 @@
             android:id="@+id/nav_nightMode_switch"
             android:icon="@drawable/ic_menu_nightmode"
             android:title="@string/nightMode"
-            app:actionLayout="@layout/switch_item" />
+            app:actionLayout="@layout/switch_item" ></item>
+        <item
+            android:id="@+id/nav_login"
+            android:icon="@drawable/ic_menu_login"
+            android:title="@string/login" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_menu_login"
+            android:title="@string/logout" />
     </group>
 </menu>

@@ -160,7 +160,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loadData(::getArticleList)
     }
 
-
+    /**
+     * @desc 初始化夜间模式
+     * @author lm
+     * @time 2018-08-19 12:49
+     */
     private fun initNightMode(){
         val switchItem = nav_view.menu.findItem(R.id.nav_nightMode_switch)
         val switch = switchItem.actionView.findViewById<Switch>(R.id.switchNightMode)
@@ -437,6 +441,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_classic -> {
                 val intent = Intent(this@MainActivity, ClassicEroticaArticleListActivity::class.java)
+                this@MainActivity.startActivity(intent)
+            }
+            R.id.nav_login -> {
+                toast("登录操作")
+                val intent = Intent(this@MainActivity,LoginActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
         }
