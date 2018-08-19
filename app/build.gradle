@@ -13,11 +13,12 @@ android {
         minSdkVersion 22
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "1.18.0818"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         debug {
+            applicationIdSuffix '.debug'
             minifyEnabled false
             debuggable true
         }
@@ -27,14 +28,21 @@ android {
         }
     }
 
-    splits {
-        abi {
-            enable true
-            reset()
-            include "armeabi-v7a","arm64-v8a"
-            universalApk false
-        }
+
+    //如果没有此设置，在Generate Signed Apk时会报“Could not download lint-checks.jar”等错误
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
+
+//    splits {
+//        abi {
+//            enable true
+//            reset()
+//            include "armeabi-v7a","arm64-v8a"
+//            universalApk true
+//        }
+//    }
 }
 
 dependencies {
