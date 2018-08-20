@@ -17,11 +17,19 @@ import android.provider.ContactsContract
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.lm.ll.spark.R
+import com.lm.ll.spark.api.TabooBooksApiService
+import com.lm.ll.spark.repository.TabooArticlesRepository
+import com.lm.ll.spark.util.toast
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import com.uber.autodispose.kotlin.autoDisposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
 
@@ -33,6 +41,8 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private var mAuthTask: UserLoginTask? = null
+    //使用AutoDispose解除Rxjava2订阅
+    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -245,6 +255,15 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
 
             try {
                 // Simulate network access.
+                val repository = TabooArticlesRepository(TabooBooksApiService.create())
+                repository.login("markherd","025646Lu","")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
+                        .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
+                        .subscribe {
+                            toast(it)
+                        }
                 Thread.sleep(2000)
             } catch (e: InterruptedException) {
                 return false

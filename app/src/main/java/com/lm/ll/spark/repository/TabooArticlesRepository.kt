@@ -15,6 +15,11 @@ import org.jsoup.Jsoup
  * 邮箱：wenhelinlu@gmail.com
  */
 class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiService) {
+
+    fun login(username: String, password: String, dologin: String): Observable<String> {
+        return tabooBooksApiService.login(username, password, dologin)
+    }
+
     /**
      * @desc 获取已收藏的文章列表
      * @author lm

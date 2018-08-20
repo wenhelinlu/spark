@@ -2,17 +2,16 @@ package com.lm.ll.spark.api
 
 import android.util.Log
 import com.lm.ll.spark.BuildConfig
+import com.lm.ll.spark.application.InitApplication
+import com.lm.ll.spark.http.PersistentCookieHelper
 import com.lm.ll.spark.util.LOG_TAG_OKHTTP3
 import io.reactivex.Observable
-import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
-import retrofit2.http.Url
+import retrofit2.http.*
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
@@ -23,14 +22,38 @@ import java.util.concurrent.TimeUnit
  */
 interface TabooBooksApiService {
 
+    /**
+     * @desc 获取文章列表接口
+     * @author ll
+     * @time 2018-08-20 20:01
+     */
     @GET("index.php?app=forum&act=cachepage")
     fun getArticleList(@Query("cp") pageNo: String): Observable<String>
 
+    /**
+     * @desc 查询文章接口
+     * @author ll
+     * @time 2018-08-20 20:01
+     */
     @GET("index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&submit=%B2%E9%D1%AF")
     fun queryArticle(@Query("keywords") keywords: String): Observable<String>
 
+    /**
+     * @desc 抓取正文接口
+     * @author ll
+     * @time 2018-08-20 20:00
+     */
     @GET
     fun getArticle(@Url url: String): Observable<String>
+
+    /**
+     * @desc 网站登录接口
+     * @author ll
+     * @time 2018-08-20 20:00
+     */
+    @FormUrlEncoded
+    @POST("https://home.6park.com/index.php?app=login&act=dologin")
+    fun login(@Field("username") username: String, @Field("password") password: String, @Field("dologin") dologin: String):Observable<String>
 
     companion object Factory {
         private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
@@ -58,7 +81,17 @@ interface TabooBooksApiService {
          * @time 2018-07-13 20:59
          */
         private fun genericClient(): OkHttpClient {
-            return OkHttpClient.Builder()
+            val cookie = object : CookieJar {
+                val helper = PersistentCookieHelper(InitApplication.getInstance())
+                override fun saveFromResponse(url: HttpUrl?, cookies: MutableList<Cookie>?) {
+                    helper[url!!.host()] = cookies!!
+                }
+
+                override fun loadForRequest(url: HttpUrl?): MutableList<Cookie> {
+                    return helper[url!!.host()] ?: ArrayList<Cookie>()
+                }
+            }
+            return OkHttpClient.Builder().cookieJar(cookie)
                     .retryOnConnectionFailure(true)
                     .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                     .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
