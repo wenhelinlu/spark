@@ -10,7 +10,6 @@ import android.content.Loader
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -31,16 +30,16 @@ import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
+import retrofit2.HttpException
+import java.net.ConnectException
 import java.util.*
+import java.util.concurrent.TimeoutException
+import javax.net.ssl.SSLHandshakeException
 
 /**
  * A login screen that offers login via email/password.
  */
 class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private var mAuthTask: UserLoginTask? = null
     //使用AutoDispose解除Rxjava2订阅
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
@@ -104,9 +103,6 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      * errors are presented and no actual login attempt is made.
      */
     private fun attemptLogin() {
-        if (mAuthTask != null) {
-            return
-        }
 
         // Reset errors.
         email.error = null
@@ -144,10 +140,40 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true)
-            mAuthTask = UserLoginTask(emailStr, passwordStr)
-            mAuthTask!!.execute(null as Void?)
+
+            login()
         }
+    }
+
+    private fun login() {
+        val repository = TabooArticlesRepository(TabooBooksApiService.create())
+        //username=markherd&password=025646Lu&dologin=+%B5%C7%C2%BC+
+        repository.login("markherd", "025646Lu")
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe {
+                    showProgress(true)
+                }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doAfterTerminate {
+                    showProgress(false)
+                }
+                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
+                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
+                .subscribe({ result ->
+                    toast("登录成功")
+
+                }, { error ->
+                    //异常处理
+                    val msg =
+                            when (error) {
+                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
+                                is TimeoutException -> "网络连接超时"
+                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
+                                else -> error.toString()
+                            }
+                    toast(msg)
+                })
     }
 
     private fun isEmailValid(email: String): Boolean {
@@ -165,37 +191,29 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private fun showProgress(show: Boolean) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
-            login_form.visibility = if (show) View.GONE else View.VISIBLE
-            login_form.animate()
-                    .setDuration(shortAnimTime)
-                    .alpha((if (show) 0 else 1).toFloat())
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            login_form.visibility = if (show) View.GONE else View.VISIBLE
-                        }
-                    })
+        val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
-            login_progress.visibility = if (show) View.VISIBLE else View.GONE
-            login_progress.animate()
-                    .setDuration(shortAnimTime)
-                    .alpha((if (show) 1 else 0).toFloat())
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator) {
-                            login_progress.visibility = if (show) View.VISIBLE else View.GONE
-                        }
-                    })
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            login_progress.visibility = if (show) View.VISIBLE else View.GONE
-            login_form.visibility = if (show) View.GONE else View.VISIBLE
-        }
+        login_form.visibility = if (show) View.GONE else View.VISIBLE
+        login_form.animate()
+                .setDuration(shortAnimTime)
+                .alpha((if (show) 0 else 1).toFloat())
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        login_form.visibility = if (show) View.GONE else View.VISIBLE
+                    }
+                })
+
+        login_progress.visibility = if (show) View.VISIBLE else View.GONE
+        login_progress.animate()
+                .setDuration(shortAnimTime)
+                .alpha((if (show) 1 else 0).toFloat())
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        login_progress.visibility = if (show) View.VISIBLE else View.GONE
+                    }
+                })
+
     }
 
     override fun onCreateLoader(i: Int, bundle: Bundle?): Loader<Cursor> {
@@ -240,61 +258,8 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         val PROJECTION = arrayOf(
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY)
-        val ADDRESS = 0
-        val IS_PRIMARY = 1
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
-
-        override fun doInBackground(vararg params: Void): Boolean? {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                val repository = TabooArticlesRepository(TabooBooksApiService.create())
-                repository.login("markherd","025646Lu","")
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                        .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
-                        .subscribe {
-                            toast(it)
-                        }
-                Thread.sleep(2000)
-            } catch (e: InterruptedException) {
-                return false
-            }
-
-            return DUMMY_CREDENTIALS
-                    .map { it.split(":") }
-                    .firstOrNull { it[0] == mEmail }
-                    ?.let {
-                        // Account exists, return true if the password matches.
-                        it[1] == mPassword
-                    }
-                    ?: true
-        }
-
-        override fun onPostExecute(success: Boolean?) {
-            mAuthTask = null
-            showProgress(false)
-
-            if (success!!) {
-                finish()
-            } else {
-                password.error = getString(R.string.error_incorrect_password)
-                password.requestFocus()
-            }
-        }
-
-        override fun onCancelled() {
-            mAuthTask = null
-            showProgress(false)
-        }
+        const val ADDRESS = 0
+        const val IS_PRIMARY = 1
     }
 
     companion object {
@@ -302,7 +267,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         /**
          * Id to identity READ_CONTACTS permission request.
          */
-        private val REQUEST_READ_CONTACTS = 0
+        private const val REQUEST_READ_CONTACTS = 0
 
         /**
          * A dummy authentication store containing known user names and passwords.

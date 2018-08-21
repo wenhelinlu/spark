@@ -101,6 +101,12 @@ dependencies {
     implementation "com.uber.autodispose:autodispose-android-archcomponents-kotlin:$uber_autodispose_version"
     implementation "com.uber.autodispose:autodispose-android-archcomponents-test-kotlin:$uber_autodispose_version"
     implementation "com.uber.autodispose:autodispose-rxlifecycle:$uber_autodispose_version"
+
+    //圆形ImageView控件
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    //material风格对话框控件
+//    implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha04'
 }
 
 //这个要放在dependencies块的后面，不然build时会报"More than one file was found with OS independent path 'lib/armeabi-v7a/libobjectbox.so'"错误

@@ -448,6 +448,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(this@MainActivity,LoginActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
+            R.id.nav_profile -> {
+                val intent = Intent(this@MainActivity, PersonProfileActivity::class.java)
+                this@MainActivity.startActivity(intent)
+            }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)

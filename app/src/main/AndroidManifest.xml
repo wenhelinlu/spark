@@ -31,7 +31,7 @@
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.EliteEroticaArticleListActivity"
             android:parentActivityName=".activity.MainActivity" />
@@ -48,7 +48,11 @@
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".activity.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".activity.PersonProfileActivity"
+            android:label="@string/title_activity_person_profile"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

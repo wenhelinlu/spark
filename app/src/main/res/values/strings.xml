@@ -49,6 +49,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="login">登录</string>
-    <string name="logout">注销</string>
+    <string name="action_login">登录</string>
+    <string name="action_logout">注销</string>
+    <string name="action_profile">个人信息</string>
+    <string name="title_activity_person_profile">个人信息</string>
 </resources>

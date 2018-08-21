@@ -16,7 +16,7 @@ import org.jsoup.Jsoup
  */
 class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiService) {
 
-    fun login(username: String, password: String, dologin: String): Observable<String> {
+    fun login(username: String, password: String, dologin: String = "+%B5%C7%C2%BC+"): Observable<String> {
         return tabooBooksApiService.login(username, password, dologin)
     }
 
