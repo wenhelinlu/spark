@@ -7,11 +7,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.lm.ll.spark"
         minSdkVersion 22
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.18.0818"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -47,18 +47,18 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation "com.android.support:appcompat-v7:$supportLib_version"
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:support-v4:27.1.1'
+    implementation "com.android.support:design:$supportLib_version"
+    implementation "com.android.support:support-v4:$supportLib_version"
+    implementation "com.android.support:design:$supportLib_version"
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'org.jsoup:jsoup:1.11.3'
     //注意：如果是Java工程则使用kotlinx-coroutines-core
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-
-    implementation 'com.android.support:design:27.1.1'
 
     //HanLP库
     implementation 'com.hankcs:hanlp:portable-1.6.6'
@@ -106,7 +106,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     //material风格对话框控件
-//    implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha04'
+    implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha04'
 }
 
 //这个要放在dependencies块的后面，不然build时会报"More than one file was found with OS independent path 'lib/armeabi-v7a/libobjectbox.so'"错误

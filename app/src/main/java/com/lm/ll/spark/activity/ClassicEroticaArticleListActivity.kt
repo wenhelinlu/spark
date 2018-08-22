@@ -125,7 +125,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
             refreshData()
 
             if (isLoadMore) {
-                this@ClassicEroticaArticleListActivity.recyclerViewEliteList.layoutManager.scrollToPosition(currentPos - 1)
+                this@ClassicEroticaArticleListActivity.recyclerViewEliteList.layoutManager!!.scrollToPosition(currentPos - 1)
             }
 
             hideProgressbar()
@@ -138,7 +138,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
      * @time 2018-08-16 17:25
      */
     private fun refreshData(){
-        this@ClassicEroticaArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
+        this@ClassicEroticaArticleListActivity.recyclerViewEliteList.adapter!!.notifyDataSetChanged()
     }
 
 

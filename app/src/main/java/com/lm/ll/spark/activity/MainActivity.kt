@@ -16,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Switch
+import com.afollestad.materialdialogs.MaterialDialog
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.application.InitApplication
@@ -299,7 +300,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
          * 解决方法是不直接给articleList赋新值，而是调用articleList的addAll()方法（视情况而定，可以先clear），这样adapter的
          * notifyDataSetChanged()方法就会起作用，列表可以正常刷新
          */
-        this@MainActivity.recyclerViewTitles.adapter.notifyDataSetChanged()
+        this@MainActivity.recyclerViewTitles.adapter!!.notifyDataSetChanged()
     }
 
     /**
@@ -444,9 +445,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(intent)
             }
             R.id.nav_login -> {
-                toast("登录操作")
-                val intent = Intent(this@MainActivity,LoginActivity::class.java)
-                this@MainActivity.startActivity(intent)
+//                toast("登录操作")
+//                val intent = Intent(this@MainActivity,LoginActivity::class.java)
+//                this@MainActivity.startActivity(intent)
+                MaterialDialog(this).show {
+                    title = "登录"
+                    negativeButton {
+                        toast("登录成功！")
+                    }
+                }
             }
             R.id.nav_profile -> {
                 val intent = Intent(this@MainActivity, PersonProfileActivity::class.java)

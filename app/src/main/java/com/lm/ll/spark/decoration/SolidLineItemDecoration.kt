@@ -11,9 +11,9 @@ import android.support.v7.widget.RecyclerView
 class SolidLineItemDecoration(mContext: Context) : RecyclerView.ItemDecoration() {
     private val mDivider = mContext.obtainStyledAttributes(ATRRS).getDrawable(0)
 
-    override fun onDrawOver(c: Canvas?, parent: RecyclerView?, state: RecyclerView.State?) {
+    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
-        val left = parent!!.paddingLeft
+        val left = parent.paddingLeft
         val right = parent.width - parent.paddingRight
 
         val childCount = parent.childCount
@@ -25,7 +25,7 @@ class SolidLineItemDecoration(mContext: Context) : RecyclerView.ItemDecoration()
 
             val top = child.bottom + params.bottomMargin
 
-            mDivider.setBounds(left, top, right, top + mDivider.intrinsicHeight)
+            mDivider!!.setBounds(left, top, right, top + mDivider.intrinsicHeight)
             mDivider.draw(c)
         }
     }

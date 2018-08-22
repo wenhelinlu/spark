@@ -26,7 +26,7 @@ abstract class MyRecyclerViewOnScrollListener(private var linearLayoutManager: L
      *                     dy > 0 时为手指向上滚动,列表滚动显示下面的内容
      *                     dy < 0 时为手指向下滚动,列表滚动显示上面的内容
      */
-    override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
         //向下滑动
         if (dy > 0) {

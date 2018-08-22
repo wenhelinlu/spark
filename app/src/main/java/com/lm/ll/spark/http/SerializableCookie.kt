@@ -12,8 +12,8 @@ class SerializableCookie(cookie:Cookie) :Serializable{
     private val name:String = cookie.name()
     private val value:String = cookie.value()
     private val expiresAt:Long?
-    private val domain:String?
-    private val path:String?
+    private val domain:String
+    private val path:String
     private val secure:Boolean?
     private val httpOnly:Boolean?
     private val hostOnly:Boolean?
@@ -39,9 +39,9 @@ class SerializableCookie(cookie:Cookie) :Serializable{
                 .expiresAt(expiresAt?:0L)
                 .path(path)
                 .let {
-                    if(secure?:false) it.secure()
-                    if(httpOnly?:false) it.httpOnly()
-                    if(hostOnly?:false)
+                    if(secure == true) it.secure()
+                    if(httpOnly == true) it.httpOnly()
+                    if(hostOnly == true)
                         it.hostOnlyDomain(domain)
                     else
                         it.domain(domain)

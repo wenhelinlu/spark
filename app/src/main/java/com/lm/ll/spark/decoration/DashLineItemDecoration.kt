@@ -9,9 +9,9 @@ import android.support.v7.widget.RecyclerView
  * @param ignoreRows 从第一行开始计数，不需要显示分割线的行数
  */
 class DashLineItemDecoration(private val dashInterval: Float = 5f, private val ignoreRows: Int = 0) : RecyclerView.ItemDecoration() {
-    override fun onDrawOver(c: Canvas?, parent: RecyclerView?, state: RecyclerView.State?) {
+    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
-        val left = parent!!.paddingLeft
+        val left = parent.paddingLeft
         val right = parent.width - parent.paddingRight
 
         val childCount = parent.childCount
@@ -36,7 +36,7 @@ class DashLineItemDecoration(private val dashInterval: Float = 5f, private val i
 
             val effects = DashPathEffect(floatArrayOf(dashInterval, dashInterval, dashInterval, dashInterval), 8f)//此处单位是像素不是dp  注意 请自行转化为dp
             paint.pathEffect = effects
-            c!!.drawPath(path, paint)
+            c.drawPath(path, paint)
         }
     }
 }

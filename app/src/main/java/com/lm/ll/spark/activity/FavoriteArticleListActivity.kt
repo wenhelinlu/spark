@@ -108,7 +108,7 @@ class FavoriteArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRe
      * @time 2018-07-10 15:23
      */
     private fun refreshData() {
-        this@FavoriteArticleListActivity.recyclerViewEliteList.adapter.notifyDataSetChanged()
+        this@FavoriteArticleListActivity.recyclerViewEliteList.adapter!!.notifyDataSetChanged()
     }
 
 
