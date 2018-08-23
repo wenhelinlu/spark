@@ -26,7 +26,6 @@ import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -49,9 +48,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-08-14 9:53
      */
     private var articleList: ArrayList<Article> = ArrayList()
-    //使用AutoDispose解除Rxjava2订阅
-    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
-
     /**
      * @desc 文章列表数据源备份（用于在查询前将articleList备份，然后退出查询时恢复原有的文章列表数据）
      * @author ll

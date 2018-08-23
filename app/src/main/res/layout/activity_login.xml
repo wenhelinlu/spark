@@ -31,18 +31,19 @@
             android:orientation="vertical">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="128dp"
-                android:layout_height="128dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/profile_header"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginVertical="48dp"
+                android:layout_marginVertical="@dimen/login_vertical_margin"
                 android:src="@drawable/splash_logo_vector"/>
 
             <android.support.design.widget.TextInputLayout
+                android:layout_marginHorizontal="@dimen/login_horizontal_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -58,6 +59,8 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:layout_marginVertical="@dimen/login_vertical_margin"
+                android:layout_marginHorizontal="@dimen/login_horizontal_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -81,6 +84,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
+                android:layout_marginHorizontal="@dimen/login_horizontal_margin"
+                android:layout_marginVertical="@dimen/login_vertical_margin"
                 android:textStyle="bold" />
 
         </LinearLayout>
