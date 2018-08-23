@@ -16,7 +16,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Switch
-import com.afollestad.materialdialogs.MaterialDialog
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.application.InitApplication
@@ -27,6 +26,7 @@ import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -49,6 +49,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-08-14 9:53
      */
     private var articleList: ArrayList<Article> = ArrayList()
+    //使用AutoDispose解除Rxjava2订阅
+    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     /**
      * @desc 文章列表数据源备份（用于在查询前将articleList备份，然后退出查询时恢复原有的文章列表数据）
@@ -445,15 +447,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(intent)
             }
             R.id.nav_login -> {
-//                toast("登录操作")
-//                val intent = Intent(this@MainActivity,LoginActivity::class.java)
-//                this@MainActivity.startActivity(intent)
-                MaterialDialog(this).show {
-                    title = "登录"
-                    negativeButton {
-                        toast("登录成功！")
-                    }
-                }
+                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                this@MainActivity.startActivity(intent)
             }
             R.id.nav_profile -> {
                 val intent = Intent(this@MainActivity, PersonProfileActivity::class.java)
