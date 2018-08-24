@@ -48,9 +48,9 @@ class ArticleDisplayActivity : AppCompatActivity() {
     private lateinit var currentArticle: Article
     //可绑定不同布局的adapter
     private lateinit var adapter: ArticleAdapter
-    //使用AutoDispose解除Rxjava2订阅
+    //使用AutoDispose解除RxJava2订阅
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
-    //recyclerview的layoutmanager
+    //RecyclerView的LayoutManager
     private val linearLayoutManager = LinearLayoutManager(this@ArticleDisplayActivity)
 
     /**

@@ -4,9 +4,7 @@ import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
-import android.app.LoaderManager.LoaderCallbacks
-import android.content.CursorLoader
-import android.content.Loader
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
@@ -14,6 +12,9 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.support.design.widget.Snackbar
+import android.support.v4.app.LoaderManager
+import android.support.v4.content.CursorLoader
+import android.support.v4.content.Loader
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
@@ -24,6 +25,7 @@ import android.widget.TextView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.repository.TabooArticlesRepository
+import com.lm.ll.spark.util.PROFILE_INFO_KEY
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
@@ -32,15 +34,15 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 import retrofit2.HttpException
 import java.net.ConnectException
-import java.util.*
 import java.util.concurrent.TimeoutException
 import javax.net.ssl.SSLHandshakeException
 
 /**
  * A login screen that offers login via email/password.
  */
-class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
-    //使用AutoDispose解除Rxjava2订阅
+class LoginActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor> {
+
+    //使用AutoDispose解除RxJava2订阅
     private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +66,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             return
         }
 
-        loaderManager.initLoader(0, null, this)
+        LoaderManager.getInstance(this).initLoader(0, null, this)
     }
 
     private fun mayRequestContacts(): Boolean {
@@ -145,6 +147,11 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         }
     }
 
+    /**
+     * @desc 登录操作
+     * @author LL
+     * @time 2018-08-24 11:58
+     */
     private fun login() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
         //username=markherd&password=025646Lu&dologin=+%B5%C7%C2%BC+
@@ -162,7 +169,9 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
                 .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
                 .subscribe({ result ->
                     toast("登录成功")
-
+                    val intent = Intent(this@LoginActivity, PersonProfileActivity::class.java)
+                    intent.putExtra(PROFILE_INFO_KEY, result)
+                    this@LoginActivity.startActivity(intent)
                 }, { error ->
                     //异常处理
                     val msg =
@@ -231,19 +240,21 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC")
     }
 
-    override fun onLoadFinished(cursorLoader: Loader<Cursor>, cursor: Cursor) {
+    override fun onLoaderReset(cursorLoader: Loader<Cursor>) {
+
+    }
+
+    override fun onLoadFinished(cursorLoader: Loader<Cursor>, cursor: Cursor?) {
         val emails = ArrayList<String>()
-        cursor.moveToFirst()
-        while (!cursor.isAfterLast) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS))
-            cursor.moveToNext()
+        cursor?.let {
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                emails.add(cursor.getString(ProfileQuery.ADDRESS))
+                cursor.moveToNext()
+            }
         }
 
         addEmailsToAutoComplete(emails)
-    }
-
-    override fun onLoaderReset(cursorLoader: Loader<Cursor>) {
-
     }
 
     private fun addEmailsToAutoComplete(emailAddressCollection: List<String>) {

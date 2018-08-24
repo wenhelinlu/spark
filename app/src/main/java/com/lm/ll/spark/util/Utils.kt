@@ -178,5 +178,8 @@ const val LOG_TAG_OKHTTP3 = "SPARK_LOG_OKHTTP3"
 //如果文本中段落标记（\r\n\r\n）个数大于此值，则按照规则清除换行标记，保留段落标记
 const val PARAGRAPH_FLAG_COUNT_LIMIT = 20
 
+//用于登录时用Intent传递个人档案页面文字的key
+const val PROFILE_INFO_KEY = "profile"
+
 
 //endregion
