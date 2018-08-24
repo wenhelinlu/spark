@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun initNightMode(){
         val switchItem = nav_view.menu.findItem(R.id.nav_nightMode_switch)
         val switch = switchItem.actionView.findViewById<Switch>(R.id.switchNightMode)
-        var isNightMode = InitApplication.getInstance().isNightModeEnabled()
+        val isNightMode = InitApplication.getInstance().isNightModeEnabled()
         switch.isChecked = isNightMode
 
         switch.setOnCheckedChangeListener { _, isChecked ->

@@ -15,7 +15,6 @@ import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.util.PROFILE_INFO_KEY
 import com.lm.ll.spark.util.toast
 import kotlinx.android.synthetic.main.activity_person_profile.*
-import kotlinx.android.synthetic.main.content_main.*
 import org.jsoup.Jsoup
 
 class PersonProfileActivity : AppCompatActivity() {
@@ -38,7 +37,7 @@ class PersonProfileActivity : AppCompatActivity() {
      * @author LL
      * @time 2018-08-24 10:18
      */
-    private lateinit var profileInfoText: String
+    private var profileInfoText: String = ""
 
     /**
      * @desc RecyclerView的LayoutManager
@@ -76,10 +75,10 @@ class PersonProfileActivity : AppCompatActivity() {
      */
     private fun initView() {
         //RecyclerView设置
-        this.recyclerViewTitles.addItemDecoration(SolidLineItemDecoration(this@PersonProfileActivity))
-        this.recyclerViewTitles.layoutManager = mLinearLayoutManager
+        this.recyclerViewProfile.addItemDecoration(SolidLineItemDecoration(this@PersonProfileActivity))
+        this.recyclerViewProfile.layoutManager = mLinearLayoutManager
         mAdapter = ProfileInfoAdapter(this@PersonProfileActivity, profileInfoList)
-        this.recyclerViewTitles.adapter = mAdapter
+        this.recyclerViewProfile.adapter = mAdapter
     }
 
     /**
@@ -97,11 +96,11 @@ class PersonProfileActivity : AppCompatActivity() {
         profileInfoList.add(info)
         info = ProfileInfo("地区", "")
         profileInfoList.add(info)
-        info = ProfileInfo("注册时间", "14-12-28")
+        info = ProfileInfo("注册时间", "2014-12-28")
         profileInfoList.add(info)
-        info = ProfileInfo("上次登录时间", "18-08-20")
+        info = ProfileInfo("上次登录时间", "2018-08-20")
         profileInfoList.add(info)
-        info = ProfileInfo("上次登录IP", "45.78.*.* (美国)")
+        info = ProfileInfo("上次登录IP", "45.78.*.* （美国）")
         profileInfoList.add(info)
     }
 

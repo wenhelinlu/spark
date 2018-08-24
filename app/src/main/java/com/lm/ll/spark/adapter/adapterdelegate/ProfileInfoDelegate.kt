@@ -19,7 +19,7 @@ class ProfileInfoDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayLi
     }
 
     override fun isForViewType(items: ArrayList<ProfileInfo>, position: Int): Boolean {
-        return false
+        return true
     }
 
     override fun onBindViewHolder(items: ArrayList<ProfileInfo>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {

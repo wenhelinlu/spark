@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@color/transparent"
         android:text="上次登录时间"
         android:textColor="?attr/textSecondaryColor"
@@ -24,11 +24,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:background="@color/transparent"
         android:text="18-08-20"
         android:textColor="?attr/textColor"
-        android:textSize="@dimen/text_size_20"
+        android:textSize="@dimen/text_size_18"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textProfileTitle" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textProfileTitle" />
 </android.support.constraint.ConstraintLayout>
