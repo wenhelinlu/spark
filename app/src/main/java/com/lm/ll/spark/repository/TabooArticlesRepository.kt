@@ -16,8 +16,22 @@ import org.jsoup.Jsoup
  */
 class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiService) {
 
+    /**
+     * @desc 登录操作
+     * @author lm
+     * @time 2018-08-26 20:24
+     */
     fun login(username: String, password: String, dologin: String = "+%B5%C7%C2%BC+"): Observable<String> {
         return tabooBooksApiService.login(username, password, dologin)
+    }
+
+    /**
+     * @desc 注销操作
+     * @author lm
+     * @time 2018-08-26 20:25
+     */
+    fun logout(): Observable<String> {
+        return tabooBooksApiService.logout()
     }
 
     /**

@@ -172,6 +172,7 @@ class LoginActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor>
                     val intent = Intent(this@LoginActivity, PersonProfileActivity::class.java)
                     intent.putExtra(PROFILE_INFO_KEY, result)
                     this@LoginActivity.startActivity(intent)
+                    this.finish()
                 }, { error ->
                     //异常处理
                     val msg =

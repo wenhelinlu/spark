@@ -24,6 +24,7 @@ import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.ForumType
+import com.lm.ll.spark.http.PersistentCookieHelper
 import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import kotlinx.android.synthetic.main.activity_main.*
@@ -115,12 +116,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
+        //设置侧栏菜单
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-
         nav_view.setNavigationItemSelectedListener(this)
+
+//        initLoginStatus()
 
         initNightMode()
 
@@ -157,6 +160,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
         loadData(::getArticleList)
+    }
+
+    /**
+     * @desc 初始化登录状态
+     * @author lm
+     * @time 2018-08-26 21:02
+     */
+    private fun initLoginStatus() {
+        val helper = PersistentCookieHelper(InitApplication.getInstance())
+
+        //根据本地是否有cookie值，判断是否已登录，如果已登录，则不显示登录菜单，如果未登录，则不显示个人信息菜单
+        val menuItem = if ((helper["home.6park.com"] ?: ArrayList()).count() == 0) {
+            this.nav_view.menu.findItem(R.id.nav_profile)
+        } else {
+            this.nav_view.menu.findItem(R.id.nav_login)
+        }
+        menuItem.isVisible = false  // true 为显示，false 为隐藏
     }
 
     /**
@@ -442,6 +462,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(this@MainActivity, ClassicEroticaArticleListActivity::class.java)
                 this@MainActivity.startActivity(intent)
             }
+
             R.id.nav_login -> {
                 val intent = Intent(this@MainActivity, LoginActivity::class.java)
                 this@MainActivity.startActivity(intent)

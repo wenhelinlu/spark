@@ -55,6 +55,14 @@ interface TabooBooksApiService {
     @POST("https://home.6park.com/index.php?app=login&act=dologin")
     fun login(@Field("username") username: String, @Field("password") password: String, @Field("dologin") dologin: String):Observable<String>
 
+    /**
+     * @desc 注销操作
+     * @author lm
+     * @time 2018-08-26 20:24
+     */
+    @GET("https://home.6park.com/index.php?app=login&act=logout")
+    fun logout(): Observable<String>
+
     companion object Factory {
         private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
         private const val TIMEOUT: Long = 50000 //超时时长
@@ -84,11 +92,16 @@ interface TabooBooksApiService {
             val cookie = object : CookieJar {
                 val helper = PersistentCookieHelper(InitApplication.getInstance())
                 override fun saveFromResponse(url: HttpUrl?, cookies: MutableList<Cookie>?) {
-                    helper[url!!.host()] = cookies!!
+                    //如果已注销，则将本地存储的cookie清空，否则保存cookie值
+                    if (cookies!!.count() == 1 && cookies[0].value() == "deleted") {
+                        helper.clear()
+                    } else {
+                        helper[url!!.host()] = cookies!!
+                    }
                 }
 
                 override fun loadForRequest(url: HttpUrl?): MutableList<Cookie> {
-                    return helper[url!!.host()] ?: ArrayList<Cookie>()
+                    return helper[url!!.host()] ?: ArrayList()
                 }
             }
             return OkHttpClient.Builder().cookieJar(cookie)
