@@ -36,6 +36,15 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
     }
 
     /**
+     * @desc 验证登录状态
+     * @author LL
+     * @time 2018-08-27 20:31
+     */
+    fun checkLoginStatus(): Observable<String> {
+        return tabooBooksApiService.getProfileInfo()
+    }
+
+    /**
      * @desc 获取已收藏的文章列表
      * @author lm
      * @time 2018-07-12 21:46

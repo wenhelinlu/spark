@@ -181,5 +181,8 @@ const val PARAGRAPH_FLAG_COUNT_LIMIT = 20
 //用于登录时用Intent传递个人档案页面文字的key
 const val PROFILE_INFO_KEY = "profile"
 
+//已登录状态标记
+const val LOGINING_STATUS = "欢迎您"
+
 
 //endregion

@@ -16,19 +16,21 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Switch
-import com.crashlytics.android.Crashlytics
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
+import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.ForumType
-import com.lm.ll.spark.http.PersistentCookieHelper
+import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -125,7 +127,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
 
-//        initLoginStatus()
+        initLoginStatus()
 
         initNightMode()
 
@@ -170,15 +172,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-08-26 21:02
      */
     private fun initLoginStatus() {
-        val helper = PersistentCookieHelper(InitApplication.getInstance())
-
-        //根据本地是否有cookie值，判断是否已登录，如果已登录，则不显示登录菜单，如果未登录，则不显示个人信息菜单
-        val menuItem = if ((helper["home.6park.com"] ?: ArrayList()).count() == 0) {
-            this.nav_view.menu.findItem(R.id.nav_profile)
-        } else {
-            this.nav_view.menu.findItem(R.id.nav_login)
-        }
-        menuItem.isVisible = false  // true 为显示，false 为隐藏
+        val repository = TabooArticlesRepository(TabooBooksApiService.create())
+        repository.checkLoginStatus()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    //根据访问个人信息页面返回的文本中是否包含已登录状态标记文本，判断是否已登录，如果已登录，则不显示登录菜单，如果未登录，则不显示个人信息菜单
+                    val menuItem = if (it.contains(LOGINING_STATUS)) {
+                        this.nav_view.menu.findItem(R.id.nav_profile)
+                    } else {
+                        this.nav_view.menu.findItem(R.id.nav_login)
+                    }
+                    menuItem.isVisible = false  // true 为显示，false 为隐藏
+                }
     }
 
     /**
@@ -465,9 +471,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(intent)
             }
             R.id.nav_profile -> {
-//                val intent = Intent(this@MainActivity, PersonProfileActivity::class.java)
-//                this@MainActivity.startActivity(intent)
-                Crashlytics.getInstance().crash() // Force a crash
+                val intent = Intent(this@MainActivity, PersonProfileActivity::class.java)
+                this@MainActivity.startActivity(intent)
             }
         }
 
