@@ -24,7 +24,7 @@ import kotlinx.coroutines.experimental.withContext
  */
 class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
-        hideProgressbar()
+        showProgress(false)
     }
 
     //文章列表数据源
@@ -79,7 +79,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
         val currentPos: Int = articleList.size
 
         async(UI) {
-            showProgressbar()
+            showProgress(true)
             withContext(CommonPool) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
                 val pageIndex = if (isLoadMore) currentPage else 1
@@ -128,7 +128,7 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
                 this@EliteEroticaArticleListActivity.recyclerViewEliteList.layoutManager!!.scrollToPosition(currentPos - 1)
             }
 
-            hideProgressbar()
+            showProgress(false)
         }
     }
 
@@ -143,22 +143,12 @@ class EliteEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.
     }
 
     /**
-     * @desc 隐藏加载进度条
-     * @author ll
-     * @time 2018-07-10 15:17
-     */
-    private fun hideProgressbar() {
-        //停止刷新
-        this.swipeRefreshEliteList.isRefreshing = false
-    }
-
-    /**
-     * @desc 显示加载进度条
+     * @desc 显示进度条
      * @author ll
      * @time 2018-07-10 17:48
      */
-    private fun showProgressbar() {
-        swipeRefreshEliteList.isRefreshing = true
+    private fun showProgress(show: Boolean) {
+        this.swipeRefreshEliteList.isRefreshing = show
     }
 
 

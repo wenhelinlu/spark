@@ -56,12 +56,20 @@ interface TabooBooksApiService {
     fun login(@Field("username") username: String, @Field("password") password: String, @Field("dologin") dologin: String):Observable<String>
 
     /**
-     * @desc 注销操作
+     * @desc 注销接口
      * @author lm
      * @time 2018-08-26 20:24
      */
     @GET("https://home.6park.com/index.php?app=login&act=logout")
     fun logout(): Observable<String>
+
+    /**
+     * @desc 获取个人信息接口
+     * @author LL
+     * @time 2018-08-27 14:32
+     */
+    @GET("")
+    fun getProfileInfo(): Observable<String>
 
     companion object Factory {
         private const val API_SERVER_URL = "https://www.cool18.com/bbs4/"
@@ -163,6 +171,11 @@ interface TabooBooksApiService {
                     .build()
         }
 
+        /**
+         * @desc 日志拦截器
+         * @author LL
+         * @time 2018-08-27 14:31
+         */
         private fun getLoggingInterceptor(): HttpLoggingInterceptor {
             val interceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
                 Log.d(LOG_TAG_OKHTTP3, it)

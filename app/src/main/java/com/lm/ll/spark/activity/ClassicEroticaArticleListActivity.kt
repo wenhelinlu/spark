@@ -26,7 +26,7 @@ import kotlinx.coroutines.experimental.withContext
  */
 class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
-        hideProgressbar()
+        showProgress(false)
     }
 
     //文章列表数据源
@@ -80,7 +80,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
         val currentPos: Int = articleList.size
 
         async(UI) {
-            showProgressbar()
+            showProgress(true)
 
             withContext(CommonPool) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
@@ -128,7 +128,7 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
                 this@ClassicEroticaArticleListActivity.recyclerViewEliteList.layoutManager!!.scrollToPosition(currentPos - 1)
             }
 
-            hideProgressbar()
+            showProgress(false)
         }
     }
 
@@ -141,26 +141,14 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
         this@ClassicEroticaArticleListActivity.recyclerViewEliteList.adapter!!.notifyDataSetChanged()
     }
 
-
     /**
-     * @desc 隐藏加载进度条
-     * @author ll
-     * @time 2018-07-10 15:17
-     */
-    private fun hideProgressbar() {
-        //停止刷新
-        this.swipeRefreshEliteList.isRefreshing = false
-    }
-
-    /**
-     * @desc 显示加载进度条
+     * @desc 显示进度条
      * @author ll
      * @time 2018-07-10 17:48
      */
-    private fun showProgressbar() {
-        swipeRefreshEliteList.isRefreshing = true
+    private fun showProgress(show: Boolean) {
+        this.swipeRefreshEliteList.isRefreshing = show
     }
-
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

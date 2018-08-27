@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.lm.ll.spark.R
@@ -83,7 +84,8 @@ class PersonProfileActivity : AppCompatActivity() {
         }
 
         initView()
-        loadData()
+        loadDataWithRx()
+//        loadData()
     }
 
     /**
@@ -123,6 +125,56 @@ class PersonProfileActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * @desc 加载个人信息
+     * @author LL
+     * @time 2018-08-27 15:51
+     */
+    private fun loadDataWithRx() {
+        val repository = TabooArticlesRepository(TabooBooksApiService.create())
+        repository.getProfileInfo(profileInfoText)
+                .firstElement() //如果数据库中有数据，则直接取数据库中数据
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe {
+                    showProgress(true)
+                }
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doAfterTerminate {
+                    showProgress(false)
+                }
+                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
+                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
+                .subscribe({ result ->
+                    profileInfoList.clear()
+                    profileInfoList.addAll(result)
+                }, { error ->
+                    //异常处理
+                    val msg =
+                            when (error) {
+                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
+                                is TimeoutException -> "网络连接超时"
+                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
+                                else -> error.toString()
+                            }
+                    Snackbar.make(fab, msg, Snackbar.LENGTH_LONG)
+                            .setAction("重试") { loadDataWithRx() }.show()
+                })
+    }
+
+    /**
+     * @desc 显示进度条
+     * @author ll
+     * @time 2018-07-10 17:48
+     */
+    private fun showProgress(show: Boolean) {
+        this.pb_loadProfileInfo.visibility = if (show) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_person_profile, menu)
         return true
@@ -156,15 +208,15 @@ class PersonProfileActivity : AppCompatActivity() {
         repository.logout()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
-                    //                    showProgress(true)
+                    showProgress(true)
                 }
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doAfterTerminate {
-                    //                    showProgress(false)
+                    showProgress(false)
                 }
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
+                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
                     Log.d(LOG_TAG_COMMON, "result = $result")
                     val intent = Intent(this@PersonProfileActivity, LoginActivity::class.java)

@@ -15,6 +15,7 @@ buildscript {
         jcenter()
         maven { url 'https://jitpack.io' }
         maven { url 'https://dl.bintray.com/drummer-aidan/maven/'}
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0-rc02'
@@ -27,6 +28,9 @@ buildscript {
 
         classpath 'com.google.gms:google-services:4.0.1'
 
+        //Firebase的Crashlytics依赖组件
+        classpath 'io.fabric.tools:gradle:1.25.4'
+
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -34,6 +38,11 @@ buildscript {
 
 allprojects {
     repositories {
+        // If you're using a version of Gradle lower than 4.1, you must instead use:
+        // maven {
+        //     url 'https://maven.google.com'
+        // }
+        //否则使用google()
         google()
         jcenter()
     }

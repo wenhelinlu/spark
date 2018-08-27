@@ -41,10 +41,8 @@ import java.net.URLEncoder
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
 
     override fun onRefresh() {
-        hideProgressbar()
+        showProgress(false)
     }
-
-    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     /**
      * @desc 文章列表数据源
@@ -103,9 +101,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Obtain the FirebaseAnalytics instance.
-        this.mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-
         val layoutParams = window.attributes
         layoutParams.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or layoutParams.flags
 
@@ -141,7 +136,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         swipeRefreshTitles.setOnRefreshListener {
             if (isQueryStatus) {
                 //查询过程中屏蔽下拉刷新操作
-                hideProgressbar()
+                showProgress(false)
             } else {
                 loadData(::getArticleList)
             }
@@ -214,7 +209,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val currentPos: Int = articleList.size
 
         async(UI) {
-            showProgressbar()
+            showProgress(true)
             withContext(CommonPool) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
                 var pageIndex = if (isLoadMore) if (isQueryStatus) queryCurrentPage else currentPage else 1
@@ -260,7 +255,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 linearLayoutManager.scrollToPositionWithOffset(currentPos - 1, 0)
             }
 
-            hideProgressbar()
+            showProgress(false)
         }
     }
 
@@ -294,22 +289,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     /**
-     * @desc 隐藏加载进度条
-     * @author ll
-     * @time 2018-07-10 15:17
-     */
-    private fun hideProgressbar() {
-        //停止刷新
-        this.swipeRefreshTitles.isRefreshing = false
-    }
-
-    /**
-     * @desc 显示加载进度条
+     * @desc 显示进度条
      * @author ll
      * @time 2018-07-10 17:48
      */
-    private fun showProgressbar() {
-        swipeRefreshTitles.isRefreshing = true
+    private fun showProgress(show: Boolean) {
+        this.swipeRefreshTitles.isRefreshing = show
     }
 
     /**
@@ -333,8 +318,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-08-16 10:33
      */
     private fun queryArticle(keyword: String) {
+        //添加统计信息
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Event.SEARCH, keyword)
+        FirebaseLogUtils.log("查询文章", bundle)
 
-        addAnalysisData(keyword)
         //初始化查询状态及备份原有数据
         isQueryStatus = true
         articleListBackup.clear()
@@ -484,29 +472,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
-
-    /**
-     * @desc 添加统计信息
-     * @author LL
-     * @time 2018-08-27 11:00
-     */
-    private fun addAnalysisData(keyword: String) {
-        try {
-            val bundle = Bundle()
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "1")
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "linlu")
-            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "查询")
-            bundle.putString(FirebaseAnalytics.Event.SEARCH, keyword)
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 }
 
 //TODO: 首页显示论坛列表
 //TODO: 检测网络状态，不通时通过Toast提示
 //TODO: 学习Gradle
 //TODO：使用MVVM模式
+
+//TODO：增加设置Activity，自动夜间模式、开启统计功能
 
 

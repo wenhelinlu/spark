@@ -32,7 +32,7 @@ import javax.net.ssl.SSLHandshakeException
  */
 class FavoriteArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
-        this.swipeRefreshEliteList.isRefreshing = false
+        showProgress(false)
     }
 
     //文章列表数据源
@@ -75,12 +75,12 @@ class FavoriteArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRe
         repository.getFavoriteArticleList()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
-                    showProgressbar()
+                    showProgress(true)
                 }
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally {
-                    hideProgressbar()
+                    showProgress(false)
                 }
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
                 .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
@@ -111,24 +111,13 @@ class FavoriteArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRe
         this@FavoriteArticleListActivity.recyclerViewEliteList.adapter!!.notifyDataSetChanged()
     }
 
-
     /**
-     * @desc 隐藏正文加载进度条
-     * @author ll
-     * @time 2018-07-10 15:17
-     */
-    private fun hideProgressbar() {
-        //停止刷新
-        swipeRefreshEliteList.isRefreshing = false
-    }
-
-    /**
-     * @desc 显示正文加载进度条
+     * @desc 显示进度条
      * @author ll
      * @time 2018-07-10 17:48
      */
-    private fun showProgressbar() {
-        swipeRefreshEliteList.isRefreshing = true
+    private fun showProgress(show: Boolean) {
+        this.swipeRefreshEliteList.isRefreshing = show
     }
 
 

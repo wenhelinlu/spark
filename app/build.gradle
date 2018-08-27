@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'io.fabric'
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -108,8 +110,11 @@ dependencies {
     //material风格对话框控件
     implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha04'
 
-    //firebase组件
+    //Firebase核心组件（Analytics功能）
     implementation 'com.google.firebase:firebase-core:16.0.1'
+
+    //Firebase的Crashlytics组件
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
 }
 
 //这个要放在dependencies块的后面，不然build时会报"More than one file was found with OS independent path 'lib/armeabi-v7a/libobjectbox.so'"错误

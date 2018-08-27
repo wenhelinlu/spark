@@ -335,15 +335,15 @@ class ArticleDisplayActivity : AppCompatActivity() {
                 .firstElement() //如果数据库中有数据，则直接取数据库中数据
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
-                    showProgressbar()
+                    showProgress(true)
                 }
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doAfterTerminate {
-                    hideProgressbar()
+                    showProgress(false)
                 }
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用autodispose解除Rxjava2订阅
+                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
                     currentArticle = result
                     updateAdapter()
@@ -400,23 +400,18 @@ class ArticleDisplayActivity : AppCompatActivity() {
     }
 
     /**
-     * @desc 隐藏正文加载进度条
-     * @author ll
-     * @time 2018-07-10 15:17
-     */
-    private fun hideProgressbar() {
-        //隐藏进度条
-        this.pb_loadArticle.visibility = View.GONE
-    }
-
-    /**
-     * @desc 显示正文加载进度条
+     * @desc 显示进度条
      * @author ll
      * @time 2018-07-10 17:48
      */
-    private fun showProgressbar() {
-        this.pb_loadArticle.visibility = View.VISIBLE
+    private fun showProgress(show: Boolean) {
+        this.pb_loadArticle.visibility = if (show) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
     }
+
 
     /**
      * @desc 将article中的comment列表转换成article列表，用于使用不同布局的Adapter中

@@ -3,6 +3,7 @@ package com.lm.ll.spark.repository
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
+import com.lm.ll.spark.db.ProfileInfo
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
 import com.lm.ll.spark.util.Spider
 import io.reactivex.Observable
@@ -88,4 +89,39 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
             Observable.concat(fromDb, fromNetwork)
         }
     }
+
+    /**
+     * @desc 获取个人信息
+     * @author LL
+     * @time 2018-08-27 15:27
+     * @param pageStr 个人信息网页内容
+     */
+    fun getProfileInfo(pageStr: String): Observable<ArrayList<ProfileInfo>> {
+        //如果从登录界面进入个人信息页，则解析登录操作响应内容（即pageStr）
+        val fromLogin = Observable.create(ObservableOnSubscribe<ArrayList<ProfileInfo>> { emitter ->
+            if (pageStr.isBlank()) {
+                emitter.onComplete()
+            } else {
+                val doc = Jsoup.parse(pageStr)
+                val list = Spider.scratchProfileInfo(doc)
+                emitter.onNext(list)
+            }
+        })
+
+        //使用本地存储的cookie，直接打开个人信息页
+        val fromCookie = tabooBooksApiService.getProfileInfo()
+                .retry(1)
+                .flatMap {
+                    val doc = Jsoup.parse(it)
+                    val list = Spider.scratchProfileInfo(doc)
+                    Observable.just(list)
+                }
+
+        return if (pageStr.isBlank()) {
+            fromCookie
+        } else {
+            Observable.concat(fromLogin, fromCookie)
+        }
+    }
+
 }
