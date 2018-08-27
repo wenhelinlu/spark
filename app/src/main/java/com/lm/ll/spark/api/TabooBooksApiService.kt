@@ -96,7 +96,7 @@ interface TabooBooksApiService {
                     if (cookies!!.count() == 1 && cookies[0].value() == "deleted") {
                         helper.clear()
                     } else {
-                        helper[url!!.host()] = cookies!!
+                        helper[url!!.host()] = cookies
                     }
                 }
 

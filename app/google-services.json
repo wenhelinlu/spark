@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "482327728559",
+    "firebase_url": "https://wenhelinlu.firebaseio.com",
+    "project_id": "wenhelinlu",
+    "storage_bucket": "wenhelinlu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482327728559:android:368ae11fe0c521ef",
+        "android_client_info": {
+          "package_name": "com.lm.ll.spark.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482327728559-sgv5efmukab4h1tam540t1n127qki12p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDng19ACD6QNpzmv59WNbTw6Mlw-kIZke8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

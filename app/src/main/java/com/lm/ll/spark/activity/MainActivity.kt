@@ -16,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Switch
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.application.InitApplication
@@ -42,6 +43,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onRefresh() {
         hideProgressbar()
     }
+
+    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     /**
      * @desc 文章列表数据源
@@ -99,6 +102,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Obtain the FirebaseAnalytics instance.
+        this.mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         val layoutParams = window.attributes
         layoutParams.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or layoutParams.flags
@@ -327,6 +333,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @time 2018-08-16 10:33
      */
     private fun queryArticle(keyword: String) {
+
+        addAnalysisData(keyword)
         //初始化查询状态及备份原有数据
         isQueryStatus = true
         articleListBackup.clear()
@@ -475,6 +483,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    /**
+     * @desc 添加统计信息
+     * @author LL
+     * @time 2018-08-27 11:00
+     */
+    private fun addAnalysisData(keyword: String) {
+        try {
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "1")
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "linlu")
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "查询")
+            bundle.putString(FirebaseAnalytics.Event.SEARCH, keyword)
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
 

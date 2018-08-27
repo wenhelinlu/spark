@@ -90,7 +90,7 @@ dependencies {
     // 字符串依赖
     implementation "com.squareup.retrofit2:converter-scalars:$retrofit2_version"
     //gson依赖
-//    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
 
     //使用Delegate设计模式的RecyclerView.Adapter框架
     implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
@@ -107,6 +107,9 @@ dependencies {
 
     //material风格对话框控件
     implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha04'
+
+    //firebase组件
+    implementation 'com.google.firebase:firebase-core:16.0.1'
 }
 
 //这个要放在dependencies块的后面，不然build时会报"More than one file was found with OS independent path 'lib/armeabi-v7a/libobjectbox.so'"错误
@@ -114,6 +117,8 @@ apply plugin: 'io.objectbox'
 
 apply plugin: 'kotlin-noarg'
 apply plugin: 'kotlin-allopen'
+
+apply plugin: 'com.google.gms.google-services'
 
 noArg {
     annotation("com.lm.ll.spark.annotation.Poko")
