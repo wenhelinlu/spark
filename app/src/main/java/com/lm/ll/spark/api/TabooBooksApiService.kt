@@ -68,7 +68,7 @@ interface TabooBooksApiService {
      * @author LL
      * @time 2018-08-27 14:32
      */
-    @GET("")
+    @GET("https://home.6park.com/index.php")
     fun getProfileInfo(): Observable<String>
 
     companion object Factory {
