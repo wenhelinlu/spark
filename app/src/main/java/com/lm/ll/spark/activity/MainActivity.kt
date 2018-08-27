@@ -16,6 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Switch
+import com.crashlytics.android.Crashlytics
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
@@ -464,8 +465,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(intent)
             }
             R.id.nav_profile -> {
-                val intent = Intent(this@MainActivity, PersonProfileActivity::class.java)
-                this@MainActivity.startActivity(intent)
+//                val intent = Intent(this@MainActivity, PersonProfileActivity::class.java)
+//                this@MainActivity.startActivity(intent)
+                Crashlytics.getInstance().crash() // Force a crash
             }
         }
 

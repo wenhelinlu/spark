@@ -16,6 +16,7 @@ import com.lm.ll.spark.adapter.ProfileInfoAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.ProfileInfo
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
+import com.lm.ll.spark.http.PersistentCookieJarHelper
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.LOG_TAG_COMMON
 import com.lm.ll.spark.util.PROFILE_INFO_KEY
@@ -148,6 +149,7 @@ class PersonProfileActivity : AppCompatActivity() {
                 .subscribe({ result ->
                     profileInfoList.clear()
                     profileInfoList.addAll(result)
+                    refreshData()
                 }, { error ->
                     //异常处理
                     val msg =
@@ -160,6 +162,22 @@ class PersonProfileActivity : AppCompatActivity() {
                     Snackbar.make(fab, msg, Snackbar.LENGTH_LONG)
                             .setAction("重试") { loadDataWithRx() }.show()
                 })
+    }
+
+
+    /**
+     * @desc 刷新数据
+     * @author ll
+     * @time 2018-08-14 9:44
+     */
+    private fun refreshData() {
+        /**
+         * 注意，如果此adapter绑定的数据源articleList重新赋值了，则表示此数据源在内存中的地址改变，adapter会认为原数据源没有改变，
+         * 此时调用notifyDataSetChanged()方法不起作用，必须重新绑定数据源才可以。
+         * 解决方法是不直接给articleList赋新值，而是调用articleList的addAll()方法（视情况而定，可以先clear），这样adapter的
+         * notifyDataSetChanged()方法就会起作用，列表可以正常刷新
+         */
+        this@PersonProfileActivity.recyclerViewProfile.adapter!!.notifyDataSetChanged()
     }
 
     /**
@@ -219,6 +237,7 @@ class PersonProfileActivity : AppCompatActivity() {
                 .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
                     Log.d(LOG_TAG_COMMON, "result = $result")
+                    PersistentCookieJarHelper.getCookieJar()!!.clear()
                     val intent = Intent(this@PersonProfileActivity, LoginActivity::class.java)
                     this@PersonProfileActivity.startActivity(intent)
                 }, { error ->

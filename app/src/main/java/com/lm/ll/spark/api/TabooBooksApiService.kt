@@ -1,13 +1,11 @@
 package com.lm.ll.spark.api
 
 import android.util.Log
-import com.franmontiel.persistentcookiejar.PersistentCookieJar
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import com.lm.ll.spark.BuildConfig
-import com.lm.ll.spark.application.InitApplication
+import com.lm.ll.spark.http.PersistentCookieJarHelper
 import com.lm.ll.spark.util.LOG_TAG_OKHTTP3
 import io.reactivex.Observable
+import okhttp3.CookieJar
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -116,8 +114,8 @@ interface TabooBooksApiService {
 //                }
 //            }
 
-            val cookie = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(InitApplication.getInstance()))
-            return OkHttpClient.Builder().cookieJar(cookie)
+
+            return OkHttpClient.Builder().cookieJar(PersistentCookieJarHelper.getCookieJar() as CookieJar)
                     .retryOnConnectionFailure(true)
                     .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                     .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
