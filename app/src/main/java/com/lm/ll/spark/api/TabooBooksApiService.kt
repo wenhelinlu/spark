@@ -1,12 +1,15 @@
 package com.lm.ll.spark.api
 
 import android.util.Log
+import com.franmontiel.persistentcookiejar.PersistentCookieJar
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import com.lm.ll.spark.BuildConfig
 import com.lm.ll.spark.application.InitApplication
-import com.lm.ll.spark.http.PersistentCookieHelper
 import com.lm.ll.spark.util.LOG_TAG_OKHTTP3
 import io.reactivex.Observable
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -97,21 +100,23 @@ interface TabooBooksApiService {
          * @time 2018-07-13 20:59
          */
         private fun genericClient(): OkHttpClient {
-            val cookie = object : CookieJar {
-                val helper = PersistentCookieHelper(InitApplication.getInstance())
-                override fun saveFromResponse(url: HttpUrl?, cookies: MutableList<Cookie>?) {
-                    //如果已注销，则将本地存储的cookie清空，否则保存cookie值
-                    if (cookies!!.count() == 1 && cookies[0].value() == "deleted") {
-                        helper.clear()
-                    } else {
-                        helper[url!!.host()] = cookies
-                    }
-                }
+//            val cookie = object : CookieJar {
+//                val helper = PersistentCookieHelper(InitApplication.getInstance())
+//                override fun saveFromResponse(url: HttpUrl?, cookies: MutableList<Cookie>?) {
+//                    //如果已注销，则将本地存储的cookie清空，否则保存cookie值
+//                    if (cookies!!.count() == 1 && cookies[0].value() == "deleted") {
+//                        helper.clear()
+//                    } else {
+//                        helper[url!!.host()] = cookies
+//                    }
+//                }
+//
+//                override fun loadForRequest(url: HttpUrl?): MutableList<Cookie> {
+//                    return helper[url!!.host()] ?: ArrayList()
+//                }
+//            }
 
-                override fun loadForRequest(url: HttpUrl?): MutableList<Cookie> {
-                    return helper[url!!.host()] ?: ArrayList()
-                }
-            }
+            val cookie = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(InitApplication.getInstance()))
             return OkHttpClient.Builder().cookieJar(cookie)
                     .retryOnConnectionFailure(true)
                     .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)

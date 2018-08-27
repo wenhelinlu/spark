@@ -45,6 +45,7 @@ allprojects {
         //否则使用google()
         google()
         jcenter()
+        maven { url "https://jitpack.io" }
     }
 }
 

@@ -13,8 +13,8 @@ import java.util.*
  */
 class FirebaseLogUtils {
     companion object {
-        private lateinit var mFirebaseAnalytics: FirebaseAnalytics
-        private lateinit var dateFormat: SimpleDateFormat
+        private var mFirebaseAnalytics: FirebaseAnalytics? = null
+        private var dateFormat: SimpleDateFormat? = null
 
         /**
          * @desc 统计数据
@@ -37,9 +37,9 @@ class FirebaseLogUtils {
             if (bundle == null) {
                 bundle = Bundle()
             }
-            val time = dateFormat.format(System.currentTimeMillis())
+            val time = dateFormat!!.format(System.currentTimeMillis())
             value!!.putString("time", time)
-            mFirebaseAnalytics.logEvent(key, bundle)
+            mFirebaseAnalytics!!.logEvent(key, bundle)
         }
 
         fun log(key: String) {
