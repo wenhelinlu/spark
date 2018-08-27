@@ -171,6 +171,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @author lm
      * @time 2018-08-26 21:02
      */
+    @SuppressLint("CheckResult")
     private fun initLoginStatus() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
         repository.checkLoginStatus()
@@ -179,9 +180,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .subscribe {
                     //根据访问个人信息页面返回的文本中是否包含已登录状态标记文本，判断是否已登录，如果已登录，则不显示登录菜单，如果未登录，则不显示个人信息菜单
                     val menuItem = if (it.contains(LOGINING_STATUS)) {
-                        this.nav_view.menu.findItem(R.id.nav_profile)
-                    } else {
                         this.nav_view.menu.findItem(R.id.nav_login)
+                    } else {
+                        this.nav_view.menu.findItem(R.id.nav_profile)
                     }
                     menuItem.isVisible = false  // true 为显示，false 为隐藏
                 }
