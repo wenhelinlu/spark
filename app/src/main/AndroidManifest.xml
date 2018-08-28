@@ -23,6 +23,7 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -48,12 +49,15 @@
         <activity
             android:name=".activity.PersonProfileActivity"
             android:label="@string/title_activity_person_profile"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.LoginActivity"
-            android:parentActivityName=".activity.MainActivity"
-            android:label="@string/title_activity_login" />
+            android:label="@string/title_activity_login"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

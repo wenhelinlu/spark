@@ -455,25 +455,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_favorite -> {
-                val intent = Intent(this@MainActivity, FavoriteArticleListActivity::class.java)
-                this@MainActivity.startActivity(intent)
+                this@MainActivity.startActivity(Intent(this@MainActivity, FavoriteArticleListActivity::class.java))
             }
             R.id.nav_elite -> {
-                val intent = Intent(this@MainActivity, EliteEroticaArticleListActivity::class.java)
-                this@MainActivity.startActivity(intent)
+                this@MainActivity.startActivity(Intent(this@MainActivity, EliteEroticaArticleListActivity::class.java))
             }
             R.id.nav_classic -> {
-                val intent = Intent(this@MainActivity, ClassicEroticaArticleListActivity::class.java)
-                this@MainActivity.startActivity(intent)
+                this@MainActivity.startActivity(Intent(this@MainActivity, ClassicEroticaArticleListActivity::class.java))
             }
-
             R.id.nav_login -> {
-                val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                this@MainActivity.startActivity(intent)
+                this@MainActivity.startActivity(Intent(this@MainActivity, LoginActivity::class.java))
             }
             R.id.nav_profile -> {
-                val intent = Intent(this@MainActivity, PersonProfileActivity::class.java)
-                this@MainActivity.startActivity(intent)
+                this@MainActivity.startActivity(Intent(this@MainActivity, PersonProfileActivity::class.java))
+            }
+            R.id.nav_settings -> {
+                this@MainActivity.startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             }
         }
 
