@@ -38,6 +38,8 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
+import mehdi.sakout.aboutpage.AboutPage
+import mehdi.sakout.aboutpage.Element
 import java.net.URLEncoder
 
 
@@ -193,7 +195,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @author lm
      * @time 2018-08-19 12:49
      */
-    private fun initNightMode(){
+    private fun initNightMode() {
         val switchItem = nav_view.menu.findItem(R.id.nav_nightMode_switch)
         val switch = switchItem.actionView.findViewById<Switch>(R.id.switchNightMode)
         val isNightMode = InitApplication.getInstance().isNightModeEnabled()
@@ -471,6 +473,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_settings -> {
                 this@MainActivity.startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            }
+            R.id.nav_about -> {
+                val versionElement = Element()
+                versionElement.title = "Version 1.1.18"
+                val aboutPage = AboutPage(this)
+                        .isRTL(false)
+                        .setImage(R.drawable.splash_logo_vector)
+                        .addItem(versionElement)
+                        .addGroup("Connect with us")
+                        .addEmail("wenhelinlu@gmail.com")
+                        .addWebsite("https://github.com/wenhelinlu")
+                        .addGitHub("wenhelinlu")
+                        .addInstagram("wenhelinlu")
+                        .create()
             }
         }
 
