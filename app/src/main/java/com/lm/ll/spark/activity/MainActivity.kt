@@ -470,7 +470,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(Intent(this@MainActivity, PersonProfileActivity::class.java))
             }
             R.id.nav_settings -> {
-//                this@MainActivity.startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+                this@MainActivity.startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             }
         }
 

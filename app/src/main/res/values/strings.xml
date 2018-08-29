@@ -60,24 +60,23 @@
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
+    <string name="pref_title_auto_night_mode">自动开启夜间模式</string>
+    <string name="pref_description_auto_night_mode">22:00到06:00之间自动开启夜间模式
     </string>
 
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
+    <string name="pref_title_text_font_size">正文字体大小</string>
+    <string-array name="pref_font_size_list_titles">
+        <item>小</item>
+        <item>中</item>
+        <item>大</item>
     </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
+    <string-array name="pref_font_size_list_values">
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->
