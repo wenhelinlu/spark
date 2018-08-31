@@ -38,8 +38,6 @@ import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.withContext
-import mehdi.sakout.aboutpage.AboutPage
-import mehdi.sakout.aboutpage.Element
 import java.net.URLEncoder
 
 
@@ -475,18 +473,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             }
             R.id.nav_about -> {
-                val versionElement = Element()
-                versionElement.title = "Version 1.1.18"
-                val aboutPage = AboutPage(this)
-                        .isRTL(false)
-                        .setImage(R.drawable.splash_logo_vector)
-                        .addItem(versionElement)
-                        .addGroup("Connect with us")
-                        .addEmail("wenhelinlu@gmail.com")
-                        .addWebsite("https://github.com/wenhelinlu")
-                        .addGitHub("wenhelinlu")
-                        .addInstagram("wenhelinlu")
-                        .create()
+                this@MainActivity.startActivity(Intent(this@MainActivity, AboutPageActivity::class.java))
             }
         }
 

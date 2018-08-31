@@ -58,6 +58,7 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
+        <activity android:name=".activity.AboutPageActivity"></activity>
     </application>
 
 </manifest>
