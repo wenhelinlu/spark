@@ -43,7 +43,7 @@
             android:title="@string/action_settings" />
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_settings"
+            android:icon="@drawable/ic_menu_about"
             android:title="@string/action_about" />
     </group>
 </menu>

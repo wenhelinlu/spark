@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.database.MatrixCursor
 import android.net.ConnectivityManager
+import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate
+import android.util.Log
 import android.widget.Toast
 import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.application.InitApplication
@@ -68,6 +70,9 @@ fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
  * @time 2018-06-15 15:28
  */
 fun switchDayNightMode(isNightMode: Boolean) {
+
+    val autoSwitchNightMode = PreferenceManager.getDefaultSharedPreferences(InitApplication.getInstance()).getBoolean("auto_night_mode_switch", false)
+    Log.d(LOG_TAG_COMMON,"auto switch night mode = $autoSwitchNightMode")
     if (isNightMode) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     } else {
