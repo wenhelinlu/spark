@@ -70,6 +70,8 @@ fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
  * @time 2018-06-15 15:28
  */
 fun switchDayNightMode(isNightMode: Boolean) {
+
+    var canSwitch = false
     //获取自动切换夜间模式设置
     val autoSwitchNightMode = PreferenceManager.getDefaultSharedPreferences(InitApplication.getInstance()).getBoolean("auto_night_mode_switch", false)
     //如果开启自动切换，则判断当前时间，在22:00到06:00之间使用夜间模式
@@ -77,14 +79,13 @@ fun switchDayNightMode(isNightMode: Boolean) {
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)  //24小时制，如果是Calendar.HOUR，则为12小时制
         if (currentHour >= NIGHT_MODE_START_HOUR || currentHour <= NIGHT_MODE_END_HOUR) {
             InitApplication.getInstance().setIsNightModeEnabled(true)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            canSwitch = true
         }
+    }
+    if (isNightMode || canSwitch) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     } else {
-        if (isNightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 }
 
@@ -145,10 +146,10 @@ fun isNetworkOnline(): Boolean {
  * @time 2018-08-15 10:52
  * @param records 数据库中保存的查询历史记录
  */
-fun getQueryRecordCursor(records: List<QueryRecord>):MatrixCursor{
-    val cursor = MatrixCursor(arrayOf("_id","text"))
-    for (r in records){
-        val row = arrayOf(r.id,r.keyword)
+fun getQueryRecordCursor(records: List<QueryRecord>): MatrixCursor {
+    val cursor = MatrixCursor(arrayOf("_id", "text"))
+    for (r in records) {
+        val row = arrayOf(r.id, r.keyword)
         cursor.addRow(row)
     }
     return cursor
@@ -160,8 +161,8 @@ fun getQueryRecordCursor(records: List<QueryRecord>):MatrixCursor{
  * @time 2018-08-15 15:19
  * @param keyword 查询条件
  */
-fun getQueryRecord(keyword: String = "", forumType: ForumType = ForumType.TABOO_BOOK): List<QueryRecord>{
-    return if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query().equal(QueryRecord_.queryType,forumType.ordinal.toLong()).contains(QueryRecord_.keyword,keyword).orderDesc(QueryRecord_.insertTime).build().find()
+fun getQueryRecord(keyword: String = "", forumType: ForumType = ForumType.TABOO_BOOK): List<QueryRecord> {
+    return if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query().equal(QueryRecord_.queryType, forumType.ordinal.toLong()).contains(QueryRecord_.keyword, keyword).orderDesc(QueryRecord_.insertTime).build().find()
 }
 
 //endregion
