@@ -2,6 +2,7 @@ package com.lm.ll.spark.adapter.adapterdelegate
 
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.TextView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.util.getArticleTextSize
 import kotlinx.android.synthetic.main.article_item_text.view.*
 
 
@@ -33,6 +35,7 @@ class ArticleTextAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
         with(vh) {
             items[position].let {
                 articleText.text = it.text
+                articleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, getArticleTextSize()) //根据设置的字体大小显示
             }
         }
     }

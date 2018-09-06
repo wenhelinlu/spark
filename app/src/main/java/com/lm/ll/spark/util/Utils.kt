@@ -6,7 +6,6 @@ import android.database.MatrixCursor
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate
-import android.util.Log
 import android.widget.Toast
 import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.application.InitApplication
@@ -16,6 +15,7 @@ import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 //region 扩展方法
@@ -70,16 +70,29 @@ fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
  * @time 2018-06-15 15:28
  */
 fun switchDayNightMode(isNightMode: Boolean) {
-
+    //获取自动切换夜间模式设置
     val autoSwitchNightMode = PreferenceManager.getDefaultSharedPreferences(InitApplication.getInstance()).getBoolean("auto_night_mode_switch", false)
-    Log.d(LOG_TAG_COMMON,"auto switch night mode = $autoSwitchNightMode")
-    if (isNightMode) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    //如果开启自动切换，则判断当前时间，在22:00到06:00之间使用夜间模式
+    if (autoSwitchNightMode) {
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)  //24小时制，如果是Calendar.HOUR，则为12小时制
+        if (currentHour >= NIGHT_MODE_START_HOUR || currentHour <= NIGHT_MODE_END_HOUR) {
+            InitApplication.getInstance().setIsNightModeEnabled(true)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
     } else {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        if (isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 }
 
+/**
+ * @desc 获取用于展现文章评论列表父子层次关系的占位符
+ * @author LL
+ * @time 2018-09-06 14:01
+ */
 fun getPlaceholder(length: Int): String {
     val l = length * 10
     val sb = StringBuilder()
@@ -87,6 +100,15 @@ fun getPlaceholder(length: Int): String {
         sb.append(" ")
     }
     return sb.toString()
+}
+
+/**
+ * @desc 获取设置的正文字体大小
+ * @author LL
+ * @time 2018-09-06 14:03
+ */
+fun getArticleTextSize(): Float {
+    return PreferenceManager.getDefaultSharedPreferences(InitApplication.getInstance()).getString("font_size_list", "16").toFloat()
 }
 
 /**
@@ -188,6 +210,12 @@ const val PROFILE_INFO_KEY = "profile"
 
 //已登录状态标记
 const val LOGINING_STATUS = "欢迎您"
+
+//自动夜间模式开始时间
+const val NIGHT_MODE_START_HOUR = 22
+
+//自动夜间模式结束时间
+const val NIGHT_MODE_END_HOUR = 6
 
 
 //endregion
