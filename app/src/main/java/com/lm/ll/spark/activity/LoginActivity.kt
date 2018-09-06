@@ -154,7 +154,7 @@ class LoginActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Cursor>
      */
     private fun login() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
-        //username=markherd&password=025646Lu&dologin=+%B5%C7%C2%BC+
+        //username=***&password=***&dologin=+%B5%C7%C2%BC+
         repository.login("markherd", "025646Lu")
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {

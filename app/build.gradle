@@ -66,13 +66,15 @@ dependencies {
     implementation 'com.hankcs:hanlp:portable-1.6.6'
 
     //图文混排库
-//    implementation 'com.github.sendtion:XRichText:1.3'
+    implementation('com.github.sendtion:XRichText:1.5') {
+        exclude group: 'com.android.support'
+    }
 
     //google风格进度条
     implementation 'com.github.castorflex.smoothprogressbar:library:1.1.0'
 
     //带有加载效果的TextView和ImageView控件
-//    implementation 'com.elyeproj.libraries:loaderviewlibrary:1.4.1'
+    implementation 'com.elyeproj.libraries:loaderviewlibrary:1.5.0'
 
     //objectbox
     debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectbox_version"

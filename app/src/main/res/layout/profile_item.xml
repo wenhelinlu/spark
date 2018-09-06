@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="?attr/bgColor">
 
-    <TextView
+    <com.elyeproj.loaderviewlibrary.LoaderTextView
         android:id="@+id/textProfileTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.elyeproj.loaderviewlibrary.LoaderTextView
         android:id="@+id/textProfileInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

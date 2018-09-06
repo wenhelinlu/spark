@@ -134,7 +134,6 @@ class PersonProfileActivity : AppCompatActivity() {
     private fun loadDataWithRx() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
         repository.getProfileInfo(profileInfoText)
-                .firstElement() //如果数据库中有数据，则直接取数据库中数据
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
                     showProgress(true)

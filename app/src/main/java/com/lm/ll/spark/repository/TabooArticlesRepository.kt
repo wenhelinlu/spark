@@ -129,7 +129,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
         return if (pageStr.isBlank()) {
             fromCookie
         } else {
-            Observable.concat(fromLogin, fromCookie)
+            fromLogin
         }
     }
 

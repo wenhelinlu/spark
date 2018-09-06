@@ -520,6 +520,23 @@ class Spider {
         }
 
 
+        /**
+         * @desc 抓取图文混排文章
+         * @author LL
+         * @time 2018-09-06 15:48
+         */
+        fun scratchRichTextData(doc: Document): ArrayList<String> {
+            try {
+                val list = ArrayList<String>()
+                val body: Elements = doc.getElementsByTag("pre")
+
+                return list
+            } catch (t: Throwable) {
+                throw Exceptions.propagate(t)
+            }
+        }
+
+
         //endregion
     }
 }
