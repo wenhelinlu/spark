@@ -66,7 +66,7 @@ dependencies {
     implementation 'com.hankcs:hanlp:portable-1.6.6'
 
     //图文混排库
-    implementation('com.github.sendtion:XRichText:1.5') {
+    implementation ('com.github.sendtion:XRichText:1.5') {
         exclude group: 'com.android.support'
     }
 

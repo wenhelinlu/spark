@@ -11,7 +11,7 @@
      TextureView, etc. -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/articleLayout"
+        android:id="@+id/richContentLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
@@ -21,7 +21,7 @@
 
         <fr.castorflex.android.smoothprogressbar.SmoothProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/pb_loadArticle"
+            android:id="@+id/pb_loadContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
@@ -45,6 +45,7 @@
             app:rt_view_text_size="16"
             android:background="?attr/bgColor"
             app:rt_view_text_color="?attr/textColor" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

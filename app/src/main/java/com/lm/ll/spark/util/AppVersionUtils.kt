@@ -15,10 +15,10 @@ class AppVersionUtils {
          * @author ll
          * @time 2018-08-31 17:53
          */
-        fun getVersionCode():Int{
-            var versionCode = 0
+        fun getVersionCode(): Long {
+            var versionCode = 0L
             try {
-                versionCode = InitApplication.getInstance().packageManager.getPackageInfo(InitApplication.getInstance().packageName,0).versionCode
+                versionCode = InitApplication.getInstance().packageManager.getPackageInfo(InitApplication.getInstance().packageName, 0).longVersionCode
             }catch (e:Exception){
                 e.printStackTrace()
             }
