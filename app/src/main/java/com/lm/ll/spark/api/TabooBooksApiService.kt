@@ -98,23 +98,6 @@ interface TabooBooksApiService {
          * @time 2018-07-13 20:59
          */
         private fun genericClient(): OkHttpClient {
-//            val cookie = object : CookieJar {
-//                val helper = PersistentCookieHelper(InitApplication.getInstance())
-//                override fun saveFromResponse(url: HttpUrl?, cookies: MutableList<Cookie>?) {
-//                    //如果已注销，则将本地存储的cookie清空，否则保存cookie值
-//                    if (cookies!!.count() == 1 && cookies[0].value() == "deleted") {
-//                        helper.clear()
-//                    } else {
-//                        helper[url!!.host()] = cookies
-//                    }
-//                }
-//
-//                override fun loadForRequest(url: HttpUrl?): MutableList<Cookie> {
-//                    return helper[url!!.host()] ?: ArrayList()
-//                }
-//            }
-
-
             return OkHttpClient.Builder().cookieJar(PersistentCookieJarHelper.getCookieJar() as CookieJar)
                     .retryOnConnectionFailure(true)
                     .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)

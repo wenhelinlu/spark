@@ -529,7 +529,14 @@ class Spider {
             try {
                 val list = ArrayList<String>()
                 val body: Elements = doc.getElementsByTag("pre")
-
+                val children = body[0].childNodes()[2].childNodes()
+                for (e in children){
+                    if(e is TextNode){
+                        list.add(e.text())
+                    }else if(e.outerHtml().contains("<img")){
+                        list.add(e.childNode(0).outerHtml())
+                    }
+                }
                 return list
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)

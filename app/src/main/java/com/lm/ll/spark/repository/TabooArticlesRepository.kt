@@ -98,6 +98,21 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
             Observable.concat(fromDb, fromNetwork)
         }
     }
+    
+    /**
+     * @desc 获取图文混排文章
+     * @author ll
+     * @time 2018-09-06 20:27
+     */
+    fun getRichTextArticle(url:String):Observable<ArrayList<String>>{
+        return tabooBooksApiService.getArticle(url)
+                .retry(1)
+                .flatMap { 
+                    val doc = Jsoup.parse(it)
+                    val list = Spider.scratchRichTextData(doc)
+                    Observable.just(list)
+                }
+    }
 
     /**
      * @desc 获取个人信息
