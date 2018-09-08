@@ -18,6 +18,20 @@ import org.jsoup.Jsoup
 class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiService) {
 
     /**
+     * @desc 获取论坛导航链接
+     * @author LL
+     * @time 2018-09-08 14:43
+     */
+    fun getSiteMapTab(): Observable<ArrayList<Article>> {
+        return tabooBooksApiService.getSiteMapTab()
+                .retry(1)
+                .flatMap {
+                    val doc = Jsoup.parse(it)
+                    val list = Spider.scratchSiteMapTab(doc)
+                    Observable.just(list)
+                }
+    }
+    /**
      * @desc 登录操作
      * @author lm
      * @time 2018-08-26 20:24

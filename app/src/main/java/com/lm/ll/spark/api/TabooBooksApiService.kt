@@ -23,6 +23,15 @@ import java.util.concurrent.TimeUnit
  */
 interface TabooBooksApiService {
 
+
+    /**
+     * @desc 获取论坛导航链接
+     * @author LL
+     * @time 2018-09-08 14:41
+     */
+    @GET("https://www.cool18.com/bbs4/index.php")
+    fun getSiteMapTab(): Observable<String>
+
     /**
      * @desc 获取文章列表接口
      * @author ll

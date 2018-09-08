@@ -8,6 +8,10 @@
         android:id="@+id/nav_group_forum"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_sitemaptab"
+            android:icon="@drawable/ic_menu_sitemaptab"
+            android:title="@string/site_map_tab" />
+        <item
             android:id="@+id/nav_favorite"
             android:icon="@drawable/ic_menu_favorite"
             android:title="@string/action_favorite" />

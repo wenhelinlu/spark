@@ -544,6 +544,31 @@ class Spider {
         }
 
 
+        /**
+         * @desc 获取留园网社区导航链接集合
+         * @author LL
+         * @time 2018-09-08 14:39
+         */
+        fun scratchSiteMapTab(doc: Document): ArrayList<Article> {
+            try {
+                val siteMap = doc.getElementById("site_map_tab")
+                val links = siteMap.getElementsByTag("a")
+                val list = ArrayList<Article>()
+                for (link in links) {
+                    val article = Article()
+
+                    article.title = link.text().convertToSimplifiedChinese()
+                    article.url = "$BASE_URL${link.attr("href")}"
+
+                    list.add(article)
+                }
+                return list
+            } catch (t: Throwable) {
+                throw Exceptions.propagate(t)
+            }
+        }
+
+
         //endregion
     }
 }

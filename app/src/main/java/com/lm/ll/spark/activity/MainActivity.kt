@@ -454,6 +454,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
+            R.id.nav_sitemaptab -> {
+                this@MainActivity.startActivity(Intent(this@MainActivity, SiteMapTabActivity::class.java))
+            }
             R.id.nav_favorite -> {
                 this@MainActivity.startActivity(Intent(this@MainActivity, FavoriteArticleListActivity::class.java))
             }
