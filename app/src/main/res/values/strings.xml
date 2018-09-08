@@ -74,9 +74,9 @@
         <item>大</item>
     </string-array>
     <string-array name="pref_font_size_list_values">
-        <item>14</item>
         <item>16</item>
         <item>18</item>
+        <item>20</item>
     </string-array>
 
     <!-- Example settings for Data & Sync -->

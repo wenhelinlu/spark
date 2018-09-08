@@ -27,7 +27,7 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
         // updated to reflect the new value, per the Android Design
         // guidelines.
         bindPreferenceSummaryToValue(findPreference("example_text"))
-        bindPreferenceSummaryToValue(findPreference("font_size_list"))
+        bindPreferenceSummaryToValue(findPreference("font_size_list"),"18")
     }
 
     companion object {
@@ -54,8 +54,10 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
          * dependent on the type of preference.
 
          * @see .sBindPreferenceSummaryToValueListener
+         * @param preference 设置项
+         * @param defaultValue 默认值
          */
-        private fun bindPreferenceSummaryToValue(preference: Preference) {
+        private fun bindPreferenceSummaryToValue(preference: Preference, defaultValue:String = "") {
             // Set the listener to watch for value changes.
             preference.onPreferenceChangeListener = sBindPreferenceSummaryToValueListener
 
@@ -64,7 +66,7 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                     PreferenceManager
                             .getDefaultSharedPreferences(preference.context)
-                            .getString(preference.key, ""))
+                            .getString(preference.key, defaultValue))
         }
     }
 }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/bgColor"
     tools:context="com.lm.ll.spark.activity.RichTextActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
@@ -42,8 +43,8 @@
             android:layout_height="match_parent"
             app:rt_view_image_height="0"
             app:rt_view_image_bottom="10"
-            app:rt_view_text_size="16"
-            android:background="?attr/bgColor"
+            app:rt_view_text_size="18"
+            android:background="@color/transparent"
             app:rt_view_text_color="?attr/textColor" />
 
     </LinearLayout>
