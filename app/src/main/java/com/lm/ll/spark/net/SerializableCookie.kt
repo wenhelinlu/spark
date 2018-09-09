@@ -1,4 +1,4 @@
-package com.lm.ll.spark.http
+package com.lm.ll.spark.net
 
 import okhttp3.Cookie
 import java.io.Serializable

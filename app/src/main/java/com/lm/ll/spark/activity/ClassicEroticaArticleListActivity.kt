@@ -11,6 +11,7 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
+import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.util.*
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.experimental.CommonPool

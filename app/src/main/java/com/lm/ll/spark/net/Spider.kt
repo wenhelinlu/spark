@@ -1,8 +1,9 @@
-package com.lm.ll.spark.util
+package com.lm.ll.spark.net
 
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.db.ProfileInfo
+import com.lm.ll.spark.util.*
 import io.reactivex.exceptions.Exceptions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

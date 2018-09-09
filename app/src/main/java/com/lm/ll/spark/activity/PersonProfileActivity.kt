@@ -16,7 +16,7 @@ import com.lm.ll.spark.adapter.ProfileInfoAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.ProfileInfo
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
-import com.lm.ll.spark.http.PersistentCookieJarHelper
+import com.lm.ll.spark.net.PersistentCookieJarHelper
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.LOG_TAG_COMMON
 import com.lm.ll.spark.util.PROFILE_INFO_KEY

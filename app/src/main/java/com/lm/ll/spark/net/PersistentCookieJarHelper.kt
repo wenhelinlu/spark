@@ -1,4 +1,4 @@
-package com.lm.ll.spark.http
+package com.lm.ll.spark.net
 
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
