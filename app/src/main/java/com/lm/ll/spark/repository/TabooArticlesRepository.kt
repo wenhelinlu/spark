@@ -4,8 +4,10 @@ import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.db.ProfileInfo
+import com.lm.ll.spark.db.SiteMap
 import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
+import com.lm.ll.spark.util.ObjectBox.getSiteMapBox
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import org.jsoup.Jsoup
@@ -22,14 +24,29 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      * @author LL
      * @time 2018-09-08 14:43
      */
-    fun getSiteMapTab(): Observable<ArrayList<Article>> {
-        return tabooBooksApiService.getSiteMapTab()
+    fun getSiteMapTab(): Observable<ArrayList<SiteMap>> {
+        //从数据库中获取论坛列表
+        val fromDb = Observable.create(ObservableOnSubscribe<ArrayList<SiteMap>> { emitter ->
+            val find = getSiteMapBox().all
+            if (find == null) {
+                emitter.onComplete()
+            } else {
+                var list = ArrayList<SiteMap>()
+                list.addAll(find)
+                emitter.onNext(list)
+            }
+        })
+
+        //从网络中抓取论坛列表
+        val fromNetwork = tabooBooksApiService.getSiteMapTab()
                 .retry(1)
                 .flatMap {
                     val doc = Jsoup.parse(it)
                     val list = Spider.scratchSiteMapTab(doc)
                     Observable.just(list)
                 }
+//        return Observable.concat(fromDb, fromNetwork)
+        return fromNetwork
     }
     /**
      * @desc 登录操作

@@ -4,6 +4,7 @@ import android.content.Context
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.MyObjectBox
 import com.lm.ll.spark.db.QueryRecord
+import com.lm.ll.spark.db.SiteMap
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.kotlin.boxFor
@@ -40,4 +41,14 @@ object ObjectBox {
     fun getQueryRecordBox():Box<QueryRecord>{
         return boxStore.boxFor()
     }
+
+    /**
+     * @desc SiteMap的Box实例，用于ObjectBox数据库中SiteMap表的相关操作
+     * @author lm
+     * @time 2018-09-09 21:02
+     */
+    fun getSiteMapBox(): Box<SiteMap> {
+        return boxStore.boxFor()
+    }
+
 }

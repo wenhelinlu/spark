@@ -6,11 +6,10 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import com.lm.ll.spark.R
-import com.lm.ll.spark.adapter.ArticleListAdapter
+import com.lm.ll.spark.adapter.SiteMapItemListAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
-import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.db.SiteMap
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
@@ -18,7 +17,6 @@ import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_site_map_tab.*
-import kotlinx.android.synthetic.main.app_bar_main.*
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -31,14 +29,14 @@ class SiteMapTabActivity : AppCompatActivity() {
      * @author ll
      * @time 2018-08-14 9:53
      */
-    private var articleList: ArrayList<Article> = ArrayList()
+    private var siteMapList: ArrayList<SiteMap> = ArrayList()
 
     /**
      * @desc RecyclerView的adapter
      * @author ll
      * @time 2018-08-14 9:53
      */
-    private lateinit var mAdapter: ArticleListAdapter
+    private lateinit var mAdapter: SiteMapItemListAdapter
 
     /**
      * @desc RecyclerView的LayoutManager
@@ -55,16 +53,12 @@ class SiteMapTabActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_site_map_tab)
 
-
-        val layoutParams = window.attributes
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS or layoutParams.flags
-
-        setSupportActionBar(toolbar)
+        supportActionBar!!.title = getString(R.string.site_map_tab_title)
 
         //RecyclerView设置
         this.recyclerViewSiteMapList.addItemDecoration(SolidLineItemDecoration(this@SiteMapTabActivity))
         this.recyclerViewSiteMapList.layoutManager = linearLayoutManager
-        mAdapter = ArticleListAdapter(this@SiteMapTabActivity, articleList)
+        mAdapter = SiteMapItemListAdapter(this@SiteMapTabActivity, siteMapList)
         this.recyclerViewSiteMapList.adapter = mAdapter
 
         loadData()
@@ -88,6 +82,7 @@ class SiteMapTabActivity : AppCompatActivity() {
     private fun loadTextWithRx() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
         repository.getSiteMapTab()
+//                .firstElement()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
                     showProgress(true)
@@ -100,8 +95,9 @@ class SiteMapTabActivity : AppCompatActivity() {
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
                 .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
-                    articleList.clear()
-                    articleList.addAll(result)
+                    siteMapList.clear()
+                    siteMapList.addAll(result)
+                    siteMapList.sortBy { x -> x.favorite }
                     refreshData()
                 }, { error ->
                     //异常处理

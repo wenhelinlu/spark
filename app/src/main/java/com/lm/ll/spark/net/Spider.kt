@@ -3,7 +3,9 @@ package com.lm.ll.spark.net
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.db.ProfileInfo
+import com.lm.ll.spark.db.SiteMap
 import com.lm.ll.spark.util.*
+import com.lm.ll.spark.util.ObjectBox.getSiteMapBox
 import io.reactivex.exceptions.Exceptions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -550,18 +552,21 @@ class Spider {
          * @author LL
          * @time 2018-09-08 14:39
          */
-        fun scratchSiteMapTab(doc: Document): ArrayList<Article> {
+        fun scratchSiteMapTab(doc: Document): ArrayList<SiteMap> {
             try {
                 val siteMap = doc.getElementById("site_map_tab")
                 val links = siteMap.getElementsByTag("a")
-                val list = ArrayList<Article>()
+                val list = ArrayList<SiteMap>()
                 for (link in links) {
-                    val article = Article()
+                    val item = SiteMap()
 
-                    article.title = link.text().convertToSimplifiedChinese()
-                    article.url = "$BASE_URL${link.attr("href")}"
+                    item.title = link.text().convertToSimplifiedChinese()
+                    item.url = "$BASE_URL${link.attr("href")}"
 
-                    list.add(article)
+                    //插入数据库中
+                    getSiteMapBox().put(item)
+
+                    list.add(item)
                 }
                 return list
             } catch (t: Throwable) {

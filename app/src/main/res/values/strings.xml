@@ -3,6 +3,7 @@
     <string name="action_settings">设置</string>
     <string name="comment_remark">所有跟帖（点击后会在本应用中打开）</string>
     <string name="action_eliteArea">精华区</string>
+    <string name="site_map_tab_title">论坛列表</string>
     <string name="title_activity_main">SPark</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
