@@ -29,6 +29,6 @@
         android:background="?attr/bgColor"
         android:lineSpacingMultiplier="1.2"
         android:textColor="?attr/textColor"
-        android:textIsSelectable="true"
+        android:textIsSelectable="false"
         android:textSize="@dimen/text_size_20" />
 </LinearLayout>

@@ -10,6 +10,7 @@ import com.lm.ll.spark.adapter.adapterdelegate.SimpleArticleListAdapterDelegate
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
+import com.lm.ll.spark.util.OnItemClickListener
 
 /**
  * @desc
@@ -24,7 +25,7 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
 
     init {
         val delegate = ArticleListAdapterDelegate(activity)
-        delegate.setOnItemClickListener(object : ArticleListAdapterDelegate.Companion.OnItemClickListener {
+        delegate.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val intent = Intent(activity, ArticleDisplayActivity::class.java)
                 InitApplication.curArticle = items[position]

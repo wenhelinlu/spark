@@ -109,7 +109,7 @@ fun getPlaceholder(length: Int): String {
  * @time 2018-09-06 14:03
  */
 fun getArticleTextSize(): Float {
-    return PreferenceManager.getDefaultSharedPreferences(InitApplication.getInstance()).getString("font_size_list", "16")!!.toFloat()
+    return PreferenceManager.getDefaultSharedPreferences(InitApplication.getInstance()).getString("font_size_list", "18")!!.toFloat()
 }
 
 /**
