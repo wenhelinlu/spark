@@ -7,6 +7,11 @@ import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.util.OnItemClickListener
 
 
+/**
+ * @desc 支持RecyclerView中Item的Click操作的AdapterDelegate基类
+ * @author LL
+ * @time 2018-09-10 17:48
+ */
 abstract class BaseListAdapterDelegate<T>(activity: AppCompatActivity) : AdapterDelegate<T>(), View.OnClickListener {
 
     var mOnItemClickListener: OnItemClickListener? = null
@@ -18,7 +23,6 @@ abstract class BaseListAdapterDelegate<T>(activity: AppCompatActivity) : Adapter
     }
 
     val inflater: LayoutInflater = activity.layoutInflater
-    val context = activity.applicationContext
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.mOnItemClickListener = listener

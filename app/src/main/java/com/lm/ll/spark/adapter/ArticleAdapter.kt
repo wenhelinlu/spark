@@ -1,14 +1,17 @@
 package com.lm.ll.spark.adapter
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleSplitterAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleTextAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.CommentListAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.SimpleCommentListAdapterDelegate
+import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 
 
@@ -23,10 +26,19 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
 
     init {
 
+        val claDelegate = CommentListAdapterDelegate(activity)
+        claDelegate.setOnItemClickListener(object : com.lm.ll.spark.util.OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                InitApplication.curArticle = items[position]
+                activity.startActivity(intent)
+            }
+        })
+
         // DelegatesManager is a protected Field in ListDelegationAdapter
         delegatesManager.addDelegate(VIEW_TYPE_TEXT, ArticleTextAdapterDelegate(activity))
                 .addDelegate(VIEW_TYPE_SPLITTER, ArticleSplitterAdapterDelegate(activity))
-                .addDelegate(VIEW_TYPE_COMMENT, CommentListAdapterDelegate(activity))
+                .addDelegate(VIEW_TYPE_COMMENT, claDelegate)
                 .addDelegate(VIEW_TYPE_COMMENT_SIMPLE,SimpleCommentListAdapterDelegate(activity))
 
         // Set the items from super class.

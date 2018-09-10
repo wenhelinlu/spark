@@ -1,16 +1,12 @@
 package com.lm.ll.spark.adapter.adapterdelegate
 
-import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
-import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.getPlaceholder
@@ -21,10 +17,7 @@ import kotlinx.android.synthetic.main.article_item.view.*
  * 作者：Created by ll on 2018-07-06 17:34.
  * 邮箱：wenhelinlu@gmail.com
  */
-class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
-    private val inflater: LayoutInflater = activity.layoutInflater
-    private val context = activity.applicationContext
-
+class CommentListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterDelegate<ArrayList<Article>>(activity) {
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
         return ArticleCommentViewHolder(inflater.inflate(R.layout.article_item, parent, false))
     }
@@ -37,6 +30,7 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
     override fun onBindViewHolder(items: ArrayList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val vh = holder as ArticleCommentViewHolder
         with(vh) {
+            itemView.tag = position
             items[position].let {
                 //根据层级设置缩进效果
                 commentPlaceholder.text = getPlaceholder(it.depth)
@@ -49,12 +43,6 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
                 commentDate.text = it.date
                 commentTextLength.text = it.textLength
                 commentReadCount.text = it.readCount
-
-                commentItem.setOnClickListener {
-                    val intent = Intent(context, ArticleDisplayActivity::class.java)
-                    InitApplication.curArticle = items[position]
-                    context.startActivity(intent)
-                }
             }
         }
     }

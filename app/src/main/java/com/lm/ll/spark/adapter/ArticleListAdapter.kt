@@ -24,8 +24,8 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
     private val listBackup = ArrayList(items)
 
     init {
-        val delegate = ArticleListAdapterDelegate(activity)
-        delegate.setOnItemClickListener(object : OnItemClickListener {
+        val alaDelegate = ArticleListAdapterDelegate(activity)
+        alaDelegate.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val intent = Intent(activity, ArticleDisplayActivity::class.java)
                 InitApplication.curArticle = items[position]
@@ -35,9 +35,22 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
                 activity.startActivity(intent)
             }
         })
+
+        val salaDelegate = SimpleArticleListAdapterDelegate(activity)
+        salaDelegate.setOnItemClickListener(object : OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                InitApplication.curArticle = items[position]
+                if (items[position].classicalFlag == 1) {
+                    intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                }
+                activity.startActivity(intent)
+            }
+        })
+
         // DelegatesManager is a protected Field in ListDelegationAdapter
-        delegatesManager.addDelegate(delegate)
-                .addDelegate(SimpleArticleListAdapterDelegate(activity))
+        delegatesManager.addDelegate(alaDelegate)
+                .addDelegate(salaDelegate)
 
         // Set the items from super class.
         setItems(items)
