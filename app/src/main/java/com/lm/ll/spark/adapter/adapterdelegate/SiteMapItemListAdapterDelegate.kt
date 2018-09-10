@@ -9,12 +9,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.activity.MainActivity
 import com.lm.ll.spark.db.SiteMap
 import com.lm.ll.spark.db.SiteMap_
 import com.lm.ll.spark.util.ObjectBox
+import com.lm.ll.spark.util.toast
 import kotlinx.android.synthetic.main.site_map_item.view.*
 
 /**
@@ -29,7 +31,8 @@ class SiteMapItemListAdapterDelegate(activity: AppCompatActivity) : AdapterDeleg
     private val context = activity.applicationContext
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return SiteMapItemListViewHolder(inflater.inflate(R.layout.site_map_item, parent, false))
+        val view = inflater.inflate(R.layout.site_map_item, parent, false)
+        return SiteMapItemListViewHolder(view)
     }
 
     override fun isForViewType(items: ArrayList<SiteMap>, position: Int): Boolean {
@@ -38,6 +41,7 @@ class SiteMapItemListAdapterDelegate(activity: AppCompatActivity) : AdapterDeleg
 
     override fun onBindViewHolder(items: ArrayList<SiteMap>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val vh = holder as SiteMapItemListViewHolder
+        vh.itemView.tag = position
         with(vh) {
             items[position].let {
                 siteMapTitle.text = it.title
@@ -54,6 +58,8 @@ class SiteMapItemListAdapterDelegate(activity: AppCompatActivity) : AdapterDeleg
                     f.favorite = if (f.favorite == 0) 1 else 0
                     ObjectBox.getSiteMapBox().put(f)
                     siteMapFavorite.setImageResource(if (f.favorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite)
+                    Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+                    context.toast(if (f.favorite == 1) "收藏成功" else "取消收藏")
                     true
                 }
             }

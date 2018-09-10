@@ -1,10 +1,15 @@
 package com.lm.ll.spark.adapter
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
+import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleListAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.SimpleArticleListAdapterDelegate
+import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
 
 /**
  * @desc
@@ -18,8 +23,19 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
     private val listBackup = ArrayList(items)
 
     init {
+        val delegate = ArticleListAdapterDelegate(activity)
+        delegate.setOnItemClickListener(object : ArticleListAdapterDelegate.Companion.OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                InitApplication.curArticle = items[position]
+                if (items[position].classicalFlag == 1) {
+                    intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                }
+                activity.startActivity(intent)
+            }
+        })
         // DelegatesManager is a protected Field in ListDelegationAdapter
-        delegatesManager.addDelegate(ArticleListAdapterDelegate(activity))
+        delegatesManager.addDelegate(delegate)
                 .addDelegate(SimpleArticleListAdapterDelegate(activity))
 
         // Set the items from super class.

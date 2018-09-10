@@ -1,6 +1,5 @@
 package com.lm.ll.spark.adapter.adapterdelegate
 
-import android.content.Intent
 import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
@@ -10,11 +9,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
-import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
-import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
 import kotlinx.android.synthetic.main.article_item.view.*
 
@@ -25,7 +22,16 @@ import kotlinx.android.synthetic.main.article_item.view.*
  * @email: wenhelinlu@gmail.com
  * @version: 0.1
  */
-class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
+class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>(), View.OnClickListener {
+
+    private var mOnItemClickListener: OnItemClickListener? = null
+
+    override fun onClick(v: View?) {
+        if (mOnItemClickListener != null) {
+            mOnItemClickListener!!.onItemClick(v!!, v.tag.toString().toInt())
+        }
+    }
+
     private val inflater: LayoutInflater = activity.layoutInflater
     private val context = activity.applicationContext
 
@@ -36,7 +42,9 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
 
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return ArticleListViewHolder(inflater.inflate(R.layout.article_item, parent, false))
+        val view = inflater.inflate(R.layout.article_item, parent, false)
+        view.setOnClickListener(this)
+        return ArticleListViewHolder(view)
     }
 
     override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {
@@ -46,6 +54,7 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
     override fun onBindViewHolder(items: ArrayList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
         val vh = holder as ArticleListViewHolder
         with(vh) {
+            itemView.tag = position
             items[position].let {
                 articleTitle.text = it.title
 
@@ -54,14 +63,15 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
                 articleTextLength.text = it.textLength
                 articleReadCount.text = it.readCount
 
-                articleItem.setOnClickListener {
-                    val intent = Intent(context, ArticleDisplayActivity::class.java)
-                    InitApplication.curArticle = items[position]
-                    if (items[position].classicalFlag == 1) {
-                        intent.putExtra(IS_CLASSIC_ARTICLE, true)
-                    }
-                    context.startActivity(intent)
-                }
+//                articleItem.setOnClickListener {
+//                    val intent = Intent(context, ArticleDisplayActivity::class.java)
+//                    InitApplication.curArticle = items[position]
+//                    if (items[position].classicalFlag == 1) {
+//                        intent.putExtra(IS_CLASSIC_ARTICLE, true)
+//                    }
+//                    context.startActivity(intent)
+//                }
+
 
                 //如果文章已收藏，则单独设置颜色
                 val favorite = getArticleBox().query().equal(Article_.url, it.url!!).build().findFirst()
@@ -74,6 +84,10 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
         }
     }
 
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.mOnItemClickListener = listener
+    }
+
     companion object {
         class ArticleListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var articleItem: ConstraintLayout = itemView.article_item
@@ -82,6 +96,10 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
             var articleDate: TextView = itemView.article_date
             var articleTextLength: TextView = itemView.article_textLength
             var articleReadCount: TextView = itemView.article_readCount
+        }
+
+        interface OnItemClickListener {
+            fun onItemClick(view: View, position: Int)
         }
     }
 }
