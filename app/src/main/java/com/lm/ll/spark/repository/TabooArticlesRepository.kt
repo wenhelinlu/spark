@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiService) {
 
     /**
-     * @desc 获取论坛导航链接
+     * @desc 获取论坛导航链接，首先从数据库中查询，如果无数据，则从网上获取
      * @author LL
      * @time 2018-09-08 14:43
      */
@@ -28,11 +28,12 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
         //从数据库中获取论坛列表
         val fromDb = Observable.create(ObservableOnSubscribe<ArrayList<SiteMap>> { emitter ->
             val find = getSiteMapBox().all
-            if (find == null) {
+            if (find == null || find.size == 0) {
                 emitter.onComplete()
             } else {
                 var list = ArrayList<SiteMap>()
                 list.addAll(find)
+                list.sortByDescending { x -> x.favorite }
                 emitter.onNext(list)
             }
         })
@@ -45,9 +46,10 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
                     val list = Spider.scratchSiteMapTab(doc)
                     Observable.just(list)
                 }
-//        return Observable.concat(fromDb, fromNetwork)
-        return fromNetwork
+
+        return Observable.concat(fromDb, fromNetwork)
     }
+
     /**
      * @desc 登录操作
      * @author lm
@@ -129,16 +131,16 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
             Observable.concat(fromDb, fromNetwork)
         }
     }
-    
+
     /**
      * @desc 获取图文混排文章
      * @author ll
      * @time 2018-09-06 20:27
      */
-    fun getRichTextArticle(url:String):Observable<ArrayList<String>>{
+    fun getRichTextArticle(url: String): Observable<ArrayList<String>> {
         return tabooBooksApiService.getArticle(url)
                 .retry(1)
-                .flatMap { 
+                .flatMap {
                     val doc = Jsoup.parse(it)
                     val list = Spider.scratchRichTextData(doc)
                     Observable.just(list)

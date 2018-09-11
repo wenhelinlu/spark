@@ -82,7 +82,7 @@ class SiteMapTabActivity : AppCompatActivity() {
     private fun loadTextWithRx() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
         repository.getSiteMapTab()
-//                .firstElement()
+                .firstElement()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
                     showProgress(true)
@@ -97,7 +97,6 @@ class SiteMapTabActivity : AppCompatActivity() {
                 .subscribe({ result ->
                     siteMapList.clear()
                     siteMapList.addAll(result)
-                    siteMapList.sortBy { x -> x.favorite }
                     refreshData()
                 }, { error ->
                     //异常处理
