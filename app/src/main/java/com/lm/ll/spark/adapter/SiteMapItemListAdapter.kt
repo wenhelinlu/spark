@@ -10,6 +10,7 @@ import com.lm.ll.spark.db.SiteMap
 import com.lm.ll.spark.listener.OnItemClickListener
 import com.lm.ll.spark.listener.OnItemLongClickListener
 import com.lm.ll.spark.util.ObjectBox
+import com.lm.ll.spark.util.SITE_MAP_URL
 import com.lm.ll.spark.util.toast
 
 /**
@@ -28,7 +29,7 @@ class SiteMapItemListAdapter(activity: AppCompatActivity, items: ArrayList<SiteM
         delegate.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val intent = Intent(activity, MainActivity::class.java)
-//                    InitApplication.curArticle = items[position]
+                intent.putExtra(SITE_MAP_URL, items[position].url)
                 activity.startActivity(intent)
             }
         })

@@ -174,13 +174,13 @@ fun getQueryRecord(keyword: String = "", forumType: ForumType = ForumType.TABOO_
 const val LIST_MIN_COUNT = 25
 
 //禁忌书屋基地址
-const val BASE_URL = "https://www.cool18.com/bbs4/"
+const val BASE_URL = "https://www.cool18.com/bbs4/index.php"
 
 //当前列表数据源URL地址（未附加页数）(在11页之前是这个地址，不包括第11页)
-const val CURRENT_BASE_URL = "index.php?app=forum&act=cachepage&cp=tree" //禁忌书屋
+const val CURRENT_BASE_URL = "?app=forum&act=cachepage&cp=tree" //禁忌书屋
 
 //禁忌书屋精华区数据源URL地址（未附加页数）
-const val CURRENT_ELITEAREA_BASE_URL = "index.php?app=forum&act=gold&p="
+const val CURRENT_ELITEAREA_BASE_URL = "?app=forum&act=gold&p="
 
 //是否是情色经典书库中的文章
 const val IS_CLASSIC_ARTICLE = "classic"
@@ -208,6 +208,9 @@ const val PARAGRAPH_FLAG_COUNT_LIMIT = 20
 
 //用于登录时用Intent传递个人档案页面文字的key
 const val PROFILE_INFO_KEY = "profile"
+
+//论坛url
+const val SITE_MAP_URL = "site"
 
 //已登录状态标记
 const val LOGINING_STATUS = "欢迎您"

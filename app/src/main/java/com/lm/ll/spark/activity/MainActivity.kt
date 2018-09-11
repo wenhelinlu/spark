@@ -102,6 +102,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private var encodedKeyword = ""
 
+    private var baseUri = BASE_URL
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -128,6 +130,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
+
+        if (intent.hasExtra(SITE_MAP_URL)) {
+            baseUri = intent.getStringExtra(SITE_MAP_URL)
+        }
 
         initLoginStatus()
 
@@ -279,9 +285,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //11页之前（不包含第11页）的url和第11页及之后的url不同
         val url = if (pageIndex <= 10) {
-            "$BASE_URL$CURRENT_BASE_URL$pageIndex"
+            "$baseUri$CURRENT_BASE_URL$pageIndex"
         } else {
-            "${BASE_URL}index.php?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764"
+            "$baseUri?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764"
         }
 //        Log.d(LOG_TAG_COMMON, url)
         return Spider.scratchArticleList(url)

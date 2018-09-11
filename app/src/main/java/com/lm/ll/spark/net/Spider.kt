@@ -4,8 +4,11 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.db.ProfileInfo
 import com.lm.ll.spark.db.SiteMap
-import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.ObjectBox.getSiteMapBox
+import com.lm.ll.spark.util.PARAGRAPH_FLAG_COUNT_LIMIT
+import com.lm.ll.spark.util.TIME_OUT
+import com.lm.ll.spark.util.USER_AGENT
+import com.lm.ll.spark.util.convertToSimplifiedChinese
 import io.reactivex.exceptions.Exceptions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -77,6 +80,7 @@ class Spider {
          */
         private fun parseArticleList(ul: Element, list: ArrayList<Article>) {
             try {
+                val baseUri = ul.baseUri().substringBefore("index")
                 for (child in ul.childNodes()) {
                     if (child.childNodes() == null || child.childNodeSize() != 7) {
                         continue
@@ -85,7 +89,7 @@ class Spider {
                     val article = Article()
                     val link: Element = childNodes[0] as Element
                     val uri = link.attr("href")
-                    article.url = "$BASE_URL$uri"
+                    article.url = "$baseUri$uri"
                     article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
                     val authorStr = (childNodes[1] as TextNode).text()
                     val author = authorStr.substringAfter('-').substringBefore('(').trim() //作者名称
@@ -226,7 +230,7 @@ class Spider {
             val comment = Comment()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
-            comment.url = "$BASE_URL$uri"
+            comment.url = "${ul.baseUri().substringBefore("index")}$uri"
             comment.title = link.text().convertToSimplifiedChinese()
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(').trim() //作者名称
@@ -262,7 +266,7 @@ class Spider {
                         val article = Article()
                         val link: Element = child.childNodes()[0] as Element
                         val uri = link.attr("href")
-                        article.url = "$BASE_URL$uri"
+                        article.url = "${child.baseUri().substringBefore("index")}$uri"
                         article.title = link.text().trimStart('.').convertToSimplifiedChinese()
 
                         mList.add(article)
@@ -454,7 +458,7 @@ class Spider {
                     val article = Article()
                     val link = e.getElementsByTag("a").first()
                     article.title = link.text().convertToSimplifiedChinese()
-                    article.url = "$BASE_URL${link.attr("href")}"
+                    article.url = "${e.baseUri().substringBefore("index")}${link.attr("href")}"
                     article.author = e.getElementsByClass("t_author").first().text()
                     article.date = e.getElementsByTag("i").first().text()
 
@@ -480,7 +484,7 @@ class Spider {
                     val article = Article()
                     val link = e.getElementsByTag("a").first()
                     article.title = link.text().convertToSimplifiedChinese()
-                    article.url = "$BASE_URL${link.attr("href")}"
+                    article.url = "${e.baseUri().substringBefore("index")}${link.attr("href")}"
                     article.author = e.getElementsByClass("t_author").first().text()
                     article.date = e.getElementsByTag("i").first().text()
 
