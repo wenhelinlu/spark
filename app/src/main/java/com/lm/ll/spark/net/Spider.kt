@@ -561,7 +561,7 @@ class Spider {
                     val item = SiteMap()
 
                     item.title = link.text().convertToSimplifiedChinese()
-                    item.url = "$BASE_URL${link.attr("href")}"
+                    item.url = link.attr("href")
 
                     //插入数据库中
                     getSiteMapBox().put(item)
