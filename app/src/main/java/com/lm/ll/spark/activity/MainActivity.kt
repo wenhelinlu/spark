@@ -300,7 +300,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @param pageIndex 查询结果页码
      */
     private fun queryArticleList(pageIndex: Int): ArrayList<Article> {
-        val url = "https://www.cool18.com/bbs4/index.php?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$encodedKeyword&submit=%B2%E9%D1%AF&p=$pageIndex"
+        val url = "$baseUri?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$encodedKeyword&submit=%B2%E9%D1%AF&p=$pageIndex"
         return Spider.scratchQueryArticles(url)
     }
 
