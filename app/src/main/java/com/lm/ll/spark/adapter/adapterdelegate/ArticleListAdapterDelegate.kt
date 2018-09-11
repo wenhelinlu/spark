@@ -1,6 +1,5 @@
 package com.lm.ll.spark.adapter.adapterdelegate
 
-import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -63,7 +62,6 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterD
 
     companion object {
         class ArticleListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var articleItem: ConstraintLayout = itemView.article_item
             var articleTitle: TextView = itemView.article_title
             var articleAuthor: TextView = itemView.article_author
             var articleDate: TextView = itemView.article_date

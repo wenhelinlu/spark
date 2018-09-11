@@ -1,6 +1,5 @@
 package com.lm.ll.spark.adapter.adapterdelegate
 
-import android.support.constraint.ConstraintLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.view.View
@@ -51,7 +50,6 @@ class CommentListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterD
 
     companion object {
         class ArticleCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val commentItem: ConstraintLayout = itemView.article_item
             var commentPlaceholder: TextView = itemView.article_placeholder
             val commentTitle: TextView = itemView.article_title
             val commentAuthor: TextView = itemView.article_author

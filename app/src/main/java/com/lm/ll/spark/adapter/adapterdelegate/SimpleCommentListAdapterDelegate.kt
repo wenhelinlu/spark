@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
@@ -40,7 +39,6 @@ class SimpleCommentListAdapterDelegate(activity: AppCompatActivity) : BaseListAd
 
     companion object {
         class SimpleCommentListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var articleItem: LinearLayout = itemView.article_item_simple
             var articleTitle: TextView = itemView.article_title_simple
         }
     }
