@@ -1,4 +1,4 @@
-package com.lm.ll.spark.util
+package com.lm.ll.spark.listener
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView

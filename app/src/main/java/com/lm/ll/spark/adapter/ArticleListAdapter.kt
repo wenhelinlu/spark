@@ -9,8 +9,8 @@ import com.lm.ll.spark.adapter.adapterdelegate.ArticleListAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.SimpleArticleListAdapterDelegate
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.listener.OnItemClickListener
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
-import com.lm.ll.spark.util.OnItemClickListener
 
 /**
  * @desc

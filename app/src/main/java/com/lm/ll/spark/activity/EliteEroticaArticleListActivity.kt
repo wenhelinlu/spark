@@ -10,8 +10,12 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
+import com.lm.ll.spark.listener.MyRecyclerViewOnScrollListener
 import com.lm.ll.spark.net.Spider
-import com.lm.ll.spark.util.*
+import com.lm.ll.spark.util.BASE_URL
+import com.lm.ll.spark.util.CURRENT_ELITEAREA_BASE_URL
+import com.lm.ll.spark.util.LIST_MIN_COUNT
+import com.lm.ll.spark.util.PULL_REFRESH_DISTANCE
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI

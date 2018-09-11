@@ -18,7 +18,9 @@ import kotlinx.android.synthetic.main.article_item_simple.view.*
  */
 class SimpleArticleListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterDelegate<ArrayList<Article>>(activity) {
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return ArticleListViewHolder(inflater.inflate(R.layout.article_item_simple, parent, false))
+        val view = inflater.inflate(R.layout.article_item_simple, parent, false)
+        view.setOnClickListener(this)
+        return ArticleListViewHolder(view)
     }
 
     override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {

@@ -19,7 +19,9 @@ import kotlinx.android.synthetic.main.article_item.view.*
  */
 class CommentListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterDelegate<ArrayList<Article>>(activity) {
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
-        return ArticleCommentViewHolder(inflater.inflate(R.layout.article_item, parent, false))
+        val view = inflater.inflate(R.layout.article_item, parent, false)
+        view.setOnClickListener(this)
+        return ArticleCommentViewHolder(view)
     }
 
     override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {

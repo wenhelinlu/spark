@@ -10,10 +10,10 @@ import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleSplitterAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleTextAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.CommentListAdapterDelegate
-import com.lm.ll.spark.adapter.adapterdelegate.SimpleCommentListAdapterDelegate
+import com.lm.ll.spark.adapter.adapterdelegate.SimpleArticleListAdapterDelegate
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
-
+import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
 
 /**
  * 作者：Created by ll on 2018-07-06 17:35.
@@ -27,10 +27,22 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
     init {
 
         val claDelegate = CommentListAdapterDelegate(activity)
-        claDelegate.setOnItemClickListener(object : com.lm.ll.spark.util.OnItemClickListener {
+        claDelegate.setOnItemClickListener(object : com.lm.ll.spark.listener.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val intent = Intent(activity, ArticleDisplayActivity::class.java)
                 InitApplication.curArticle = items[position]
+                activity.startActivity(intent)
+            }
+        })
+
+        val salaDelegate = SimpleArticleListAdapterDelegate(activity)
+        salaDelegate.setOnItemClickListener(object : com.lm.ll.spark.listener.OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                InitApplication.curArticle = items[position]
+                if (items[position].classicalFlag == 1) {
+                    intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                }
                 activity.startActivity(intent)
             }
         })
@@ -39,7 +51,7 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
         delegatesManager.addDelegate(VIEW_TYPE_TEXT, ArticleTextAdapterDelegate(activity))
                 .addDelegate(VIEW_TYPE_SPLITTER, ArticleSplitterAdapterDelegate(activity))
                 .addDelegate(VIEW_TYPE_COMMENT, claDelegate)
-                .addDelegate(VIEW_TYPE_COMMENT_SIMPLE,SimpleCommentListAdapterDelegate(activity))
+                .addDelegate(VIEW_TYPE_COMMENT_SIMPLE, salaDelegate)
 
         // Set the items from super class.
         setItems(items)

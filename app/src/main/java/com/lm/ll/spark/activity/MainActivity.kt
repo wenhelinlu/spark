@@ -26,6 +26,7 @@ import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.ForumType
+import com.lm.ll.spark.listener.MyRecyclerViewOnScrollListener
 import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.*
