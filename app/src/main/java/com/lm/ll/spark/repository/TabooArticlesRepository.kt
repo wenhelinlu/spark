@@ -137,14 +137,14 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      * @author ll
      * @time 2018-09-06 20:27
      */
-    fun getRichTextArticle(url: String): Observable<ArrayList<String>> {
+    fun getRichTextArticle(url: String): Observable<String> {
         return tabooBooksApiService.getArticle(url)
                 .retry(1)
-                .flatMap {
-                    val doc = Jsoup.parse(it)
-                    val list = Spider.scratchRichTextData(doc)
-                    Observable.just(list)
-                }
+//                .flatMap {
+//                    val doc = Jsoup.parse(it)
+//                    val list = Spider.scratchRichTextData(doc)
+//                    Observable.just(list)
+//                }
     }
 
     /**

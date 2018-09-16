@@ -536,17 +536,32 @@ class Spider {
             try {
                 val list = ArrayList<String>()
                 val body: Elements = doc.getElementsByTag("pre")
-                val children = body[0].childNodes()[2].childNodes()
-                for (e in children){
-                    if(e is TextNode){
-                        list.add(e.text())
-                    }else if(e.outerHtml().contains("<img")){
-                        list.add(e.childNode(0).outerHtml())
-                    }
+                for (node in body[0].childNodes()) {
+                    scratchRichTextDataRecursively(node, list)
                 }
                 return list
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
+            }
+        }
+
+        /**
+         * @desc 递归解析网页图文混排文章结构
+         * @author lm
+         * @time 2018-09-16 22:25
+         */
+        private fun scratchRichTextDataRecursively(e: Node, list: ArrayList<String>) {
+            if (e.childNodes() != null && e.childNodeSize() > 0) {
+                for (node in e.childNodes()) {
+                    scratchRichTextDataRecursively(node, list)
+                }
+            }
+            if (e is TextNode && e.text().isNotEmpty() && !e.text().contains("6park.com")) {
+                list.add(e.text())
+            } else if (e is Element) {
+                if (e.outerHtml().contains("<img")) {
+                    list.add(e.outerHtml())
+                }
             }
         }
 

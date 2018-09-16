@@ -7,13 +7,16 @@ import android.util.Log
 import android.view.View
 import com.lm.ll.spark.R
 import com.lm.ll.spark.api.TabooBooksApiService
+import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_rich_text.*
+import org.jsoup.Jsoup
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -37,17 +40,38 @@ class RichTextActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rich_text)
 
+        initData()
         loadData()
     }
 
+    /**
+     * @desc 初始化数据
+     * @author lm
+     * @time 2018-09-16 21:23
+     */
+    private fun initData() {
+        //从列表中传来的点击的标题
+        currentArticle = InitApplication.curArticle!!
+    }
+
+    /**
+     * @desc 加载数据
+     * @author lm
+     * @time 2018-09-16 21:23
+     */
     private fun loadData() {
         loadDataWithRx()
     }
 
+    /**
+     * @desc 使用Rxjava加载数据
+     * @author lm
+     * @time 2018-09-16 21:23
+     */
     private fun loadDataWithRx() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
-        val url = "https://site.6parker.com/chan1/index.php?app=forum&act=threadview&tid=14170357"
-        repository.getRichTextArticle(url)
+//        val url = "https://site.6parker.com/chan1/index.php?app=forum&act=threadview&tid=14170357"
+        repository.getRichTextArticle(currentArticle.url!!)
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
                     showProgress(true)
@@ -60,7 +84,9 @@ class RichTextActivity : AppCompatActivity() {
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
                 .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
-                    for (text in result) {
+                    val doc = Jsoup.parse(result)
+                    val list = Spider.scratchRichTextData(doc)
+                    for (text in list) {
                         if (text.contains("<img") && text.contains("src=")) {
                             //imagePath可能是本地路径，也可能是网络地址
                             val imagePath = getImgSrc(text)

@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.activity.ArticleDisplayActivity
+import com.lm.ll.spark.activity.RichTextActivity
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleListAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.SimpleArticleListAdapterDelegate
 import com.lm.ll.spark.application.InitApplication
@@ -27,24 +28,34 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
         val alaDelegate = ArticleListAdapterDelegate(activity)
         alaDelegate.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                val intent = Intent(activity, ArticleDisplayActivity::class.java)
                 InitApplication.curArticle = items[position]
-                if (items[position].classicalFlag == 1) {
-                    intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                if (items[position].url!!.contains("cool18")) {
+                    val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                    if (items[position].classicalFlag == 1) {
+                        intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                    }
+                    activity.startActivity(intent)
+                } else {
+                    val intent = Intent(activity, RichTextActivity::class.java)
+                    activity.startActivity(intent)
                 }
-                activity.startActivity(intent)
             }
         })
 
         val salaDelegate = SimpleArticleListAdapterDelegate(activity)
         salaDelegate.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                val intent = Intent(activity, ArticleDisplayActivity::class.java)
                 InitApplication.curArticle = items[position]
-                if (items[position].classicalFlag == 1) {
-                    intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                if (items[position].url!!.contains("cool18")) {
+                    val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                    if (items[position].classicalFlag == 1) {
+                        intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                    }
+                    activity.startActivity(intent)
+                } else {
+                    val intent = Intent(activity, RichTextActivity::class.java)
+                    activity.startActivity(intent)
                 }
-                activity.startActivity(intent)
             }
         })
 

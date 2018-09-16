@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.activity.ArticleDisplayActivity
+import com.lm.ll.spark.activity.RichTextActivity
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleSplitterAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.ArticleTextAdapterDelegate
 import com.lm.ll.spark.adapter.adapterdelegate.CommentListAdapterDelegate
@@ -29,21 +30,31 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
         val claDelegate = CommentListAdapterDelegate(activity)
         claDelegate.setOnItemClickListener(object : com.lm.ll.spark.listener.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                val intent = Intent(activity, ArticleDisplayActivity::class.java)
                 InitApplication.curArticle = items[position]
-                activity.startActivity(intent)
+                if (items[position].url!!.contains("cool18")) {
+                    val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                    activity.startActivity(intent)
+                } else {
+                    val intent = Intent(activity, RichTextActivity::class.java)
+                    activity.startActivity(intent)
+                }
             }
         })
 
         val salaDelegate = SimpleArticleListAdapterDelegate(activity)
         salaDelegate.setOnItemClickListener(object : com.lm.ll.spark.listener.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                val intent = Intent(activity, ArticleDisplayActivity::class.java)
                 InitApplication.curArticle = items[position]
-                if (items[position].classicalFlag == 1) {
-                    intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                if (items[position].url!!.contains("cool18")) {
+                    val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                    if (items[position].classicalFlag == 1) {
+                        intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                    }
+                    activity.startActivity(intent)
+                } else {
+                    val intent = Intent(activity, RichTextActivity::class.java)
+                    activity.startActivity(intent)
                 }
-                activity.startActivity(intent)
             }
         })
 

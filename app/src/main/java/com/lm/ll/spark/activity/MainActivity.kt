@@ -484,8 +484,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
             }
             R.id.nav_about -> {
-//                this@MainActivity.startActivity(Intent(this@MainActivity, AboutPageActivity::class.java))
-                this@MainActivity.startActivity(Intent(this@MainActivity,RichTextActivity::class.java))
+                this@MainActivity.startActivity(Intent(this@MainActivity, AboutPageActivity::class.java))
+//                this@MainActivity.startActivity(Intent(this@MainActivity,RichTextActivity::class.java))
             }
         }
 
