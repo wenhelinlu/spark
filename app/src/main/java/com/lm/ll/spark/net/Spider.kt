@@ -117,65 +117,6 @@ class Spider {
         }
 
         /**
-         * @desc 抓取文章正文
-         * @author ll
-         * @time 2018-05-29 18:46
-         * @param article 待抓取正文的文章链接
-         * @return 包含正文的文章链接
-         */
-        fun scratchText(article: Article): Article {
-            try {
-                val doc = getDocument(article.url!!)
-                val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
-
-                /**
-                 *
-                 * 去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
-                 *
-                 * \s* 表示若干个空格（可以是0个），\s+ 表示一个或多个空格
-                 *
-                 * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
-                 */
-
-                val originalText = parseText(body[0])
-                //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
-                val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(originalText, "")
-                val containsParagraphFlag = Regex(paragraphFlagPattern).containsMatchIn(removedEmptyLineText) //是否包含段落标记（\r\n\r\n）
-                //如果包含段落标记，则按照规则清除换行标记，保留段落标记
-                if (containsParagraphFlag) {
-                    val text = Regex(paragraphFlagPattern).replace(removedEmptyLineText, replacerWord)
-                    //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
-                    article.text = Regex(newlineFlagPattern).replace(text, "").replace(replacerWord, paragraphFlag, false)
-                } else {
-                    article.text = originalText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
-                }
-
-
-                val commentList = ArrayList<Comment>()
-                //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
-                val links: Elements = body[0].getElementsByTag("a")
-                for (link in links) {
-                    val comment = Comment()
-                    comment.url = link.attr("href")
-                    comment.title = link.text().convertToSimplifiedChinese()
-
-                    commentList.add(comment)
-                }
-                //因为在精华区中，章节链接是倒序显示，所以将其翻转
-                commentList.reverse()
-
-                //抓取对正文的评论列表
-                commentList.addAll(scratchComments(article))
-                article.comments.addAll(commentList)
-
-                return article
-            } catch (t: Throwable) {
-                throw Exceptions.propagate(t)
-            }
-        }
-
-
-        /**
          * @desc 抓取正文的评论
          * @author ll
          * @time 2018-06-04 15:06
@@ -195,14 +136,14 @@ class Spider {
          * @author ll
          * @time 2018-06-04 16:34
          */
-        private fun parseComments(ul: Element): ArrayList<Comment> {
+        private fun parseComments(ul: Element, baseUri:String = ""): ArrayList<Comment> {
             try {
                 val list = ArrayList<Comment>()
                 for (child in ul.childNodes()) {
                     depth = 0  //每个评论初始层级都置为0
 
                     val subList = ArrayList<Comment>()
-                    parseCommentsRecursive(child, subList)
+                    parseCommentsRecursive(child, subList,baseUri)
                     subList.reverse()
                     list.addAll(subList)
                 }
@@ -217,11 +158,11 @@ class Spider {
          * @author lm
          * @time 2018-07-21 22:20
          */
-        private fun parseCommentsRecursive(ul: Node, list: ArrayList<Comment>) {
+        private fun parseCommentsRecursive(ul: Node, list: ArrayList<Comment>, baseUri: String) {
             if (ul.childNodes()[3].childNodes().count() > 0) {
                 for (sub in ul.childNodes()[3].childNodes()) {
                     depth++   //子评论层级加1
-                    parseCommentsRecursive(sub, list)
+                    parseCommentsRecursive(sub, list,baseUri)
                     depth--  //从子评论返回上一级评论时，层级减1
                 }
             }
@@ -230,7 +171,7 @@ class Spider {
             val comment = Comment()
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
-            comment.url = "${ul.baseUri().substringBefore("index")}$uri"
+            comment.url = "$baseUri$uri"
             comment.title = link.text().convertToSimplifiedChinese()
             val authorStr = (childNodes[1] as TextNode).text()
             val author = authorStr.substringAfter('-').substringBefore('(').trim() //作者名称
@@ -305,29 +246,35 @@ class Spider {
             }
         }
 
+
         /**
-         * @desc 抓取经典书库的文章正文
+         * @desc 抓取并解析根据关键词查询到的文章列表
          * @author ll
-         * @time 2018-06-11 19:53
+         * @time 2018-08-13 20:16
          */
-        fun scratchClassicEroticaArticleText(article: Article): Article {
+        fun scratchQueryArticles(webUrl: String): ArrayList<Article> {
             try {
-                val doc = getDocument(article.url!!)
-                val elements = doc.getElementsByTag("p")
-                val stringBuilder = StringBuilder()
-                for (e in elements) {
-                    if (e.childNodeSize() == 2) {
-                        stringBuilder.appendln((e.childNodes()[0] as TextNode).text())
-                    }
+                val doc = getDocument(webUrl)
+                val articles: Elements = doc.getElementsByClass("t_l")
+                val list = ArrayList<Article>()
+                for (e in articles) {
+                    val article = Article()
+                    val link = e.getElementsByTag("a").first()
+                    article.title = link.text().convertToSimplifiedChinese()
+                    article.url = "${e.baseUri().substringBefore("index")}${link.attr("href")}"
+                    article.author = e.getElementsByClass("t_author").first().text()
+                    article.date = e.getElementsByTag("i").first().text()
+
+                    list.add(article)
                 }
-                article.text = stringBuilder.toString().convertToSimplifiedChinese()
-                return article
+                return list
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }
         }
-        //endregion
 
+
+        //endregion
 
         //region 使用Retrofit2 + RxJava + Jsoup
         /**
@@ -364,27 +311,9 @@ class Spider {
             try {
                 val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
 
-                /**
-                 *
-                 * 去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
-                 * \s* 表示若干个空格（可以是0个），\s+ 表示一个或多个空格
-                 * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
-                 */
-
                 val originalText = parseText(body[0])
-                //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
-                val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(originalText, "")
-                //判断文本中段落标记（\r\n\r\n）个数，大于某个值，则处理，否则不处理
-                val pCount = Regex(paragraphFlagPattern).findAll(removedEmptyLineText).count()
-//                Log.d(LOG_TAG_COMMON,"段落标记数量 = $pCount")
-                //判断是否需要按照规则清除换行标记，保留段落标记
-                if (pCount > PARAGRAPH_FLAG_COUNT_LIMIT) {
-                    val text = Regex(paragraphFlagPattern).replace(removedEmptyLineText, replacerWord)
-                    //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
-                    article.text = Regex(newlineFlagPattern).replace(text, "").replace(replacerWord, paragraphFlag, false)
-                } else {
-                    article.text = originalText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
-                }
+
+                article.text = formatText(originalText)
 
                 val commentList = ArrayList<Comment>()
                 //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
@@ -400,13 +329,42 @@ class Spider {
                 commentList.reverse()
 
                 //抓取对正文的评论列表
-                commentList.addAll(scratchComments(doc))
+                commentList.addAll(scratchComments(doc, article.url!!.substringBefore("index")))
                 article.comments.addAll(commentList)
 
                 return article
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }
+        }
+
+        /**
+         * @desc 格式化文本
+         * @author ll
+         * @time 2018-09-20 16:16
+         */
+        private fun formatText(originalText: String): String {
+            /**
+             *
+             * 去除\r\n，保留\r\n\r\n，保留段落格式，去除段落内不需要的换行显示
+             * \s* 表示若干个空格（可以是0个），\s+ 表示一个或多个空格
+             * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
+             */
+            
+            //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
+            val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(originalText, "")
+            //判断文本中段落标记（\r\n\r\n）个数，大于某个值，则处理，否则不处理
+            val pCount = Regex(paragraphFlagPattern).findAll(removedEmptyLineText).count()
+//                Log.d(LOG_TAG_COMMON,"段落标记数量 = $pCount")
+            //判断是否需要按照规则清除换行标记，保留段落标记
+            val formatedText = if (pCount > PARAGRAPH_FLAG_COUNT_LIMIT) {
+                val text = Regex(paragraphFlagPattern).replace(removedEmptyLineText, replacerWord)
+                //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
+                Regex(newlineFlagPattern).replace(text, "").replace(replacerWord, paragraphFlag, false)
+            } else {
+                originalText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
+            }
+            return formatedText
         }
 
         /**
@@ -435,36 +393,10 @@ class Spider {
          * @author ll
          * @time 2018-06-04 15:06
          */
-        private fun scratchComments(doc: Document): ArrayList<Comment> {
+        private fun scratchComments(doc: Document, baseUri: String): ArrayList<Comment> {
             try {
                 val comments: Elements = doc.getElementsByTag("ul")
-                return parseComments(comments[0])
-            } catch (t: Throwable) {
-                throw Exceptions.propagate(t)
-            }
-        }
-
-        /**
-         * @desc 抓取并解析根据关键词查询到的文章列表
-         * @author ll
-         * @time 2018-08-13 20:16
-         */
-        fun scratchQueryArticles(webUrl: String): ArrayList<Article> {
-            try {
-                val doc = getDocument(webUrl)
-                val articles: Elements = doc.getElementsByClass("t_l")
-                val list = ArrayList<Article>()
-                for (e in articles) {
-                    val article = Article()
-                    val link = e.getElementsByTag("a").first()
-                    article.title = link.text().convertToSimplifiedChinese()
-                    article.url = "${e.baseUri().substringBefore("index")}${link.attr("href")}"
-                    article.author = e.getElementsByClass("t_author").first().text()
-                    article.date = e.getElementsByTag("i").first().text()
-
-                    list.add(article)
-                }
-                return list
+                return parseComments(comments[0],baseUri)
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }
@@ -557,14 +489,13 @@ class Spider {
                 }
             }
             if (e is TextNode && e.text().isNotEmpty() && !e.text().contains("6park.com")) {
-                list.add(e.text())
+                list.add(formatText(e.text()))
             } else if (e is Element) {
                 if (e.outerHtml().contains("<img")) {
                     list.add(e.outerHtml())
                 }
             }
         }
-
 
         /**
          * @desc 获取留园网社区导航链接集合
