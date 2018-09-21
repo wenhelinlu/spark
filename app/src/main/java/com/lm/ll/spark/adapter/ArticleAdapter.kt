@@ -8,10 +8,7 @@ import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.activity.RichTextActivity
-import com.lm.ll.spark.adapter.adapterdelegate.ArticleSplitterAdapterDelegate
-import com.lm.ll.spark.adapter.adapterdelegate.ArticleTextAdapterDelegate
-import com.lm.ll.spark.adapter.adapterdelegate.CommentListAdapterDelegate
-import com.lm.ll.spark.adapter.adapterdelegate.SimpleArticleListAdapterDelegate
+import com.lm.ll.spark.adapter.adapterdelegate.*
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
@@ -63,6 +60,7 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
                 .addDelegate(VIEW_TYPE_SPLITTER, ArticleSplitterAdapterDelegate(activity))
                 .addDelegate(VIEW_TYPE_COMMENT, claDelegate)
                 .addDelegate(VIEW_TYPE_COMMENT_SIMPLE, salaDelegate)
+                .addDelegate(VIEW_TYPE_IMAGE,ArticleImageAdapterDelegate(activity))
 
         // Set the items from super class.
         setItems(items)
@@ -73,6 +71,7 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
         const val VIEW_TYPE_SPLITTER = 1 //标识分割条item
         const val VIEW_TYPE_COMMENT = 2 //标识评论item
         const val VIEW_TYPE_COMMENT_SIMPLE = 3  //只有标题的评论项
+        const val VIEW_TYPE_IMAGE = 4 //正文中的图片
 
         interface OnItemClickListener {
             fun onItemClick(view: View)

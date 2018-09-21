@@ -294,7 +294,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         //滚动到正文开始位置
         iv_scrollUp.setOnClickListener {
-            this.linearLayoutManager.scrollToPositionWithOffset(0,0)
+            this.linearLayoutManager.scrollToPositionWithOffset(0, 0)
         }
 
         //滚动到正文结束位置
@@ -371,7 +371,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
         //查询此文章是否已收藏（在数据库中存在）
         //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
         //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
-        val find = getArticleBox().query().equal(Article_.url,currentArticle.url!!).build().findFirst()
+        val find = getArticleBox().query().equal(Article_.url, currentArticle.url!!).build().findFirst()
         //如果存在，说明此文章已被收藏并存入数据库中
         if (find != null) {
             currentArticle.id = find.id  //id为Long类型，由ObjectBox自动生成
@@ -420,13 +420,14 @@ class ArticleDisplayActivity : AppCompatActivity() {
      */
     private fun toArticleList(article: Article): ArrayList<Article> {
         val list = ArrayList<Article>()
-
-        list.add(article) // 正文布局数据
+        // 正文布局数据
+        list.add(article)
+        // 分割条布局数据
         val spliter = Article()
         spliter.url = null
         spliter.articleFlag = 2
-
-        list.add(spliter) // 分割条布局数据
+        list.add(spliter)
+        // 评论布局数据
         for (comment in article.comments) {
             val temp = Article()
 
@@ -440,7 +441,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             temp.articleFlag = 1
             temp.depth = comment.depth
 
-            list.add(temp) // 评论布局数据
+            list.add(temp)
         }
         return list
     }
