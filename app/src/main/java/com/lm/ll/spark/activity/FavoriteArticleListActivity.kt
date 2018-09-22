@@ -15,7 +15,7 @@ import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
-import com.lm.ll.spark.util.PULL_REFRESH_DISTANCE
+import com.lm.ll.spark.util.GlobalConst.Companion.PULL_REFRESH_DISTANCE
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers

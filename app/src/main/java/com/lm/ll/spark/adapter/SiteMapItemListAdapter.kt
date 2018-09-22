@@ -9,8 +9,8 @@ import com.lm.ll.spark.adapter.adapterdelegate.SiteMapItemListAdapterDelegate
 import com.lm.ll.spark.db.SiteMap
 import com.lm.ll.spark.listener.OnItemClickListener
 import com.lm.ll.spark.listener.OnItemLongClickListener
+import com.lm.ll.spark.util.GlobalConst.Companion.SITE_MAP_URL
 import com.lm.ll.spark.util.ObjectBox
-import com.lm.ll.spark.util.SITE_MAP_URL
 import com.lm.ll.spark.util.toast
 
 /**

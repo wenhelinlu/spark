@@ -18,7 +18,9 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
+import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
+import com.lm.ll.spark.util.getImgSrc
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
@@ -420,8 +422,25 @@ class ArticleDisplayActivity : AppCompatActivity() {
      */
     private fun toArticleList(article: Article): ArrayList<Article> {
         val list = ArrayList<Article>()
+
         // 正文布局数据
-        list.add(article)
+        val text = article.text
+        val textList = text.split(TEXT_IMAGE_SPLITER)
+        textList.map {
+            var a = article.copy()
+            a.text = if (it.contains("<img")) {
+                getImgSrc(it)!!
+            } else {
+                it
+            }
+            a.articleFlag = if (it.contains("<img")) {
+                3
+            } else {
+                0
+            }
+            list.add(a)
+        }
+
         // 分割条布局数据
         val spliter = Article()
         spliter.url = null

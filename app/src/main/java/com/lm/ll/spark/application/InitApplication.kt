@@ -4,7 +4,7 @@ import android.app.Application
 import android.preference.PreferenceManager
 import com.lm.ll.spark.BuildConfig
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.NIGHT_MODE
+import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.switchDayNightMode
 import io.objectbox.android.AndroidObjectBrowser

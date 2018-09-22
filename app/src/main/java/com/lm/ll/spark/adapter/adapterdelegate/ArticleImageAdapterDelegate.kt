@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.main.article_item_image.view.*
  */
 class ArticleImageAdapterDelegate (activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
     private var inflater: LayoutInflater = activity.layoutInflater
+
 
     override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
         return ArticleImageViewHolder(inflater.inflate(R.layout.article_item_image, parent, false))
@@ -32,6 +34,9 @@ class ArticleImageAdapterDelegate (activity: AppCompatActivity) : AdapterDelegat
         with(vh) {
             items[position].let {
                 //TODO 使用Glide加载图片
+                Glide.with(articleImage.context)
+                        .load(it.text)
+                        .into(articleImage)
             }
         }
     }

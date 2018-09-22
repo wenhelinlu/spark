@@ -142,7 +142,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
                 .retry(1)
 //                .flatMap {
 //                    val doc = Jsoup.parse(it)
-//                    val list = Spider.scratchRichTextData(doc)
+//                    val list = Spider.scratchRichTextDataList(doc)
 //                    Observable.just(list)
 //                }
     }

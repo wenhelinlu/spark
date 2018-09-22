@@ -25,7 +25,7 @@ import android.widget.TextView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.repository.TabooArticlesRepository
-import com.lm.ll.spark.util.PROFILE_INFO_KEY
+import com.lm.ll.spark.util.GlobalConst.Companion.PROFILE_INFO_KEY
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable

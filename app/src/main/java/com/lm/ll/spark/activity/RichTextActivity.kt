@@ -9,8 +9,8 @@ import com.lm.ll.spark.R
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.repository.TabooArticlesRepository
+import com.lm.ll.spark.util.getImgSrc
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,7 +20,6 @@ import org.jsoup.Jsoup
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
-import java.util.regex.Pattern
 import javax.net.ssl.SSLHandshakeException
 
 
@@ -85,7 +84,7 @@ class RichTextActivity : AppCompatActivity() {
                 .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
                     val doc = Jsoup.parse(result)
-                    val list = Spider.scratchRichTextData(doc)
+                    val list = ArrayList<String>()
                     for (text in list) {
                         if (text.contains("<img") && text.contains("src=")) {
                             //imagePath可能是本地路径，也可能是网络地址
@@ -109,39 +108,6 @@ class RichTextActivity : AppCompatActivity() {
                     Snackbar.make(richContentLayout, msg, Snackbar.LENGTH_LONG)
                             .setAction("重试") { loadData() }.show()
                 })
-    }
-
-    /**
-     * 获取img标签中的src值
-     * @param content
-     * @return
-     */
-    private fun getImgSrc(content: String): String? {
-        var imgSrc: String? = null
-        //目前img标签标示有3种表达式
-        //<img alt="" src="1.jpg"/>   <img alt="" src="1.jpg"></img>     <img alt="" src="1.jpg">
-        //开始匹配content中的<img />标签
-        val pImg = Pattern.compile("<(img|IMG)(.*?)(/>|></img>|>)")
-        val mImg = pImg.matcher(content)
-        var resultImg = mImg.find()
-        if (resultImg) {
-            while (resultImg) {
-                //获取到匹配的<img />标签中的内容
-                val strImg = mImg.group(2)
-
-                //开始匹配<img />标签中的src
-                val pSrc = Pattern.compile("(src|SRC)=(\"|\')(.*?)(\"|\')")
-                val mSrc = pSrc.matcher(strImg)
-                if (mSrc.find()) {
-                    imgSrc = mSrc.group(3)
-                }
-                //结束匹配<img />标签中的src
-
-                //匹配content中是否存在下一个<img />标签，有则继续以上步骤匹配<img />标签中的src
-                resultImg = mImg.find()
-            }
-        }
-        return imgSrc
     }
 
     /**

@@ -11,7 +11,7 @@ import com.lm.ll.spark.activity.RichTextActivity
 import com.lm.ll.spark.adapter.adapterdelegate.*
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.IS_CLASSIC_ARTICLE
+import com.lm.ll.spark.util.GlobalConst.Companion.IS_CLASSIC_ARTICLE
 
 /**
  * 作者：Created by ll on 2018-07-06 17:35.

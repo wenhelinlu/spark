@@ -3,7 +3,7 @@ package com.lm.ll.spark.api
 import android.util.Log
 import com.lm.ll.spark.BuildConfig
 import com.lm.ll.spark.net.PersistentCookieJarHelper
-import com.lm.ll.spark.util.LOG_TAG_OKHTTP3
+import com.lm.ll.spark.util.GlobalConst.Companion.LOG_TAG_OKHTTP3
 import io.reactivex.Observable
 import okhttp3.CookieJar
 import okhttp3.OkHttpClient

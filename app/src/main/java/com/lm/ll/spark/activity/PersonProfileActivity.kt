@@ -18,8 +18,8 @@ import com.lm.ll.spark.db.ProfileInfo
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.net.PersistentCookieJarHelper
 import com.lm.ll.spark.repository.TabooArticlesRepository
-import com.lm.ll.spark.util.LOG_TAG_COMMON
-import com.lm.ll.spark.util.PROFILE_INFO_KEY
+import com.lm.ll.spark.util.GlobalConst.Companion.LOG_TAG_COMMON
+import com.lm.ll.spark.util.GlobalConst.Companion.PROFILE_INFO_KEY
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable

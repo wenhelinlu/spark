@@ -4,10 +4,11 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.db.ProfileInfo
 import com.lm.ll.spark.db.SiteMap
+import com.lm.ll.spark.util.GlobalConst.Companion.PARAGRAPH_FLAG_COUNT_LIMIT
+import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
+import com.lm.ll.spark.util.GlobalConst.Companion.TIME_OUT
+import com.lm.ll.spark.util.GlobalConst.Companion.USER_AGENT
 import com.lm.ll.spark.util.ObjectBox.getSiteMapBox
-import com.lm.ll.spark.util.PARAGRAPH_FLAG_COUNT_LIMIT
-import com.lm.ll.spark.util.TIME_OUT
-import com.lm.ll.spark.util.USER_AGENT
 import com.lm.ll.spark.util.convertToSimplifiedChinese
 import io.reactivex.exceptions.Exceptions
 import org.jsoup.Jsoup
@@ -310,10 +311,14 @@ class Spider {
         fun scratchText(doc: Document, article: Article): Article {
             try {
                 val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
-
                 val originalText = parseText(body[0])
 
-                article.text = formatText(originalText)
+                //如果网页文本中包含图片信息，则使用抓取图文混排的方法，否则直接获取文本
+                article.text = if (originalText.contains("<img") && originalText.contains("src=")) {
+                    scratchRichTextData(doc)
+                } else {
+                    formatText(originalText)
+                }
 
                 val commentList = ArrayList<Comment>()
                 //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
@@ -458,20 +463,24 @@ class Spider {
             }
         }
 
-
         /**
          * @desc 抓取图文混排文章
-         * @author LL
-         * @time 2018-09-06 15:48
+         * @author lm
+         * @time 2018-09-22 9:58
          */
-        fun scratchRichTextData(doc: Document): ArrayList<String> {
+        private fun scratchRichTextData(doc: Document): String {
             try {
                 val list = ArrayList<String>()
                 val body: Elements = doc.getElementsByTag("pre")
                 for (node in body[0].childNodes()) {
                     scratchRichTextDataRecursively(node, list)
                 }
-                return list
+
+                val composedText = StringBuilder()
+                list.forEach {
+                    composedText.append("$it$TEXT_IMAGE_SPLITER")
+                }
+                return composedText.toString()
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }

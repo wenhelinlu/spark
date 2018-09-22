@@ -12,10 +12,13 @@ import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.enum.ForumType
+import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_END_HOUR
+import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_START_HOUR
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 
 //region 扩展方法
@@ -165,61 +168,37 @@ fun getQueryRecord(keyword: String = "", forumType: ForumType = ForumType.TABOO_
     return if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query().equal(QueryRecord_.queryType, forumType.ordinal.toLong()).contains(QueryRecord_.keyword, keyword).orderDesc(QueryRecord_.insertTime).build().find()
 }
 
-//endregion
+/**
+ * 获取img标签中的src值
+ * @param content
+ * @return
+ */
+fun getImgSrc(content: String): String? {
+    var imgSrc: String? = null
+    //目前img标签标示有3种表达式
+    //<img alt="" src="1.jpg"/>   <img alt="" src="1.jpg"></img>     <img alt="" src="1.jpg">
+    //开始匹配content中的<img />标签
+    val pImg = Pattern.compile("<(img|IMG)(.*?)(/>|></img>|>)")
+    val mImg = pImg.matcher(content)
+    var resultImg = mImg.find()
+    if (resultImg) {
+        while (resultImg) {
+            //获取到匹配的<img />标签中的内容
+            val strImg = mImg.group(2)
 
-//region 全局常量
+            //开始匹配<img />标签中的src
+            val pSrc = Pattern.compile("(src|SRC)=(\"|\')(.*?)(\"|\')")
+            val mSrc = pSrc.matcher(strImg)
+            if (mSrc.find()) {
+                imgSrc = mSrc.group(3)
+            }
+            //结束匹配<img />标签中的src
 
-
-//文章列表初次加载时最小行数
-const val LIST_MIN_COUNT = 25
-
-//禁忌书屋基地址
-const val BASE_URL = "https://www.cool18.com/bbs4/index.php"
-
-//当前列表数据源URL地址（未附加页数）(在11页之前是这个地址，不包括第11页)
-const val CURRENT_BASE_URL = "?app=forum&act=cachepage&cp=tree" //禁忌书屋
-
-//禁忌书屋精华区数据源URL地址（未附加页数）
-const val CURRENT_ELITEAREA_BASE_URL = "?app=forum&act=gold&p="
-
-//是否是情色经典书库中的文章
-const val IS_CLASSIC_ARTICLE = "classic"
-
-//下拉刷新操作触发距离
-const val PULL_REFRESH_DISTANCE = 400
-
-//抓取网页设置的Useragent，防止被服务器阻止
-const val USER_AGENT = "User-Agent,Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36" //使用PC版User-Agent，如果使用移动版User-Agent，会导致正文解析错误
-
-//连接超时时长
-const val TIME_OUT = 50000
-
-//存储夜间模式设置的键
-const val NIGHT_MODE = "NIGHT_MODE"
-
-//常规Log的tag
-const val LOG_TAG_COMMON = "SPARK_LOG_COMMON"
-
-//okhttp3的log tag
-const val LOG_TAG_OKHTTP3 = "SPARK_LOG_OKHTTP3"
-
-//如果文本中段落标记（\r\n\r\n）个数大于此值，则按照规则清除换行标记，保留段落标记
-const val PARAGRAPH_FLAG_COUNT_LIMIT = 20
-
-//用于登录时用Intent传递个人档案页面文字的key
-const val PROFILE_INFO_KEY = "profile"
-
-//论坛url
-const val SITE_MAP_URL = "site"
-
-//已登录状态标记
-const val LOGINING_STATUS = "欢迎您"
-
-//自动夜间模式开始时间
-const val NIGHT_MODE_START_HOUR = 22
-
-//自动夜间模式结束时间
-const val NIGHT_MODE_END_HOUR = 6
-
+            //匹配content中是否存在下一个<img />标签，有则继续以上步骤匹配<img />标签中的src
+            resultImg = mImg.find()
+        }
+    }
+    return imgSrc
+}
 
 //endregion
