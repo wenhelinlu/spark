@@ -7,17 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
 import kotlinx.android.synthetic.main.article_item_image.view.*
 
-
 /**
  * 作者：Created by ll on 2018-09-21 14:46.
  * 邮箱：wenhelinlu@gmail.com
  */
-class ArticleImageAdapterDelegate (activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
+class ArticleImageAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<ArrayList<Article>>() {
     private var inflater: LayoutInflater = activity.layoutInflater
 
 
@@ -33,9 +34,11 @@ class ArticleImageAdapterDelegate (activity: AppCompatActivity) : AdapterDelegat
         val vh = holder as ArticleImageViewHolder
         with(vh) {
             items[position].let {
+
                 //TODO 使用Glide加载图片
                 Glide.with(articleImage.context)
                         .load(it.text)
+//                        .apply(requestOptions)
                         .into(articleImage)
             }
         }
@@ -45,5 +48,18 @@ class ArticleImageAdapterDelegate (activity: AppCompatActivity) : AdapterDelegat
         class ArticleImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val articleImage: ImageView = itemView.article_image
         }
+
+        lateinit var requestOptions: RequestOptions
+            private set
+    }
+
+    init {
+        requestOptions = RequestOptions()
+
+        requestOptions.fitCenter()
+        requestOptions.override(400, 200)
+        requestOptions.placeholder(R.drawable.ic_placeholder)
+        requestOptions.error(R.drawable.ic_image_error)
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL)
     }
 }

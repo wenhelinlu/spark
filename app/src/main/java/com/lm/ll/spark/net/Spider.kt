@@ -83,25 +83,55 @@ class Spider {
             try {
                 val baseUri = ul.baseUri().substringBefore("index")
                 for (child in ul.childNodes()) {
-                    if (child.childNodes() == null || child.childNodeSize() != 7) {
+                    if (child.childNodes() == null || child.childNodeSize() == 0) {
                         continue
                     }
-                    val childNodes = child.childNodes()
-                    val article = Article()
-                    val link: Element = childNodes[0] as Element
-                    val uri = link.attr("href")
-                    article.url = "$baseUri$uri"
-                    article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
-                    val authorStr = (childNodes[1] as TextNode).text()
-                    val author = authorStr.substringAfter('-').substringBefore('(').trim() //作者名称
-                    val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).lastOrNull() //字节数
-                    article.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
-                    article.author = "作者:$author"
-                    article.date = (childNodes[2] as Element).text() //日期
+                    when {
+                        child.childNodeSize() == 7 -> {
+                            val childNodes = child.childNodes()
+                            val article = Article()
+                            val link: Element = childNodes[0] as Element
+                            val uri = link.attr("href")
+                            article.url = "$baseUri$uri"
+                            article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
+                            val authorStr = (childNodes[1] as TextNode).text()
+                            val author = authorStr.substringAfter('-').substringBefore('(').trim() //作者名称
+                            val wordCount = Regex(pattern).findAll(authorStr).toList().flatMap(MatchResult::groupValues).lastOrNull() //字节数
+                            article.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
+                            article.author = "作者:$author"
+                            article.date = (childNodes[2] as Element).text() //日期
 
-                    val readCount = Regex(pattern).findAll((childNodes[4] as Element).text()).toList().flatMap(MatchResult::groupValues).firstOrNull()
-                    article.readCount = "阅读${readCount}次"
-                    list.add(article)
+                            val readCount = Regex(pattern).findAll((childNodes[4] as Element).text()).toList().flatMap(MatchResult::groupValues).firstOrNull()
+                            article.readCount = "阅读${readCount}次"
+                            list.add(article)
+                        }
+                        child.childNodeSize() == 9 -> {
+                            val childNodes = child.childNodes()
+                            val article = Article()
+                            val link: Element = childNodes[0] as Element
+                            val uri = link.attr("href")
+                            article.url = "$baseUri$uri"
+                            article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
+                            val author = (childNodes[2] as Element).text() //作者名称
+                            val wordCount = Regex(pattern).findAll((childNodes[3] as TextNode).text()).toList().flatMap(MatchResult::groupValues).lastOrNull() //字节数
+                            article.textLength = "${(wordCount!!.toLong()) / 2}字" //字数
+                            article.author = "作者:$author"
+                            article.date = (childNodes[4] as Element).text() //日期
+                            val readCount = Regex(pattern).findAll((childNodes[6] as Element).text()).toList().flatMap(MatchResult::groupValues).firstOrNull()
+                            article.readCount = "阅读${readCount}次"
+                            list.add(article)
+                        }
+                        else -> {
+                            val childNodes = child.childNodes()
+                            val article = Article()
+                            val link: Element = childNodes[0] as Element
+                            val uri = link.attr("href")
+                            article.url = "$baseUri$uri"
+                            article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
+                            list.add(article)
+                        }
+                    }
+
                 }
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
@@ -311,13 +341,13 @@ class Spider {
         fun scratchText(doc: Document, article: Article): Article {
             try {
                 val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
-                val originalText = parseText(body[0])
+                val originalText = body[0].outerHtml()
 
                 //如果网页文本中包含图片信息，则使用抓取图文混排的方法，否则直接获取文本
                 article.text = if (originalText.contains("<img") && originalText.contains("src=")) {
                     scratchRichTextData(doc)
                 } else {
-                    formatText(originalText)
+                    formatText(parseText(body[0]))
                 }
 
                 val commentList = ArrayList<Comment>()

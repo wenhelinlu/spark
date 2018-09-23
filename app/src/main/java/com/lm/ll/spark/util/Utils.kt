@@ -7,7 +7,10 @@ import android.net.ConnectivityManager
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate
 import android.widget.Toast
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.hankcs.hanlp.HanLP
+import com.lm.ll.spark.R
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
@@ -199,6 +202,14 @@ fun getImgSrc(content: String): String? {
         }
     }
     return imgSrc
+}
+
+fun getGlideRequestOptions(): RequestOptions {
+    val requestOptions = RequestOptions()
+    requestOptions.placeholder(R.drawable.ic_placeholder)
+    requestOptions.error(R.drawable.ic_image_error)
+    requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL)
+    return requestOptions
 }
 
 //endregion
