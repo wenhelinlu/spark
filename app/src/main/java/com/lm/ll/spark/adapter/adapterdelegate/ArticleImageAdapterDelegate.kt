@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestOptions
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
@@ -35,10 +36,10 @@ class ArticleImageAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate
         with(vh) {
             items[position].let {
 
-                //TODO 使用Glide加载图片
                 Glide.with(articleImage.context)
                         .load(it.text)
-//                        .apply(requestOptions)
+                        .apply(requestOptions)
+                        .transition(withCrossFade()) //渐显效果
                         .into(articleImage)
             }
         }
@@ -49,6 +50,7 @@ class ArticleImageAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate
             val articleImage: ImageView = itemView.article_image
         }
 
+        //Glide参数
         lateinit var requestOptions: RequestOptions
             private set
     }
@@ -57,8 +59,8 @@ class ArticleImageAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate
         requestOptions = RequestOptions()
 
         requestOptions.fitCenter()
-        requestOptions.override(400, 200)
-        requestOptions.placeholder(R.drawable.ic_placeholder)
+        requestOptions.override(900, 900)
+        requestOptions.placeholder(R.drawable.ic_placeholder_900dp)
         requestOptions.error(R.drawable.ic_image_error)
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL)
     }
