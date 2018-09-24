@@ -144,7 +144,7 @@ class Spider {
          * @time 2018-05-29 18:44
          */
         private fun parseText(e: Element): String {
-            return e.text().convertToSimplifiedChinese()
+            return formatText(e.text().convertToSimplifiedChinese())
         }
 
         /**
@@ -347,7 +347,7 @@ class Spider {
                 article.text = if (originalText.contains("<img") && originalText.contains("src=")) {
                     scratchRichTextData(doc)
                 } else {
-                    formatText(parseText(body[0]))
+                    parseText(body[0])
                 }
 
                 val commentList = ArrayList<Comment>()
@@ -385,21 +385,21 @@ class Spider {
              * \s* 表示若干个空格（可以是0个），\s+ 表示一个或多个空格
              * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
              */
-            
+            //去除文本中的6park.com
+            val puredText = originalText.replace("6park.com", "", true)
             //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
-            val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(originalText, "")
+            val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(puredText, "")
             //判断文本中段落标记（\r\n\r\n）个数，大于某个值，则处理，否则不处理
             val pCount = Regex(paragraphFlagPattern).findAll(removedEmptyLineText).count()
 //                Log.d(LOG_TAG_COMMON,"段落标记数量 = $pCount")
             //判断是否需要按照规则清除换行标记，保留段落标记
-            val formatedText = if (pCount > PARAGRAPH_FLAG_COUNT_LIMIT) {
+            return if (pCount > PARAGRAPH_FLAG_COUNT_LIMIT) {
                 val text = Regex(paragraphFlagPattern).replace(removedEmptyLineText, replacerWord)
                 //原字符串中用于换行的\r\n两侧可能会有空格，如果不处理会导致将\r\n替换成空字符后，原有位置的空格仍然存在，所以使用正则将\r\n及两侧可能有的空格都替换成空字符
                 Regex(newlineFlagPattern).replace(text, "").replace(replacerWord, paragraphFlag, false)
             } else {
-                originalText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
+                puredText //如果文章不包含段落标记（如琼明神女录第33章），则不处理
             }
-            return formatedText
         }
 
         /**
@@ -508,7 +508,13 @@ class Spider {
 
                 val composedText = StringBuilder()
                 list.forEach {
-                    composedText.append("$it$TEXT_IMAGE_SPLITER")
+
+                    //相邻的纯文本（即不包含图片链接）合并在一起（即占用一个RecyclerView的item显示）
+                    if (it.contains("<img")) {
+                        composedText.append("$TEXT_IMAGE_SPLITER$it$TEXT_IMAGE_SPLITER")
+                    } else {
+                        composedText.appendln(it)
+                    }
                 }
                 return composedText.toString()
             } catch (t: Throwable) {
@@ -527,10 +533,10 @@ class Spider {
                     scratchRichTextDataRecursively(node, list)
                 }
             }
-            if (e is TextNode && e.text().isNotEmpty() && !e.text().contains("6park.com")) {
+            if (e is TextNode && e.text().isNotBlank()) {
                 list.add(formatText(e.text()))
             } else if (e is Element) {
-                if (e.outerHtml().contains("<img")) {
+                if (e.outerHtml().contains("<img") && e.childNodeSize() == 0) {  //需要同时判断childNodeSize等于0，否则会重复添加
                     list.add(e.outerHtml())
                 }
             }
