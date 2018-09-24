@@ -5,6 +5,7 @@ import com.lm.ll.spark.BuildConfig
 import com.lm.ll.spark.net.PersistentCookieJarHelper
 import com.lm.ll.spark.util.GlobalConst.Companion.LOG_TAG_OKHTTP3
 import io.reactivex.Observable
+import io.reactivex.exceptions.Exceptions
 import okhttp3.CookieJar
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -63,7 +64,7 @@ interface TabooBooksApiService {
      */
     @FormUrlEncoded
     @POST("https://home.6park.com/index.php?app=login&act=dologin")
-    fun login(@Field("username") username: String, @Field("password") password: String, @Field("dologin") dologin: String):Observable<String>
+    fun login(@Field("username") username: String, @Field("password") password: String, @Field("dologin") dologin: String): Observable<String>
 
     /**
      * @desc 注销接口
@@ -122,7 +123,12 @@ interface TabooBooksApiService {
                                 .addHeader("Accept", "*/*")
                                 .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36")
                                 .build()
-                        chain.proceed(request)
+
+                        try {
+                            chain.proceed(request)
+                        } catch (t: Throwable) {
+                            throw Exceptions.propagate(t)
+                        }
                     }
                     .addInterceptor { chain ->
 
@@ -159,7 +165,11 @@ interface TabooBooksApiService {
                             val body = ResponseBody.create(contentType, content)
                             response.newBuilder().body(body).build()
                         } else {
-                            chain.proceed(chain.request())
+                            try {
+                                chain.proceed(chain.request())
+                            } catch (t: Throwable) {
+                                throw Exceptions.propagate(t)
+                            }
                         }
                     }
                     .addInterceptor(getLoggingInterceptor())
