@@ -35,7 +35,6 @@ class ArticleImageAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate
         val vh = holder as ArticleImageViewHolder
         with(vh) {
             items[position].let {
-
                 Glide.with(articleImage.context)
                         .load(it.text)
                         .apply(requestOptions)

@@ -3,6 +3,7 @@ package com.lm.ll.spark.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.database.MatrixCursor
+import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate
@@ -16,6 +17,7 @@ import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_END_HOUR
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_START_HOUR
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import java.io.IOException
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -199,6 +201,18 @@ fun getImgSrc(content: String): String? {
         }
     }
     return imgSrc
+}
+
+/**
+ * 获取网络图像尺寸
+ * @param imageUrl 网络图像路径
+ * @return
+ */
+fun getImageSizeAhead(imageUrl:String):IntArray{
+    val options = BitmapFactory.Options()
+    options.inJustDecodeBounds = true
+    val bitmap = BitmapFactory.decodeStream(URL(imageUrl).openStream(),null, options)
+    return intArrayOf(bitmap!!.width, bitmap.height)
 }
 
 //endregion
