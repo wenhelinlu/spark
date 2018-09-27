@@ -121,15 +121,15 @@ class Spider {
                             article.readCount = "阅读${readCount}次"
                             list.add(article)
                         }
-                        else -> {
-                            val childNodes = child.childNodes()
-                            val article = Article()
-                            val link: Element = childNodes[0] as Element
-                            val uri = link.attr("href")
-                            article.url = "$baseUri$uri"
-                            article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
-                            list.add(article)
-                        }
+//                        else -> {
+//                            val childNodes = child.childNodes()
+//                            val article = Article()
+//                            val link: Element = childNodes[0] as Element
+//                            val uri = link.attr("href")
+//                            article.url = "$baseUri$uri"
+//                            article.title = link.text().convertToSimplifiedChinese() //标题也将繁体转为简体
+//                            list.add(article)
+//                        }
                     }
 
                 }
