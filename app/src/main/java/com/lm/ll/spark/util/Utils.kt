@@ -3,6 +3,7 @@ package com.lm.ll.spark.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.database.MatrixCursor
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
@@ -210,9 +211,12 @@ fun getImgSrc(content: String): String? {
  */
 fun getImageSizeAhead(imageUrl:String):IntArray{
     val options = BitmapFactory.Options()
-    options.inJustDecodeBounds = true
+    options.inPreferredConfig = Bitmap.Config.RGB_565 //压缩图片
+    options.inJustDecodeBounds = true //仅返回宽高，减少内存占用
+    //这里返回的Bitmap是null，因为options的inJustDecodeBounds属性设为true
     val bitmap = BitmapFactory.decodeStream(URL(imageUrl).openStream(),null, options)
-    return intArrayOf(bitmap!!.width, bitmap.height)
+
+    return intArrayOf(options.outWidth, options.outHeight)
 }
 
 //endregion

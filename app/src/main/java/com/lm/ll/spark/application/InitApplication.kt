@@ -21,6 +21,7 @@ class InitApplication : Application() {
 
         //用于不同Activity间数据的传递，这样不需要对Article和Comment进行Parcelable处理
         var curArticle:Article? = null
+        var screenWidth:Int = 0
 
         fun getInstance(): InitApplication {
             if (singleton == null) {
@@ -46,10 +47,21 @@ class InitApplication : Application() {
 
         //根据配置切换日间\夜间模式
         switchDayNightMode(this.isNightModeEnabled)
+        screenWidth = getScreenWidth()
     }
 
     fun isNightModeEnabled(): Boolean {
         return isNightModeEnabled
+    }
+
+    /**
+     * @desc 获取屏幕宽度（dp）
+     * @author ll
+     * @time 2018-09-28 14:25
+     */
+    private fun getScreenWidth():Int{
+//        return (resources.displayMetrics.widthPixels/resources.displayMetrics.density).toInt()
+        return resources.displayMetrics.widthPixels
     }
 
     /**
