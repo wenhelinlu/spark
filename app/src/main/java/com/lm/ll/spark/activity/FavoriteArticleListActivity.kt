@@ -65,6 +65,11 @@ class FavoriteArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRe
         loadDataWithRx()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadDataWithRx()
+    }
+
     /**
      * @desc 使用RxJava2从数据库中加载数据
      * @author lm
