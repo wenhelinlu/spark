@@ -4,11 +4,12 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
-import com.lm.ll.spark.activity.MainActivity
+import com.lm.ll.spark.activity.ArticleListActivity
 import com.lm.ll.spark.adapter.adapterdelegate.SiteMapItemListAdapterDelegate
 import com.lm.ll.spark.db.SiteMap
 import com.lm.ll.spark.listener.OnItemClickListener
 import com.lm.ll.spark.listener.OnItemLongClickListener
+import com.lm.ll.spark.util.GlobalConst.Companion.SITE_MAP_TITLE
 import com.lm.ll.spark.util.GlobalConst.Companion.SITE_MAP_URL
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.toast
@@ -28,8 +29,9 @@ class SiteMapItemListAdapter(activity: AppCompatActivity, items: ArrayList<SiteM
         val delegate = SiteMapItemListAdapterDelegate(activity)
         delegate.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                val intent = Intent(activity, MainActivity::class.java)
+                val intent = Intent(activity, ArticleListActivity::class.java)
                 intent.putExtra(SITE_MAP_URL, items[position].url)
+                intent.putExtra(SITE_MAP_TITLE, items[position].title)
                 activity.startActivity(intent)
             }
         })

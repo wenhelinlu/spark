@@ -23,7 +23,6 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -32,6 +31,9 @@
             android:label="@string/title_activity_main"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.ArticleListActivity"
+            android:parentActivityName=".activity.MainActivity" />
         <activity
             android:name=".activity.EliteEroticaArticleListActivity"
             android:parentActivityName=".activity.MainActivity" />
@@ -62,7 +64,7 @@
         <activity android:name=".activity.RichTextActivity" />
         <activity
             android:name=".activity.SiteMapTabActivity"
-            android:parentActivityName=".activity.MainActivity"></activity>
+            android:parentActivityName=".activity.MainActivity" />
     </application>
 
 </manifest>

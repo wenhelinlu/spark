@@ -129,4 +129,7 @@
     <string name="action_about">关于</string>
     <string name="site_map_tab">论坛</string>
     <string name="image_content_description">image in text</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>
