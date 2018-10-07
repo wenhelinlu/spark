@@ -6,14 +6,19 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Switch
 import com.lm.ll.spark.R
+import com.lm.ll.spark.adapter.ViewPagerAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
+import com.lm.ll.spark.fragment.NewsFragment
+import com.lm.ll.spark.fragment.SubForumFragment
+import com.lm.ll.spark.fragment.VideoFragment
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.GlobalConst
 import com.lm.ll.spark.util.switchDayNightMode
@@ -25,23 +30,7 @@ import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_home -> {
-                message.setText(R.string.title_home)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_dashboard -> {
-                message.setText(R.string.title_dashboard)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_notifications -> {
-                message.setText(R.string.title_notifications)
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        false
-    }
+    private var menuItem: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +53,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initNightMode()
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+            }
+
+            override fun onPageSelected(position: Int) {
+                if (menuItem != null) {
+                    menuItem!!.isChecked = false
+                } else {
+                    navigation.menu.getItem(0).isChecked = false
+                }
+                menuItem = navigation.menu.getItem(position)
+                menuItem!!.isChecked = true
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {}
+        })
+
+        setupViewPager(viewPager)
+    }
+
+    private fun setupViewPager(viewPager: ViewPager) {
+        val adapter = ViewPagerAdapter(supportFragmentManager)
+
+        adapter.addFragment(NewsFragment.newInstance())
+        adapter.addFragment(VideoFragment.newInstance())
+        adapter.addFragment(SubForumFragment.newInstance())
+        viewPager.adapter = adapter
     }
 
 
@@ -106,6 +124,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             recreate() //在onCreate方法中设置日、夜间模式后，不需要调用recreate()方法，但是，在其他方法中切换后，需要调用此方法
         }
     }
+
+    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        //        when (item.itemId) {
+//            R.id.navigation_home -> {
+//                viewPager.currentItem = 0
+//                return@OnNavigationItemSelectedListener true
+//            }
+//            R.id.navigation_dashboard -> {
+//                viewPager.currentItem = 1
+//                return@OnNavigationItemSelectedListener true
+//            }
+//            R.id.navigation_notifications -> {
+//                viewPager.currentItem = 2
+//                return@OnNavigationItemSelectedListener true
+//            }
+//        }
+        viewPager.currentItem = item.order
+        false
+    }
+
+
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
