@@ -22,6 +22,6 @@ class VideoFragment : Fragment() {
          * @return A new instance of fragment NewsFragment.
          */
         @JvmStatic
-        fun newInstance() = NewsFragment()
+        fun newInstance() = VideoFragment()
     }
 }

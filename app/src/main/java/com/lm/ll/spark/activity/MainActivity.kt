@@ -26,7 +26,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -126,24 +125,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        //        when (item.itemId) {
-//            R.id.navigation_home -> {
-//                viewPager.currentItem = 0
-//                return@OnNavigationItemSelectedListener true
-//            }
-//            R.id.navigation_dashboard -> {
-//                viewPager.currentItem = 1
-//                return@OnNavigationItemSelectedListener true
-//            }
-//            R.id.navigation_notifications -> {
-//                viewPager.currentItem = 2
-//                return@OnNavigationItemSelectedListener true
-//            }
-//        }
         viewPager.currentItem = item.order
-        false
+        true
     }
-
 
 
     override fun onBackPressed() {
