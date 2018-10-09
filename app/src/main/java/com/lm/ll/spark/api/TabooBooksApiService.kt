@@ -31,7 +31,7 @@ interface TabooBooksApiService {
      * @time 2018-09-08 14:41
      */
     @GET("https://www.cool18.com/bbs4/index.php")
-    fun getSiteMapTab(): Observable<String>
+    fun getSubForumList(): Observable<String>
 
     /**
      * @desc 获取文章列表接口

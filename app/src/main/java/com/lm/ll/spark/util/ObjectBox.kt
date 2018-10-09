@@ -4,7 +4,7 @@ import android.content.Context
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.MyObjectBox
 import com.lm.ll.spark.db.QueryRecord
-import com.lm.ll.spark.db.SiteMap
+import com.lm.ll.spark.db.SubForum
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.kotlin.boxFor
@@ -47,7 +47,7 @@ object ObjectBox {
      * @author lm
      * @time 2018-09-09 21:02
      */
-    fun getSiteMapBox(): Box<SiteMap> {
+    fun getSubForumBox(): Box<SubForum> {
         return boxStore.boxFor()
     }
 

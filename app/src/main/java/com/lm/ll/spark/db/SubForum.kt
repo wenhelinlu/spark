@@ -9,7 +9,7 @@ import io.objectbox.annotation.Id
  * @time 2018-09-08 15:36
  */
 @Entity
-data class SiteMap(
+data class SubForum(
         @Id var id: Long = 0, //ObjectBox内部主键
         var url: String? = null, //url链接
         var title: String? = null, //标题

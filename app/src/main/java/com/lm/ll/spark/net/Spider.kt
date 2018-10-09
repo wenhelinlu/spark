@@ -3,12 +3,12 @@ package com.lm.ll.spark.net
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.db.ProfileInfo
-import com.lm.ll.spark.db.SiteMap
+import com.lm.ll.spark.db.SubForum
 import com.lm.ll.spark.util.GlobalConst.Companion.PARAGRAPH_FLAG_COUNT_LIMIT
 import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
 import com.lm.ll.spark.util.GlobalConst.Companion.TIME_OUT
 import com.lm.ll.spark.util.GlobalConst.Companion.USER_AGENT
-import com.lm.ll.spark.util.ObjectBox.getSiteMapBox
+import com.lm.ll.spark.util.ObjectBox.getSubForumBox
 import com.lm.ll.spark.util.convertToSimplifiedChinese
 import io.reactivex.exceptions.Exceptions
 import org.jsoup.Jsoup
@@ -547,19 +547,19 @@ class Spider {
          * @author LL
          * @time 2018-09-08 14:39
          */
-        fun scratchSiteMapTab(doc: Document): ArrayList<SiteMap> {
+        fun scratchSubForumList(doc: Document): ArrayList<SubForum> {
             try {
                 val siteMap = doc.getElementById("site_map_tab")
                 val links = siteMap.getElementsByTag("a")
-                val list = ArrayList<SiteMap>()
+                val list = ArrayList<SubForum>()
                 for (link in links) {
-                    val item = SiteMap()
+                    val item = SubForum()
 
                     item.title = link.text().convertToSimplifiedChinese()
                     item.url = link.attr("href")
 
                     //插入数据库中
-                    getSiteMapBox().put(item)
+                    getSubForumBox().put(item)
 
                     list.add(item)
                 }

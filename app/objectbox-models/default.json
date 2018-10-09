@@ -149,39 +149,46 @@
       "relations": []
     },
     {
-      "id": "4:7510959739387852864",
-      "lastPropertyId": "4:1453616599602416182",
-      "name": "SiteMap",
+      "id": "5:8274759648660604513",
+      "lastPropertyId": "4:6969651136311692082",
+      "name": "SubForum",
       "properties": [
         {
-          "id": "1:6303583344575149523",
+          "id": "1:8513696056549173531",
           "name": "id"
         },
         {
-          "id": "2:5953573322534450152",
+          "id": "2:5067907888561732334",
           "name": "url"
         },
         {
-          "id": "3:8688571474501717396",
+          "id": "3:1348497115812461908",
           "name": "title"
         },
         {
-          "id": "4:1453616599602416182",
+          "id": "4:6969651136311692082",
           "name": "favorite"
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "4:7510959739387852864",
+  "lastEntityId": "5:8274759648660604513",
   "lastIndexId": "0:0",
   "lastRelationId": "1:120272016332455052",
   "lastSequenceId": "0:0",
   "modelVersion": 4,
   "modelVersionParserMinimum": 4,
-  "retiredEntityUids": [],
+  "retiredEntityUids": [
+    7510959739387852864
+  ],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    6303583344575149523,
+    5953573322534450152,
+    8688571474501717396,
+    1453616599602416182
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

@@ -13,9 +13,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.lm.ll.spark.R
-import com.lm.ll.spark.adapter.SiteMapItemListAdapter
+import com.lm.ll.spark.adapter.SubForumItemListAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
-import com.lm.ll.spark.db.SiteMap
+import com.lm.ll.spark.db.SubForum
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
@@ -34,14 +34,14 @@ class SubForumFragment : Fragment() {
      * @author ll
      * @time 2018-08-14 9:53
      */
-    private var siteMapList: ArrayList<SiteMap> = ArrayList()
+    private var subForumList: ArrayList<SubForum> = ArrayList()
 
     /**
      * @desc RecyclerView的adapter
      * @author ll
      * @time 2018-08-14 9:53
      */
-    private lateinit var mAdapter: SiteMapItemListAdapter
+    private lateinit var mAdapter: SubForumItemListAdapter
 
     /**
      * @desc RecyclerView的LayoutManager
@@ -78,7 +78,7 @@ class SubForumFragment : Fragment() {
         mRecyclerView.addItemDecoration(SolidLineItemDecoration(mActivity!!))
         linearLayoutManager = LinearLayoutManager(mActivity!!)
         mRecyclerView.layoutManager = linearLayoutManager
-        mAdapter = SiteMapItemListAdapter(mActivity!!, siteMapList)
+        mAdapter = SubForumItemListAdapter(mActivity!!, subForumList)
         mRecyclerView.adapter = mAdapter
 
         loadData()
@@ -103,7 +103,7 @@ class SubForumFragment : Fragment() {
      */
     private fun loadTextWithRx() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
-        repository.getSiteMapTab()
+        repository.getSubForumList()
                 .firstElement()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
@@ -117,8 +117,8 @@ class SubForumFragment : Fragment() {
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
                 .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
-                    siteMapList.clear()
-                    siteMapList.addAll(result)
+                    subForumList.clear()
+                    subForumList.addAll(result)
                     refreshData()
                 }, { error ->
                     //异常处理

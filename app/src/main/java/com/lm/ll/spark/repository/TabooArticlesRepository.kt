@@ -4,10 +4,10 @@ import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.db.ProfileInfo
-import com.lm.ll.spark.db.SiteMap
+import com.lm.ll.spark.db.SubForum
 import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
-import com.lm.ll.spark.util.ObjectBox.getSiteMapBox
+import com.lm.ll.spark.util.ObjectBox.getSubForumBox
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import org.jsoup.Jsoup
@@ -24,14 +24,14 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      * @author LL
      * @time 2018-09-08 14:43
      */
-    fun getSiteMapTab(): Observable<ArrayList<SiteMap>> {
+    fun getSubForumList(): Observable<ArrayList<SubForum>> {
         //从数据库中获取论坛列表
-        val fromDb = Observable.create(ObservableOnSubscribe<ArrayList<SiteMap>> { emitter ->
-            val find = getSiteMapBox().all
+        val fromDb = Observable.create(ObservableOnSubscribe<ArrayList<SubForum>> { emitter ->
+            val find = getSubForumBox().all
             if (find == null || find.size == 0) {
                 emitter.onComplete()
             } else {
-                var list = ArrayList<SiteMap>()
+                val list = ArrayList<SubForum>()
                 list.addAll(find)
                 list.sortByDescending { x -> x.favorite }
                 emitter.onNext(list)
@@ -39,11 +39,11 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
         })
 
         //从网络中抓取论坛列表
-        val fromNetwork = tabooBooksApiService.getSiteMapTab()
+        val fromNetwork = tabooBooksApiService.getSubForumList()
                 .retry(1)
                 .flatMap {
                     val doc = Jsoup.parse(it)
-                    val list = Spider.scratchSiteMapTab(doc)
+                    val list = Spider.scratchSubForumList(doc)
                     Observable.just(list)
                 }
 
