@@ -15,7 +15,7 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
-        app:srcCompat="@drawable/ic_menu_unfavorite"
+        app:srcCompat="@drawable/ic_menu_unfavorite_grey"
         android:contentDescription="@string/menu_favorite" />
 
     <TextView

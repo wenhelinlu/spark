@@ -38,7 +38,8 @@ class SiteMapItemListAdapterDelegate(activity: AppCompatActivity) : BaseListAdap
             itemView.tag = position
             items[position].let {
                 siteMapTitle.text = it.title
-                siteMapFavorite.setImageResource(if (it.favorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite)
+//                siteMapTitle.setCompoundDrawables(if (it.favorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite_grey)
+                siteMapFavorite.setImageResource(if (it.favorite == 1) R.drawable.ic_menu_favorite else R.drawable.ic_menu_unfavorite_grey)
             }
         }
     }

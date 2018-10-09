@@ -392,11 +392,10 @@ class ArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLis
 
 }
 
-//TODO: 首页显示论坛列表
 //TODO: 检测网络状态，不通时通过Toast提示
 //TODO: 学习Gradle
 //TODO：使用MVVM模式
 
-//TODO：增加设置Activity，自动夜间模式、开启统计功能
+//TODO：评论列表层级过深会显示不全
 
 

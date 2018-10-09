@@ -73,7 +73,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setupViewPager(viewPager)
     }
-
+    
+    /**
+     * @desc 设置ViewPager的Adapter
+     * @author ll
+     * @time 2018-10-09 11:58
+     */
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = ViewPagerAdapter(supportFragmentManager)
 
@@ -124,6 +129,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    /**
+     * @desc 点击BottomNavigationView，切换ViewPager中显示的Fragment
+     * @author ll
+     * @time 2018-10-09 11:00
+     */
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         viewPager.currentItem = item.order
         true
@@ -141,9 +151,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_sitemaptab -> {
-                this@MainActivity.startActivity(Intent(this@MainActivity, SiteMapTabActivity::class.java))
-            }
             R.id.nav_favorite -> {
                 this@MainActivity.startActivity(Intent(this@MainActivity, FavoriteArticleListActivity::class.java))
             }

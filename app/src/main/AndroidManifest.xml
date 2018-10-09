@@ -62,9 +62,6 @@
             android:label="@string/title_activity_settings" />
         <activity android:name=".activity.AboutPageActivity" />
         <activity android:name=".activity.RichTextActivity" />
-        <activity
-            android:name=".activity.SiteMapTabActivity"
-            android:parentActivityName=".activity.MainActivity" />
     </application>
 
 </manifest>
