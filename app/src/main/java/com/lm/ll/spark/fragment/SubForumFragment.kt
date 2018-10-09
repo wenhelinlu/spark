@@ -22,7 +22,7 @@ import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_sub_forum.*
+import kotlinx.android.synthetic.main.fragment_data_list.*
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -72,9 +72,9 @@ class SubForumFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_sub_forum, container, false)
+        val view = inflater.inflate(R.layout.fragment_data_list, container, false)
         //RecyclerView设置
-        mRecyclerView = view.findViewById(R.id.recyclerViewSiteMapList)
+        mRecyclerView = view.findViewById(R.id.dataRecyclerView)
         mRecyclerView.addItemDecoration(SolidLineItemDecoration(mActivity!!))
         linearLayoutManager = LinearLayoutManager(mActivity!!)
         mRecyclerView.layoutManager = linearLayoutManager
@@ -129,7 +129,7 @@ class SubForumFragment : Fragment() {
                                 is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
                                 else -> error.toString()
                             }
-                    Snackbar.make(siteMapLayout, msg, Snackbar.LENGTH_LONG)
+                    Snackbar.make(dataListLayout, msg, Snackbar.LENGTH_LONG)
                             .setAction("重试") { loadData() }.show()
                 })
     }
@@ -156,7 +156,7 @@ class SubForumFragment : Fragment() {
      * @time 2018-07-10 17:48
      */
     private fun showProgress(show: Boolean) {
-        this.pb_loadSiteMap.visibility = if (show) {
+        this.pb_loadData.visibility = if (show) {
             View.VISIBLE
         } else {
             View.GONE

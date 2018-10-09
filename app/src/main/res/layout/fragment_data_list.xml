@@ -7,7 +7,7 @@ android:layout_height="match_parent"
 tools:context="com.lm.ll.spark.fragment.SubForumFragment">
 
 <LinearLayout
-    android:id="@+id/siteMapLayout"
+    android:id="@+id/dataListLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/transparent"
@@ -16,7 +16,7 @@ tools:context="com.lm.ll.spark.fragment.SubForumFragment">
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
-        android:id="@+id/pb_loadSiteMap"
+        android:id="@+id/pb_loadData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"
@@ -32,7 +32,7 @@ tools:context="com.lm.ll.spark.fragment.SubForumFragment">
         app:spb_stroke_width="4dp" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerViewSiteMapList"
+        android:id="@+id/dataRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/bgColor"
