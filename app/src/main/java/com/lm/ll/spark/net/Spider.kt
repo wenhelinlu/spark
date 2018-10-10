@@ -167,14 +167,14 @@ class Spider {
          * @author ll
          * @time 2018-06-04 16:34
          */
-        private fun parseComments(ul: Element, baseUri:String = ""): ArrayList<Comment> {
+        private fun parseComments(ul: Element, baseUri: String = ""): ArrayList<Comment> {
             try {
                 val list = ArrayList<Comment>()
                 for (child in ul.childNodes()) {
                     depth = 0  //每个评论初始层级都置为0
 
                     val subList = ArrayList<Comment>()
-                    parseCommentsRecursive(child, subList,baseUri)
+                    parseCommentsRecursive(child, subList, baseUri)
                     subList.reverse()
                     list.addAll(subList)
                 }
@@ -193,7 +193,7 @@ class Spider {
             if (ul.childNodes()[3].childNodes().count() > 0) {
                 for (sub in ul.childNodes()[3].childNodes()) {
                     depth++   //子评论层级加1
-                    parseCommentsRecursive(sub, list,baseUri)
+                    parseCommentsRecursive(sub, list, baseUri)
                     depth--  //从子评论返回上一级评论时，层级减1
                 }
             }
@@ -431,7 +431,7 @@ class Spider {
         private fun scratchComments(doc: Document, baseUri: String): ArrayList<Comment> {
             try {
                 val comments: Elements = doc.getElementsByTag("ul")
-                return parseComments(comments[0],baseUri)
+                return parseComments(comments[0], baseUri)
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }
@@ -549,20 +549,31 @@ class Spider {
          */
         fun scratchSubForumList(doc: Document): ArrayList<SubForum> {
             try {
-                val siteMap = doc.getElementById("site_map_tab")
-                val links = siteMap.getElementsByTag("a")
                 val list = ArrayList<SubForum>()
-                for (link in links) {
-                    val item = SubForum()
 
-                    item.title = link.text().convertToSimplifiedChinese()
-                    item.url = link.attr("href")
+                val tables = doc.getElementsByTag("table")
+                if (tables != null && tables.size > 4) {
+                    val tds = tables[3].getElementsByClass("td4")
+                    if (tds != null && tds.size > 1) {
+                        tds.removeAt(0)  //去除第一个元素，因为不是有效的子论坛
+                    }
 
-                    //插入数据库中
-                    getSubForumBox().put(item)
+                    for (td in tds) {
+                        val links = td.getElementsByTag("a")
+                        for (link in links) {
+                            val item = SubForum()
 
-                    list.add(item)
+                            item.title = link.text().convertToSimplifiedChinese()
+                            item.url = link.attr("href")
+
+                            //插入数据库中
+                            getSubForumBox().put(item)
+
+                            list.add(item)
+                        }
+                    }
                 }
+
                 return list
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)

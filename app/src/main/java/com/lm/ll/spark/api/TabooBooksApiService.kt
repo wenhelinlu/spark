@@ -30,7 +30,7 @@ interface TabooBooksApiService {
      * @author LL
      * @time 2018-09-08 14:41
      */
-    @GET("https://www.cool18.com/bbs4/index.php")
+    @GET("https://www.6park.com/guide.html")
     fun getSubForumList(): Observable<String>
 
     /**
