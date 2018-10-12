@@ -3,30 +3,25 @@ package com.lm.ll.spark.fragment
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.lm.ll.spark.R
-import com.lm.ll.spark.adapter.SubForumItemListAdapter
-import com.lm.ll.spark.api.TabooBooksApiService
-import com.lm.ll.spark.db.SubForum
+import com.lm.ll.spark.adapter.ArticleListAdapter
+import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
-import com.lm.ll.spark.repository.TabooArticlesRepository
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_data_list.*
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.util.concurrent.TimeoutException
-import javax.net.ssl.SSLHandshakeException
+import com.lm.ll.spark.listener.MyRecyclerViewOnScrollListener
+import com.lm.ll.spark.net.Spider
+import com.lm.ll.spark.util.GlobalConst
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 
 class VideoFragment : Fragment() {
     /**
@@ -34,14 +29,14 @@ class VideoFragment : Fragment() {
      * @author ll
      * @time 2018-08-14 9:53
      */
-    private var subForumList: ArrayList<SubForum> = ArrayList()
+    private var videoList: ArrayList<Article> = ArrayList()
 
     /**
      * @desc RecyclerView的adapter
      * @author ll
      * @time 2018-08-14 9:53
      */
-    private lateinit var mAdapter: SubForumItemListAdapter
+    private lateinit var mAdapter: ArticleListAdapter
 
     /**
      * @desc RecyclerView的LayoutManager
@@ -50,10 +45,33 @@ class VideoFragment : Fragment() {
      */
     private lateinit var linearLayoutManager: LinearLayoutManager
 
+    /**
+     * @desc 当前加载的页数
+     * @author ll
+     * @time 2018-08-14 9:53
+     */
+    private var currentPage: Int = 1
+
+    /**
+     * @desc 子论坛基地址
+     * @author lm
+     * @time 2018-10-06 11:47
+     */
+    private var baseUri = "https://mv.6park.com/index.php"
+    
+    /**
+     * @desc 列表控件
+     * @author ll
+     * @time 2018-10-10 16:51
+     */
     private lateinit var mRecyclerView: RecyclerView
 
-    //使用AutoDispose解除RxJava2订阅
-    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
+    /**
+     * @desc 下拉刷新控件
+     * @author ll
+     * @time 2018-10-10 16:51
+     */
+    private lateinit var mSwipeRefreshLayout:SwipeRefreshLayout
 
     private var mActivity: AppCompatActivity? = null
 
@@ -72,16 +90,35 @@ class VideoFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_data_list, container, false)
+        val view = inflater.inflate(R.layout.activity_article_list, container, false)
+
+        //SwipeRefreshLayout设置
+        mSwipeRefreshLayout = view.findViewById(R.id.swipeRefreshTitles)
+        //下拉刷新进度条颜色
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.md_teal_500, R.color.md_orange_500, R.color.md_light_blue_500)
+        //触发刷新的下拉距离
+        mSwipeRefreshLayout.setDistanceToTriggerSync(GlobalConst.PULL_REFRESH_DISTANCE)
+        //下拉刷新监听
+        mSwipeRefreshLayout.setOnRefreshListener {
+            loadData(::getArticleList)
+        }
         //RecyclerView设置
-        mRecyclerView = view.findViewById(R.id.dataRecyclerView)
+        mRecyclerView = view.findViewById(R.id.recyclerViewTitles)
         mRecyclerView.addItemDecoration(SolidLineItemDecoration(mActivity!!))
         linearLayoutManager = LinearLayoutManager(mActivity!!)
         mRecyclerView.layoutManager = linearLayoutManager
-        mAdapter = SubForumItemListAdapter(mActivity!!, subForumList)
+        mAdapter = ArticleListAdapter(mActivity!!, videoList)
         mRecyclerView.adapter = mAdapter
 
-        loadData()
+        //上拉加载更多
+        mRecyclerView.addOnScrollListener(object : MyRecyclerViewOnScrollListener(linearLayoutManager) {
+            override fun loadMoreData() {
+                currentPage++
+                loadData(::getArticleList, true)
+
+            }
+        })
+        loadData(::getArticleList)
 
         return view
     }
@@ -90,49 +127,82 @@ class VideoFragment : Fragment() {
     /**
      * @desc 加载数据
      * @author ll
-     * @time 2018-07-10 17:23
+     * @time 2018-08-13 20:59
+     * @param download 函数类型参数，实际的下载方法
+     * @param isLoadMore 是否是加载更多数据
      */
-    private fun loadData() {
-        loadTextWithRx()
+    private fun loadData(download: (page: Int) -> ArrayList<Article>, isLoadMore: Boolean = false) {
+        val currentPos: Int = videoList.size
+
+        async(UI) {
+            showProgress(true)
+            withContext(CommonPool) {
+                //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
+                var pageIndex = if (isLoadMore) currentPage else 1
+                val list = download(pageIndex)
+
+                //Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex, list'size = ${list.size}")
+
+                if (isLoadMore) {
+                    videoList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
+                } else {
+                    /**
+                     *  如果不是第一次加载，即当前已存在数据，则在新获取的列表中找出和当前已存在的数据列表第一条数据相同
+                     *  的数据位置（如果没有找到，则说明新获取的数据列表数据都为新数据，可直接添加当已有集合中），然后将新获取数据列表中
+                     *  这个位置之前的数据添加到已有集合中
+                     */
+                    if (videoList.count() > 0) {
+                        val firstNews = list.findLast { x -> x.url == videoList[0].url }
+                        if (firstNews != null) {
+                            val firstIndex = list.indexOf(firstNews)
+                            if (firstIndex > 0) {
+                                val latest = list.take(firstIndex)
+                                videoList.addAll(latest)
+                            } else {
+                            }
+                        } else {
+                        }
+                    } else {
+                        videoList.clear()
+                        videoList.addAll(list)
+                        //如果此时获取的集合数据不超过预定值，则继续加载数据
+                        while (videoList.size < GlobalConst.LIST_MIN_COUNT) {
+                            pageIndex = ++currentPage
+                            val tmpList = download(pageIndex)
+                            videoList.addAll(tmpList)
+                        }
+                    }
+                }
+            }
+            refreshData()
+
+            //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
+            if (isLoadMore) {
+                linearLayoutManager.scrollToPositionWithOffset(currentPos - 1, 0)
+            }
+
+            showProgress(false)
+        }
     }
 
     /**
-     * @desc 使用RxJava+Retrofit实现异步读取数据
+     * @desc 根据页码获取文章列表，注意：11页之前（不包含第11页）的url和第11页及之后的url不同
      * @author lm
-     * @time 2018-07-01 17:21
+     * @time 2018-07-28 15:50
+     * @param pageIndex 页码
      */
-    private fun loadTextWithRx() {
-        val repository = TabooArticlesRepository(TabooBooksApiService.create())
-        repository.getSubForumList()
-                .firstElement()
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe {
-                    showProgress(true)
-                }
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doAfterTerminate {
-                    showProgress(false)
-                }
-                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
-                .subscribe({ result ->
-                    subForumList.clear()
-                    subForumList.addAll(result)
-                    refreshData()
-                }, { error ->
-                    //异常处理
-                    val msg =
-                            when (error) {
-                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
-                                is TimeoutException -> "网络连接超时"
-                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
-                                else -> error.toString()
-                            }
-                    Snackbar.make(dataListLayout, msg, Snackbar.LENGTH_LONG)
-                            .setAction("重试") { loadData() }.show()
-                })
+    private fun getArticleList(pageIndex: Int): ArrayList<Article> {
+
+        //11页之前（不包含第11页）的url和第11页及之后的url不同
+        val url = if (pageIndex <= 10) {
+            "$baseUri${GlobalConst.CURRENT_BASE_URL}$pageIndex"
+        } else {
+            "$baseUri?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764"
+        }
+//        Log.d(LOG_TAG_COMMON, url)
+        return Spider.scratchOnlineVideoList(url)
     }
+
 
     /**
      * @desc 刷新数据
@@ -156,12 +226,9 @@ class VideoFragment : Fragment() {
      * @time 2018-07-10 17:48
      */
     private fun showProgress(show: Boolean) {
-        this.pb_loadData.visibility = if (show) {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
+        mSwipeRefreshLayout.isRefreshing = show
     }
+
     companion object {
         /**
          * Use this factory method to create a new instance of

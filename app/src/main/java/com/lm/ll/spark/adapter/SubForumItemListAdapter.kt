@@ -9,8 +9,8 @@ import com.lm.ll.spark.adapter.adapterdelegate.SubForumItemListAdapterDelegate
 import com.lm.ll.spark.db.SubForum
 import com.lm.ll.spark.listener.OnItemClickListener
 import com.lm.ll.spark.listener.OnItemLongClickListener
-import com.lm.ll.spark.util.GlobalConst.Companion.SITE_MAP_TITLE
-import com.lm.ll.spark.util.GlobalConst.Companion.SITE_MAP_URL
+import com.lm.ll.spark.util.GlobalConst.Companion.SUB_FORUM_TITLE
+import com.lm.ll.spark.util.GlobalConst.Companion.SUB_FORUM_URL
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.toast
 
@@ -30,8 +30,8 @@ class SubForumItemListAdapter(activity: AppCompatActivity, items: ArrayList<SubF
         delegate.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val intent = Intent(activity, ArticleListActivity::class.java)
-                intent.putExtra(SITE_MAP_URL, items[position].url)
-                intent.putExtra(SITE_MAP_TITLE, items[position].title)
+                intent.putExtra(SUB_FORUM_URL, items[position].url)
+                intent.putExtra(SUB_FORUM_TITLE, items[position].title)
                 activity.startActivity(intent)
             }
         })

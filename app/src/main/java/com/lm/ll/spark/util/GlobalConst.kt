@@ -49,10 +49,10 @@ class GlobalConst {
         const val PROFILE_INFO_KEY = "profile"
 
         //Intent中传递子论坛url的key
-        const val SITE_MAP_URL = "site_url"
+        const val SUB_FORUM_URL = "sub_forum_url"
 
         //Intent中传递子论坛标题的key
-        const val SITE_MAP_TITLE = "site_title"
+        const val SUB_FORUM_TITLE = "sub_forum_title"
 
         //已登录状态标记
         const val LOGINING_STATUS = "欢迎您"

@@ -23,8 +23,8 @@ import com.lm.ll.spark.util.GlobalConst.Companion.BASE_URL
 import com.lm.ll.spark.util.GlobalConst.Companion.CURRENT_BASE_URL
 import com.lm.ll.spark.util.GlobalConst.Companion.LIST_MIN_COUNT
 import com.lm.ll.spark.util.GlobalConst.Companion.PULL_REFRESH_DISTANCE
-import com.lm.ll.spark.util.GlobalConst.Companion.SITE_MAP_TITLE
-import com.lm.ll.spark.util.GlobalConst.Companion.SITE_MAP_URL
+import com.lm.ll.spark.util.GlobalConst.Companion.SUB_FORUM_TITLE
+import com.lm.ll.spark.util.GlobalConst.Companion.SUB_FORUM_URL
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import com.lm.ll.spark.util.getQueryRecord
 import com.lm.ll.spark.util.getQueryRecordCursor
@@ -108,12 +108,12 @@ class ArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLis
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_article_list)
 
-        if (intent.hasExtra(SITE_MAP_URL)) {
-            baseUri = intent.getStringExtra(SITE_MAP_URL)
+        if (intent.hasExtra(SUB_FORUM_URL)) {
+            baseUri = intent.getStringExtra(SUB_FORUM_URL)
         }
 
-        if (intent.hasExtra(SITE_MAP_TITLE)) {
-            subForumTitle = intent.getStringExtra(SITE_MAP_TITLE)
+        if (intent.hasExtra(SUB_FORUM_TITLE)) {
+            subForumTitle = intent.getStringExtra(SUB_FORUM_TITLE)
         }
 
         supportActionBar!!.title = subForumTitle

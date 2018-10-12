@@ -34,6 +34,14 @@ interface TabooBooksApiService {
     fun getSubForumList(): Observable<String>
 
     /**
+     * @desc 获取首页新闻列表
+     * @author ll
+     * @time 2018-10-10 15:53
+     */
+    @GET("https://www.6park.com")
+    fun getHomeNewsList():Observable<String>
+
+    /**
      * @desc 获取文章列表接口
      * @author ll
      * @time 2018-08-20 20:01
