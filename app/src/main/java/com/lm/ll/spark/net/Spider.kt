@@ -444,8 +444,8 @@ class Spider {
              * \s* 表示若干个空格（可以是0个），\s+ 表示一个或多个空格
              * 因为不同的文章可能段落符号不一致，两个\r\n之间可能有0到多个空格，影响下一步的替换处理。所以先将\r\n和\r\n之间的空格去掉再匹配，统一将段落转换成\r\n\r\n形式
              */
-            //去除文本中的6park.com
-            val puredText = originalText.replace("6park.com", "", true).replace("cool18.com","",true)
+            //文本中的6park.com或者cool18.com替换为段落标记，起到分段效果
+            val puredText = originalText.replace("6park.com", paragraphFlag, true).replace("cool18.com",paragraphFlag,true)
             //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
             val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(puredText, "")
             //判断文本中段落标记（\r\n\r\n）个数，大于某个值，则处理，否则不处理
