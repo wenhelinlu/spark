@@ -12,7 +12,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:background="?attr/bgColor"
-        android:lineSpacingMultiplier="1.2"
+        android:lineSpacingMultiplier="1.1"
         android:paddingBottom="8dp"
         android:textColor="?attr/textColor"
         android:textIsSelectable="true"
