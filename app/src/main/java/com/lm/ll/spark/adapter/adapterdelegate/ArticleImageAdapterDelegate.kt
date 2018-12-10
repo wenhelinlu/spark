@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.util.GlobalConst.Companion.LOG_TAG_COMMON
 import com.lm.ll.spark.util.getImageSizeAhead
 import kotlinx.android.synthetic.main.article_item_image.view.*
 import kotlinx.coroutines.experimental.CommonPool
@@ -50,7 +52,7 @@ class ArticleImageAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate
                         //获取图片尺寸，因为是访问网络，所以需要异步操作
                         size = getImageSizeAhead(it.text)
                     }
-//                        Log.d(LOG_TAG_COMMON, "width = ${size[0]}, height = ${size[1]}")
+                        Log.d(LOG_TAG_COMMON, "width = ${size[0]}, height = ${size[1]}")
                     requestOptions.override(size[0], size[1])
                     Glide.with(articleImage.context)
                             .load(it.text)

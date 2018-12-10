@@ -28,13 +28,13 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
         claDelegate.setOnItemClickListener(object : com.lm.ll.spark.listener.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 InitApplication.curArticle = items[position]
-                if (items[position].url!!.contains("cool18")) {
+//                if (items[position].url!!.contains("cool18")) {
                     val intent = Intent(activity, ArticleDisplayActivity::class.java)
                     activity.startActivity(intent)
-                } else {
-                    val intent = Intent(activity, RichTextActivity::class.java)
-                    activity.startActivity(intent)
-                }
+//                } else {
+//                    val intent = Intent(activity, RichTextActivity::class.java)
+//                    activity.startActivity(intent)
+//                }
             }
         })
 
@@ -42,16 +42,16 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
         salaDelegate.setOnItemClickListener(object : com.lm.ll.spark.listener.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 InitApplication.curArticle = items[position]
-                if (items[position].url!!.contains("cool18")) {
+//                if (items[position].url!!.contains("cool18")) {
                     val intent = Intent(activity, ArticleDisplayActivity::class.java)
                     if (items[position].classicalFlag == 1) {
                         intent.putExtra(IS_CLASSIC_ARTICLE, true)
                     }
                     activity.startActivity(intent)
-                } else {
-                    val intent = Intent(activity, RichTextActivity::class.java)
-                    activity.startActivity(intent)
-                }
+//                } else {
+//                    val intent = Intent(activity, RichTextActivity::class.java)
+//                    activity.startActivity(intent)
+//                }
             }
         })
 
