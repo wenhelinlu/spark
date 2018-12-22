@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.activity.ArticleDisplayActivity
-import com.lm.ll.spark.activity.RichTextActivity
 import com.lm.ll.spark.adapter.adapterdelegate.*
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.util.GlobalConst.Companion.FROM_NORMAL_LIST
 import com.lm.ll.spark.util.GlobalConst.Companion.IS_CLASSIC_ARTICLE
 
 /**
@@ -19,7 +19,7 @@ import com.lm.ll.spark.util.GlobalConst.Companion.IS_CLASSIC_ARTICLE
  */
 class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : ListDelegationAdapter<ArrayList<Article>>() {
 
-    //Recyclerview内部item的自定义单击事件，用于通过点击正文显示或隐藏状态栏和底部工具栏
+    //RecyclerView内部item的自定义单击事件，用于通过点击正文显示或隐藏状态栏和底部工具栏
     lateinit var mItemClickListener: ArticleAdapter.Companion.OnItemClickListener
 
     init {
@@ -27,31 +27,28 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
         val claDelegate = CommentListAdapterDelegate(activity)
         claDelegate.setOnItemClickListener(object : com.lm.ll.spark.listener.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                InitApplication.curArticle = items[position]
-//                if (items[position].url!!.contains("cool18")) {
-                    val intent = Intent(activity, ArticleDisplayActivity::class.java)
-                    activity.startActivity(intent)
-//                } else {
-//                    val intent = Intent(activity, RichTextActivity::class.java)
-//                    activity.startActivity(intent)
-//                }
+                //如果是从评论列表中打开的链接，则使用curArticleFromCommentList作为跳转传输的中介，而不使用curArticle，
+                // 防止从此链接打开的界面返回正文时，会把此链接打开后加载的正文覆盖原始的正文
+                InitApplication.curArticleFromCommentList = items[position]
+                val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                intent.putExtra(FROM_NORMAL_LIST, false)
+                activity.startActivity(intent)
             }
         })
 
         val salaDelegate = SimpleArticleListAdapterDelegate(activity)
         salaDelegate.setOnItemClickListener(object : com.lm.ll.spark.listener.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                InitApplication.curArticle = items[position]
-//                if (items[position].url!!.contains("cool18")) {
-                    val intent = Intent(activity, ArticleDisplayActivity::class.java)
-                    if (items[position].classicalFlag == 1) {
-                        intent.putExtra(IS_CLASSIC_ARTICLE, true)
-                    }
-                    activity.startActivity(intent)
-//                } else {
-//                    val intent = Intent(activity, RichTextActivity::class.java)
-//                    activity.startActivity(intent)
-//                }
+                //如果是从评论列表中打开的链接，则使用curArticleFromCommentList作为跳转传输的中介，而不使用curArticle，
+                // 防止从此链接打开的界面返回正文时，会把此链接打开后加载的正文覆盖原始的正文
+                //TODO 注意：此处可能会存在问题，比如精华区正常列表也使用SimpleArticleListAdapterDelegate，所以还是可能造成混乱，需要再考虑
+                InitApplication.curArticleFromCommentList = items[position]
+                val intent = Intent(activity, ArticleDisplayActivity::class.java)
+                if (items[position].classicalFlag == 1) {
+                    intent.putExtra(IS_CLASSIC_ARTICLE, true)
+                }
+                intent.putExtra(FROM_NORMAL_LIST, false)
+                activity.startActivity(intent)
             }
         })
 

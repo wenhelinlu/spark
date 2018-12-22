@@ -21,6 +21,9 @@ class InitApplication : Application() {
 
         //用于不同Activity间数据的传递，这样不需要对Article和Comment进行Parcelable处理
         var curArticle:Article? = null
+
+        var curArticleFromCommentList: Article? = null
+
         var screenWidth:Int = 0
 
         fun getInstance(): InitApplication {
