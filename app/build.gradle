@@ -66,8 +66,10 @@ dependencies {
     //注意：如果是Java工程则使用kotlinx-coroutines-core
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
-    //HanLP库
-    implementation 'com.hankcs:hanlp:portable-1.6.6'
+    //HanLP库 繁简转换
+    implementation 'com.hankcs:hanlp:portable-1.7.1'
+    //opencc-android 繁简转换库
+    //implementation 'com.zqc.opencc.android.lib:lib-opencc-android:0.8.0@aar'
 
     //图文混排库
     implementation('com.github.sendtion:XRichText:1.5') {
