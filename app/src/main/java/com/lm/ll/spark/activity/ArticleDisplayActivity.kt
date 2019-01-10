@@ -21,6 +21,7 @@ import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.GlobalConst.Companion.FROM_NORMAL_LIST
 import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
+import com.lm.ll.spark.util.convertToSimplifiedChinese
 import com.lm.ll.spark.util.getImgSrc
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
@@ -319,6 +320,17 @@ class ArticleDisplayActivity : AppCompatActivity() {
             this.linearLayoutManager.scrollToPositionWithOffset(this.recyclerViewArticle.adapter!!.itemCount - 1, 0)
         }
 
+        //繁体转换成简体
+        iv_translate.setOnClickListener {
+            currentArticle.title = currentArticle.title!!.convertToSimplifiedChinese(true)
+            currentArticle.text = currentArticle.text.convertToSimplifiedChinese(true)
+
+            iv_translate.setImageResource(R.drawable.ic_menu_translated)
+
+            updateAdapter()
+            toast("转换完成")
+        }
+
         //在浏览器中打开
         iv_openInBrowser.setOnClickListener {
             val intent = Intent()
@@ -363,7 +375,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
                 .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
                     currentArticle = result
-                    updateAdapter()
+                    getReadingStatus()
                 }, { error ->
                     //异常处理
                     val msg =
@@ -379,11 +391,11 @@ class ArticleDisplayActivity : AppCompatActivity() {
     }
 
     /**
-     * @desc 更新RecyclerView的Adapter
+     * @desc 获取文章阅读状态
      * @author ll
      * @time 2018-07-10 15:23
      */
-    private fun updateAdapter() {
+    private fun getReadingStatus() {
 
         //查询此文章是否已收藏（在数据库中存在）
         //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
@@ -405,7 +417,15 @@ class ArticleDisplayActivity : AppCompatActivity() {
         } else {
             iv_favorite.setImageResource(R.drawable.ic_menu_unfavorite)
         }
+        updateAdapter()
+    }
 
+    /**
+     * @desc 更新RecyclerView的Adapter
+     * @author ll
+     * @time 2018-07-10 15:23
+     */
+    private fun updateAdapter() {
         adapter = ArticleAdapter(this@ArticleDisplayActivity, toArticleList(currentArticle))
         adapter.mItemClickListener = object : ArticleAdapter.Companion.OnItemClickListener {
             override fun onItemClick(view: View) {

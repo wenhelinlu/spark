@@ -12,6 +12,9 @@ class GlobalConst {
         //文章列表初次加载时最小行数
         const val LIST_MIN_COUNT = 25
 
+        //文章列表上滑加载时一次加载最少行数
+        const val LIST_MIN_UP_REFRESH = 15
+
         //禁忌书屋基地址
         const val BASE_URL = "https://www.cool18.com/bbs4/index.php"
 

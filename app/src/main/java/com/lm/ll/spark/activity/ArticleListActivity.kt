@@ -22,6 +22,7 @@ import com.lm.ll.spark.util.FirebaseLogUtils
 import com.lm.ll.spark.util.GlobalConst.Companion.BASE_URL
 import com.lm.ll.spark.util.GlobalConst.Companion.CURRENT_BASE_URL
 import com.lm.ll.spark.util.GlobalConst.Companion.LIST_MIN_COUNT
+import com.lm.ll.spark.util.GlobalConst.Companion.LIST_MIN_UP_REFRESH
 import com.lm.ll.spark.util.GlobalConst.Companion.PULL_REFRESH_DISTANCE
 import com.lm.ll.spark.util.GlobalConst.Companion.SUB_FORUM_TITLE
 import com.lm.ll.spark.util.GlobalConst.Companion.SUB_FORUM_URL
@@ -173,6 +174,17 @@ class ArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLis
                 //Log.d(LOG_TAG_COMMON, "isLoadMore = $isLoadMore, pageIndex = $pageIndex, list'size = ${list.size}")
 
                 if (isLoadMore) {
+                    //如果此时获取的集合数据不超过预定值，则继续加载数据
+                    while (list.size < LIST_MIN_UP_REFRESH) {
+                        pageIndex = if (isQueryStatus) ++queryCurrentPage else ++currentPage
+                        val tmpList = download(pageIndex)
+
+                        //如果没有更多数据，则不再继续
+                        if (tmpList == null || tmpList.size == 0) {
+                            break
+                        }
+                        list.addAll(tmpList)
+                    }
                     articleList.addAll(list) //如果是上拉加载更多，则直接将新获取的数据源添加到已有集合中
                 } else {
                     /**
@@ -198,6 +210,10 @@ class ArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLis
                         while (articleList.size < LIST_MIN_COUNT) {
                             pageIndex = if (isQueryStatus) ++queryCurrentPage else ++currentPage
                             val tmpList = download(pageIndex)
+                            //如果没有更多数据，则不再继续
+                            if (tmpList == null || tmpList.size == 0) {
+                                break
+                            }
                             articleList.addAll(tmpList)
                         }
                     }

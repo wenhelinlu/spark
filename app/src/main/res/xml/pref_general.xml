@@ -9,6 +9,13 @@
         android:summary="@string/pref_description_auto_night_mode"
         android:title="@string/pref_title_auto_night_mode" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="auto_t2s"
+        android:icon="@drawable/ic_menu_translate"
+        android:summary="@string/pref_desc_lang_t2s"
+        android:title="@string/pref_lang_t2s" />
+
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
     <EditTextPreference

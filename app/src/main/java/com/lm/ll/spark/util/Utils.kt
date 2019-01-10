@@ -23,9 +23,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
-
 //region 扩展方法
 
+//是否设置了自动进行繁简转换
+val autoTranslate = PreferenceManager.getDefaultSharedPreferences(InitApplication.getInstance()).getBoolean("auto_t2s", false)
 
 /**
  * @desc String类的扩展方法，将String类型的日期转换为指定格式的日期字符串形式
@@ -44,16 +45,22 @@ fun String.toFormatedDate(format: String = "yyyy-MM-dd"): String {
  * @desc String类的扩展方法，将String转换成简体中文
  * @author ll
  * @time 2018-07-09 16:23
+ * @param forceConvert 强制进行繁简转换
  * @return 简体中文
  */
-fun String.convertToSimplifiedChinese(): String {
+fun String.convertToSimplifiedChinese(forceConvert: Boolean = false): String {
     return if (this.isBlank()) {
         this
     } else {
-//        ChineseConverter.convert(this, ConversionType.T2S, InitApplication.getInstance())
-        HanLP.convertToSimplifiedChinese(this)
+        //根据设置中是否启用自动繁简转换来操作
+//        Log.d(LOG_TAG_COMMON, " auto_t2s = $autoTranslate")
+        if (autoTranslate || forceConvert) {
+            //        ChineseConverter.convert(this, ConversionType.T2S, InitApplication.getInstance())  //opencc-android转换库的用法
+            HanLP.convertToSimplifiedChinese(this)
+        } else {
+            this
+        }
     }
-//    return this
 }
 
 //简化的Toast方法
@@ -209,12 +216,12 @@ fun getImgSrc(content: String): String? {
  * @param imageUrl 网络图像路径
  * @return
  */
-fun getImageSizeAhead(imageUrl:String):IntArray{
+fun getImageSizeAhead(imageUrl: String): IntArray {
     val options = BitmapFactory.Options()
     options.inPreferredConfig = Bitmap.Config.RGB_565 //压缩图片
     options.inJustDecodeBounds = true //仅返回宽高，减少内存占用
     //这里返回的Bitmap是null，因为options的inJustDecodeBounds属性设为true
-    val bitmap = BitmapFactory.decodeStream(URL(imageUrl).openStream(),null, options)
+    val bitmap = BitmapFactory.decodeStream(URL(imageUrl).openStream(), null, options)
 
     return intArrayOf(options.outWidth, options.outHeight)
 }
