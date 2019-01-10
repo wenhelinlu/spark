@@ -5,7 +5,6 @@
 /build
 /captures
 .externalNativeBuild
-app/libs/
 /.idea/assetWizardSettings.xml
 .idea/assetWizardSettings.xml
 .idea/
