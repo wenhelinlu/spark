@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatDelegate
 import android.widget.Toast
 import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.application.InitApplication
+import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
 import com.lm.ll.spark.enum.ForumType
@@ -66,6 +68,36 @@ fun String.convertToSimplifiedChinese(forceConvert: Boolean = false): String {
 //简化的Toast方法
 fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, message, duration).show()
+}
+
+/**
+ * @desc Article类的深拷贝
+ * @author Administrator
+ * @time 2019-01-29 17:35
+ */
+
+fun Article.deepCopy(): Article {
+    var newArticle = Article()
+    newArticle.text = this.text
+    newArticle.title = this.title
+    newArticle.articleFlag = this.articleFlag
+    newArticle.author = this.author
+    newArticle.classicalFlag = this.classicalFlag
+    newArticle.date = this.date
+    newArticle.depth = this.depth
+    newArticle.favorite = this.favorite
+    newArticle.id = this.id
+    newArticle.insertTime = this.insertTime
+    newArticle.leavePosition = this.leavePosition
+    newArticle.offset = this.offset
+    newArticle.readCount = this.readCount
+    newArticle.textLength = this.textLength
+    newArticle.url = this.url
+
+    val commentList = ArrayList<Comment>()
+    commentList.addAll(this.comments)
+
+    return newArticle
 }
 
 //endregion

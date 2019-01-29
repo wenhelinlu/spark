@@ -71,8 +71,5 @@ class GlobalConst {
 
         //文章正文中文本和图片之间分隔符
         const val TEXT_IMAGE_SPLITER = "@@@"
-
-        //链接是否来源于正常列表，即不是文章中的列表的key
-        const val FROM_NORMAL_LIST = "from_normal_list"
     }
 }

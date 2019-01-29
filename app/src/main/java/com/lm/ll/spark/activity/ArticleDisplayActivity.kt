@@ -18,10 +18,10 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
-import com.lm.ll.spark.util.GlobalConst.Companion.FROM_NORMAL_LIST
 import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
 import com.lm.ll.spark.util.convertToSimplifiedChinese
+import com.lm.ll.spark.util.deepCopy
 import com.lm.ll.spark.util.getImgSrc
 import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
@@ -49,8 +49,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
     //是否需要强制刷新（如果是从我的收藏打开，则直接读取数据库中，否则重新从网上获取）
     private var isForceRefresh = false
 
-    //链接是否来源于正常文章列表，即不是点击正文中的评论列表尔打开的
-    private var isFromNormalList = true
     //接收从文章列表传过来的被点击的文章Model
     private lateinit var currentArticle: Article
     //可绑定不同布局的adapter
@@ -116,10 +114,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.article_display)
-
-        if (intent.hasExtra(FROM_NORMAL_LIST)) {
-            isFromNormalList = intent.getBooleanExtra(FROM_NORMAL_LIST, true)
-        }
 
         initData()
 
@@ -245,14 +239,8 @@ class ArticleDisplayActivity : AppCompatActivity() {
      * @time 2018-06-07 16:33
      */
     private fun initData() {
-
-        //区分是从文章正文中的列表打开还是从正常的文章列表中打开此界面
-        //从列表中传来的点击的标题
-        currentArticle = if (isFromNormalList) {
-            InitApplication.curArticle!!
-        } else {
-            InitApplication.curArticleFromCommentList!!
-        }
+        //使用深拷贝，避免打开文章评论后再返回，会把评论的正文赋值给当前正文
+        currentArticle = InitApplication.curArticle!!.deepCopy()
 
         currentArticle.articleFlag = 0  //适用正文item布局
 

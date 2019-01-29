@@ -10,7 +10,6 @@ import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.adapter.adapterdelegate.*
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.util.GlobalConst.Companion.FROM_NORMAL_LIST
 import com.lm.ll.spark.util.GlobalConst.Companion.IS_CLASSIC_ARTICLE
 
 /**
@@ -29,9 +28,8 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
             override fun onItemClick(view: View, position: Int) {
                 //如果是从评论列表中打开的链接，则使用curArticleFromCommentList作为跳转传输的中介，而不使用curArticle，
                 // 防止从此链接打开的界面返回正文时，会把此链接打开后加载的正文覆盖原始的正文
-                InitApplication.curArticleFromCommentList = items[position]
+                InitApplication.curArticle = items[position]
                 val intent = Intent(activity, ArticleDisplayActivity::class.java)
-                intent.putExtra(FROM_NORMAL_LIST, false)
                 activity.startActivity(intent)
             }
         })
@@ -42,12 +40,11 @@ class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : L
                 //如果是从评论列表中打开的链接，则使用curArticleFromCommentList作为跳转传输的中介，而不使用curArticle，
                 // 防止从此链接打开的界面返回正文时，会把此链接打开后加载的正文覆盖原始的正文
                 //TODO 注意：此处可能会存在问题，比如精华区正常列表也使用SimpleArticleListAdapterDelegate，所以还是可能造成混乱，需要再考虑
-                InitApplication.curArticleFromCommentList = items[position]
+                InitApplication.curArticle = items[position]
                 val intent = Intent(activity, ArticleDisplayActivity::class.java)
                 if (items[position].classicalFlag == 1) {
                     intent.putExtra(IS_CLASSIC_ARTICLE, true)
                 }
-                intent.putExtra(FROM_NORMAL_LIST, false)
                 activity.startActivity(intent)
             }
         })
