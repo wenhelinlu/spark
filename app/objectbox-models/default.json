@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:5171091627223607668",
-      "lastPropertyId": "15:3269112451254953653",
+      "lastPropertyId": "17:2165048789104812445",
       "name": "Article",
       "properties": [
         {
@@ -67,6 +67,14 @@
         {
           "id": "15:3269112451254953653",
           "name": "depth"
+        },
+        {
+          "id": "16:3207121448295658709",
+          "name": "commentsCached"
+        },
+        {
+          "id": "17:2165048789104812445",
+          "name": "parentId"
         }
       ],
       "relations": [

@@ -88,6 +88,27 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
         return Observable.just(articles)
     }
 
+    /**
+     * @desc 批量缓存评论列表内容
+     * @author Administrator
+     * @time 2019-01-30 15:42
+     * @param articles 待缓存的评论列表（已转换成Article列表）
+     */
+
+    fun cacheCommentsList(articles: List<Article>): Observable<List<Article>> {
+        //从网络中抓取文章
+        val list = arrayListOf<Article>()
+        articles.forEach {
+            try {
+                val doc = Jsoup.parse(it.url)
+                val item = Spider.scratchText(doc, it)
+                list.add(item)
+            } catch (ex: Exception) {
+            }
+
+        }
+        return Observable.just(list)
+    }
 
     /**
      * @desc 抓取文章内容，利用缓存，首先判断数据库中是否存在数据，是则从数据库中读取，否则从网络获取（如果强制刷新则直接从网络获取）

@@ -22,6 +22,8 @@ data class Article(
         var text: String = "", //文章正文
         var insertTime: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), //文章收藏入库时间
         var favorite: Int = 0,  //是否被收藏, 1表示已收藏，0表示未收藏
+        var commentsCached: Int = 0, //评论列表是否被缓存,1表示已缓存，0表示未缓存
+        var parentId: Long = -1, //父Id，对于被缓存的评论列表来说，此值存储的是文章的id，这样如果撤销缓存，可以根据此值快速从数据表中删除
         var articleFlag: Int = 0, //是否是Article，0表示Article正文文本，1表示Comment，2表示正文和评论列表间的分隔栏，3表示正文中的图标标签（包含<img的文本）
         var classicalFlag: Int = 0, //是否是经典书库文章，0表示否，1表示是（解析正文方式不同）
         var leavePosition: Int = 0, //当前RecyclerView中第一个可见的item的位置

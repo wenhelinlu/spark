@@ -401,31 +401,35 @@ class Spider {
         fun scratchText(doc: Document, article: Article): Article {
             try {
                 val body: Elements = doc.getElementsByTag("pre") //TODO 图文混排
-                val originalText = body[0].outerHtml()
 
-                //如果网页文本中包含图片信息，则使用抓取图文混排的方法，否则直接获取文本
-                article.text = if (originalText.contains("<img") && originalText.contains("src=")) {
-                    scratchRichTextData(doc)
-                } else {
-                    parseText(body[0])
+                if (body.any()) {
+                    val originalText = body[0].outerHtml()
+
+                    //如果网页文本中包含图片信息，则使用抓取图文混排的方法，否则直接获取文本
+                    article.text = if (originalText.contains("<img") && originalText.contains("src=")) {
+                        scratchRichTextData(doc)
+                    } else {
+                        parseText(body[0])
+                    }
+
+                    val commentList = ArrayList<Comment>()
+                    //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
+                    val links: Elements = body[0].getElementsByTag("a")
+                    for (link in links) {
+                        val comment = Comment()
+                        comment.url = link.attr("href")
+                        comment.title = link.text().convertToSimplifiedChinese()
+
+                        commentList.add(comment)
+                    }
+                    //因为在精华区中，章节链接是倒序显示，所以将其翻转
+                    commentList.reverse()
+
+                    //抓取对正文的评论列表
+                    commentList.addAll(scratchComments(doc, article.url!!.substringBefore("index")))
+                    article.comments.addAll(commentList)
                 }
 
-                val commentList = ArrayList<Comment>()
-                //抓取文章正文中可能包含的其他章节链接（比如精华区中的正文）
-                val links: Elements = body[0].getElementsByTag("a")
-                for (link in links) {
-                    val comment = Comment()
-                    comment.url = link.attr("href")
-                    comment.title = link.text().convertToSimplifiedChinese()
-
-                    commentList.add(comment)
-                }
-                //因为在精华区中，章节链接是倒序显示，所以将其翻转
-                commentList.reverse()
-
-                //抓取对正文的评论列表
-                commentList.addAll(scratchComments(doc, article.url!!.substringBefore("index")))
-                article.comments.addAll(commentList)
 
                 return article
             } catch (t: Throwable) {

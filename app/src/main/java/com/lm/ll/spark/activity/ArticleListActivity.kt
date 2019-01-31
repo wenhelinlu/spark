@@ -2,6 +2,7 @@ package com.lm.ll.spark.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.provider.Contacts
 import android.support.v4.widget.SimpleCursorAdapter
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -30,10 +31,7 @@ import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import com.lm.ll.spark.util.getQueryRecord
 import com.lm.ll.spark.util.getQueryRecordCursor
 import kotlinx.android.synthetic.main.activity_article_list.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 
 
@@ -164,7 +162,7 @@ class ArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLis
     private fun loadData(download: (page: Int) -> ArrayList<Article>, isLoadMore: Boolean = false) {
         val currentPos: Int = articleList.size
 
-        async(UI) {
+        async(Contacts.Intents.UI) {
             showProgress(true)
             withContext(CommonPool) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容

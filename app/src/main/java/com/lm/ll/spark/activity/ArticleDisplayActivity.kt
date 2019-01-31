@@ -77,11 +77,11 @@ class ArticleDisplayActivity : AppCompatActivity() {
         // at compile-time and do nothing on earlier devices.
         articleLayout.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                View.SYSTEM_UI_FLAG_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
 
     /**
@@ -196,7 +196,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
         // Show the system bar
         articleLayout.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         mVisible = true
 
         // Schedule a runnable to display UI elements after a delay
@@ -282,7 +282,6 @@ class ArticleDisplayActivity : AppCompatActivity() {
 
         //收藏图标点击事件
         iv_favorite.setOnClickListener {
-
             //收藏或取消收藏
             if (currentArticle.favorite == 1) {
                 currentArticle.favorite = 0
@@ -319,6 +318,18 @@ class ArticleDisplayActivity : AppCompatActivity() {
             toast("转换完成")
         }
 
+        //缓存评论列表内容
+        iv_cachecomment.setOnClickListener {
+            hide()
+            val msg = if (currentArticle.commentsCached == 0) "确定要缓存评论列表内容吗?" else "确定要清除评论列表缓存内容吗?"
+            try {
+                Snackbar.make(articleLayout, msg, Snackbar.LENGTH_LONG)
+                        .setAction("确定") { cacheComments() }.show()
+            } catch (ex: Exception) {
+                toast(ex.message!!)
+            }
+        }
+
         //在浏览器中打开
         iv_openInBrowser.setOnClickListener {
             val intent = Intent()
@@ -330,6 +341,55 @@ class ArticleDisplayActivity : AppCompatActivity() {
         //评论列表添加点线分隔线
         this.recyclerViewArticle.addItemDecoration(DashLineItemDecoration(10f, 2))
         this.recyclerViewArticle.layoutManager = linearLayoutManager
+    }
+
+    /**
+     * @desc 缓存评论列表内容
+     * @author Administrator
+     * @time 2019-01-30 15:46
+     */
+    private fun cacheComments() {
+        //缓存或清除缓存
+        if (currentArticle.commentsCached == 1) {
+            currentArticle.commentsCached = 0
+            //从数据库中删除当前文章缓存的评论列表数据
+            var commentIds = getArticleBox().query().equal(Article_.parentId, currentArticle.id).build().findIds().toList()
+            getArticleBox().removeByKeys(commentIds)
+
+        } else {
+            currentArticle.commentsCached = 1
+            //将评论列表内容缓存到数据表中
+            val repository = TabooArticlesRepository(TabooBooksApiService.create())
+            repository.cacheCommentsList(toArticleList(currentArticle))
+                    .subscribeOn(Schedulers.io())
+                    .doOnSubscribe {
+                        showProgress(true)
+                    }
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doAfterTerminate {
+                        showProgress(false)
+                    }
+                    .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
+                    .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
+                    .subscribe({ result ->
+                        getArticleBox().put(result)
+                    }, { error ->
+                        //异常处理
+                        val msg =
+                                when (error) {
+                                    is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
+                                    is TimeoutException -> "网络连接超时"
+                                    is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
+                                    else -> error.toString()
+                                }
+                        Snackbar.make(articleLayout, msg, Snackbar.LENGTH_LONG)
+                                .setAction("了解") { }.show()
+                    })
+        }
+
+        iv_cachecomment.setImageResource(if (currentArticle.commentsCached == 1) R.drawable.ic_menu_cached else R.drawable.ic_menu_uncache)
+        toast(if (currentArticle.commentsCached == 1) "批量缓存成功" else "缓存已清除")
     }
 
     /**
@@ -393,6 +453,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
         if (find != null) {
             currentArticle.id = find.id  //id为Long类型，由ObjectBox自动生成
             currentArticle.favorite = 1
+            currentArticle.commentsCached = find.commentsCached
             currentArticle.leavePosition = find.leavePosition
             currentArticle.offset = find.offset
         }
