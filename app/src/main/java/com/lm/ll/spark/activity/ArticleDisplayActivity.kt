@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
@@ -17,6 +16,7 @@ import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.decoration.DashLineItemDecoration
+import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
@@ -30,6 +30,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.article_display.*
 import kotlinx.android.synthetic.main.bottom_toolbar_text.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jsoup.Jsoup
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.util.concurrent.TimeoutException
@@ -42,7 +46,7 @@ import javax.net.ssl.SSLHandshakeException
  * @email: wenhelinlu@gmail.com
  * @version: 0.1
  */
-class ArticleDisplayActivity : AppCompatActivity() {
+class ArticleDisplayActivity : CoroutineScopeActivity() {
 
     //是否是经典情色书库中文章的正文（需要单独解析）
     private var isClassic = false
@@ -349,47 +353,34 @@ class ArticleDisplayActivity : AppCompatActivity() {
      * @time 2019-01-30 15:46
      */
     private fun cacheComments() {
-        //缓存或清除缓存
-        if (currentArticle.commentsCached == 1) {
-            currentArticle.commentsCached = 0
-            //从数据库中删除当前文章缓存的评论列表数据
-            var commentIds = getArticleBox().query().equal(Article_.parentId, currentArticle.id).build().findIds().toList()
-            getArticleBox().removeByKeys(commentIds)
+        launch {
+            withContext(Dispatchers.IO) {
+                //缓存或清除缓存
+                if (currentArticle.commentsCached == 1) {
+                    currentArticle.commentsCached = 0
+                    //从数据库中删除当前文章缓存的评论列表数据
+                    var commentIds = getArticleBox().query().equal(Article_.parentId, currentArticle.id).build().findIds().toList()
+                    getArticleBox().removeByKeys(commentIds)
 
-        } else {
-            currentArticle.commentsCached = 1
-            //将评论列表内容缓存到数据表中
-            val repository = TabooArticlesRepository(TabooBooksApiService.create())
-            repository.cacheCommentsList(toArticleList(currentArticle, true))
-                    .subscribeOn(Schedulers.io())
-                    .doOnSubscribe {
-                        showProgress(true)
+                } else {
+                    currentArticle.commentsCached = 1
+                    //将评论列表内容缓存到数据表中
+                    val comments = toArticleList(currentArticle, true)
+                    //从网络中抓取文章
+                    val list = arrayListOf<Article>()
+                    comments.forEach {
+                        try {
+                            val doc = Jsoup.parse(it.url)
+                            val item = Spider.scratchText(doc, it)
+                            list.add(item)
+                        } catch (ex: Exception) {
+                        }
                     }
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doAfterTerminate {
-                        showProgress(false)
-                    }
-                    .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                    .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
-                    .subscribe({ result ->
-                        getArticleBox().put(result)
-                    }, { error ->
-                        //异常处理
-                        val msg =
-                                when (error) {
-                                    is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
-                                    is TimeoutException -> "网络连接超时"
-                                    is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
-                                    else -> error.toString()
-                                }
-                        Snackbar.make(articleLayout, msg, Snackbar.LENGTH_LONG)
-                                .setAction("了解") { }.show()
-                    })
+                }
+            }
+            iv_cachecomment.setImageResource(if (currentArticle.commentsCached == 1) R.drawable.ic_menu_cached else R.drawable.ic_menu_uncache)
+            toast(if (currentArticle.commentsCached == 1) "批量缓存成功" else "缓存已清除")
         }
-
-        iv_cachecomment.setImageResource(if (currentArticle.commentsCached == 1) R.drawable.ic_menu_cached else R.drawable.ic_menu_uncache)
-        toast(if (currentArticle.commentsCached == 1) "批量缓存成功" else "缓存已清除")
     }
 
     /**

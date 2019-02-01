@@ -1,29 +1,23 @@
 package com.lm.ll.spark.activity
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
-import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
-import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.GlobalConst.Companion.PULL_REFRESH_DISTANCE
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.lm.ll.spark.util.ObjectBox
+import com.lm.ll.spark.util.toast
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.util.concurrent.TimeoutException
-import javax.net.ssl.SSLHandshakeException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 作者：Created by ll on 2018-06-07 17:15.
@@ -38,9 +32,6 @@ class FavoriteArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout
     private var articleList: ArrayList<Article> = ArrayList()
     //文章列表adapter
     private lateinit var adapter: ArticleListAdapter
-
-    //使用AutoDispose解除RxJava2订阅
-    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,49 +52,36 @@ class FavoriteArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout
         adapter = ArticleListAdapter(this@FavoriteArticleListActivity, articleList)
         this@FavoriteArticleListActivity.recyclerViewEliteList.adapter = adapter
 
-        loadDataWithRx()
+        loadData()
     }
 
     override fun onResume() {
         super.onResume()
-        loadDataWithRx()
+        loadData()
     }
 
     /**
-     * @desc 使用RxJava2从数据库中加载数据
-     * @author lm
-     * @time 2018-07-12 21:50
+     * @desc 从数据库中读取数据
+     * @author Administrator
+     * @time 2019-02-01 14:46
      */
-    private fun loadDataWithRx() {
-        val repository = TabooArticlesRepository(TabooBooksApiService.create())
-        repository.getFavoriteArticleList()
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe {
-                    showProgress(true)
-                }
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doFinally {
-                    showProgress(false)
-                }
-                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
-                .subscribe({ result ->
+    private fun loadData() {
+        launch {
+            showProgress(true)
+            try {
+                withContext(Dispatchers.IO) {
+                    //注意：Article_.comments中的下划线，这个Article_是ObjectBox内部生成的properties class,即属性类，通过它可以直接获取Article类的各个属性
+                    val articles = ObjectBox.getArticleBox().query().orderDesc(Article_.insertTime).build().find()
                     articleList.clear()
-                    articleList.addAll(ArrayList(result))
-                    refreshData()
-                }, { error ->
-                    //异常处理
-                    val msg =
-                            when (error) {
-                                is HttpException, is SSLHandshakeException,is ConnectException -> "网络连接异常"
-                                is TimeoutException -> "网络连接超时"
-                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
-                                else -> error.toString()
-                            }
-                    Snackbar.make(elite_layout, msg, Snackbar.LENGTH_LONG)
-                            .setAction("重试") { loadDataWithRx() }.show()
-                })
+                    articleList.addAll(ArrayList(articles))
+                }
+            } catch (e: Exception) {
+                toast("加载失败")
+            }
+
+            showProgress(false)
+            refreshData()
+        }
     }
 
     /**

@@ -30,7 +30,7 @@ import com.lm.ll.spark.util.getQueryRecord
 import com.lm.ll.spark.util.getQueryRecordCursor
 import kotlinx.android.synthetic.main.activity_article_list.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 
@@ -162,7 +162,7 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
     private fun loadData(download: (page: Int) -> ArrayList<Article>, isLoadMore: Boolean = false) {
         val currentPos: Int = articleList.size
 
-        async(Dispatchers.Main) {
+        launch {
             showProgress(true)
             withContext(Dispatchers.IO) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容

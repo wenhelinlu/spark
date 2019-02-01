@@ -17,7 +17,7 @@ import com.lm.ll.spark.util.GlobalConst.Companion.LIST_MIN_COUNT
 import com.lm.ll.spark.util.GlobalConst.Companion.PULL_REFRESH_DISTANCE
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -81,7 +81,7 @@ class EliteEroticaArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLa
 
         val currentPos: Int = articleList.size
 
-        async(Dispatchers.Main) {
+        launch {
             showProgress(true)
             withContext(Dispatchers.IO) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
