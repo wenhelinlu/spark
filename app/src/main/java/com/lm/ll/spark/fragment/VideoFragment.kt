@@ -18,10 +18,10 @@ import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.listener.MyRecyclerViewOnScrollListener
 import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.util.GlobalConst
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class VideoFragment : Fragment() {
     /**
@@ -134,9 +134,9 @@ class VideoFragment : Fragment() {
     private fun loadData(download: (page: Int) -> ArrayList<Article>, isLoadMore: Boolean = false) {
         val currentPos: Int = videoList.size
 
-        async(UI) {
+        GlobalScope.launch(Dispatchers.Main) {
             showProgress(true)
-            withContext(CommonPool) {
+            withContext(Dispatchers.IO) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
                 var pageIndex = if (isLoadMore) currentPage else 1
                 val list = download(pageIndex)

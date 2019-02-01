@@ -3,7 +3,6 @@ package com.lm.ll.spark.activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
@@ -18,10 +17,9 @@ import com.lm.ll.spark.util.GlobalConst.Companion.IS_CLASSIC_ARTICLE
 import com.lm.ll.spark.util.GlobalConst.Companion.LIST_MIN_COUNT
 import com.lm.ll.spark.util.GlobalConst.Companion.PULL_REFRESH_DISTANCE
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -29,7 +27,7 @@ import kotlinx.coroutines.experimental.withContext
  * 作者：Created by ll on 2018-06-11 16:16.
  * 邮箱：wenhelinlu@gmail.com
  */
-class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+class ClassicEroticaArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
         showProgress(false)
     }
@@ -84,10 +82,9 @@ class ClassicEroticaArticleListActivity : AppCompatActivity(), SwipeRefreshLayou
 
         val currentPos: Int = articleList.size
 
-        async(UI) {
+        async(Dispatchers.Main) {
             showProgress(true)
-
-            withContext(CommonPool) {
+            withContext(Dispatchers.IO) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
                 val pageIndex = if (isLoadMore) currentPage else 1
                 val list = Spider.scratchClassicEroticaArticleList("${BASE_URL}classbk/md$pageIndex.shtml")

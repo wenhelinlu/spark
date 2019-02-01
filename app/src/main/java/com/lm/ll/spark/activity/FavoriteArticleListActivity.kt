@@ -3,7 +3,6 @@ package com.lm.ll.spark.activity
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.util.Log
@@ -30,7 +29,7 @@ import javax.net.ssl.SSLHandshakeException
  * 作者：Created by ll on 2018-06-07 17:15.
  * 邮箱：wenhelinlu@gmail.com
  */
-class FavoriteArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+class FavoriteArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
         showProgress(false)
     }

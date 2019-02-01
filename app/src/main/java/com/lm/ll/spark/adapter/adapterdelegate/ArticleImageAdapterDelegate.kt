@@ -19,10 +19,10 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.GlobalConst.Companion.LOG_TAG_COMMON
 import com.lm.ll.spark.util.getImageSizeAhead
 import kotlinx.android.synthetic.main.article_item_image.view.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 作者：Created by ll on 2018-09-21 14:46.
@@ -46,9 +46,9 @@ class ArticleImageAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate
             items[position].let {
 
                 //使用async，先获取图片的尺寸，然后根据尺寸加载图片
-                async(UI) {
+                GlobalScope.launch(Dispatchers.Main) {
                     var size = intArrayOf()
-                    withContext(CommonPool) {
+                    withContext(Dispatchers.IO) {
                         //获取图片尺寸，因为是访问网络，所以需要异步操作
                         size = getImageSizeAhead(it.text)
                     }

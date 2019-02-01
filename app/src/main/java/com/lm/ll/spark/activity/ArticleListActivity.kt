@@ -2,10 +2,8 @@ package com.lm.ll.spark.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.provider.Contacts
 import android.support.v4.widget.SimpleCursorAdapter
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.Menu
@@ -31,11 +29,13 @@ import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import com.lm.ll.spark.util.getQueryRecord
 import com.lm.ll.spark.util.getQueryRecordCursor
 import kotlinx.android.synthetic.main.activity_article_list.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 
 
-class ArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onRefresh() {
         showProgress(false)
@@ -162,9 +162,9 @@ class ArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLis
     private fun loadData(download: (page: Int) -> ArrayList<Article>, isLoadMore: Boolean = false) {
         val currentPos: Int = articleList.size
 
-        async(Contacts.Intents.UI) {
+        async(Dispatchers.Main) {
             showProgress(true)
-            withContext(CommonPool) {
+            withContext(Dispatchers.IO) {
                 //如果下拉刷新，则只抓取第一页内容，否则加载下一页内容
                 var pageIndex = if (isLoadMore) if (isQueryStatus) queryCurrentPage else currentPage else 1
                 val list = download(pageIndex)
@@ -403,7 +403,6 @@ class ArticleListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLis
 
         return true
     }
-
 }
 
 //TODO: 检测网络状态，不通时通过Toast提示

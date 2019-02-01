@@ -360,7 +360,7 @@ class ArticleDisplayActivity : AppCompatActivity() {
             currentArticle.commentsCached = 1
             //将评论列表内容缓存到数据表中
             val repository = TabooArticlesRepository(TabooBooksApiService.create())
-            repository.cacheCommentsList(toArticleList(currentArticle))
+            repository.cacheCommentsList(toArticleList(currentArticle, true))
                     .subscribeOn(Schedulers.io())
                     .doOnSubscribe {
                         showProgress(true)
@@ -498,38 +498,40 @@ class ArticleDisplayActivity : AppCompatActivity() {
         }
     }
 
-
     /**
      * @desc 将article中的comment列表转换成article列表，用于使用不同布局的Adapter中
      * @author lm
      * @time 2018-07-07 23:35
      */
-    private fun toArticleList(article: Article): ArrayList<Article> {
+    private fun toArticleList(article: Article, onlyComments: Boolean = false): ArrayList<Article> {
         val list = ArrayList<Article>()
 
-        // 正文布局数据
-        val text = article.text
-        val textList = text.split(TEXT_IMAGE_SPLITER)
-        textList.map {
-            var a = article.copy()
-            a.text = if (it.contains("<img")) {
-                getImgSrc(it)!!
-            } else {
-                it
+        if (!onlyComments) {
+            // 正文布局数据
+            val text = article.text
+            val textList = text.split(TEXT_IMAGE_SPLITER)
+            textList.map {
+                var a = article.copy()
+                a.text = if (it.contains("<img")) {
+                    getImgSrc(it)!!
+                } else {
+                    it
+                }
+                a.articleFlag = if (it.contains("<img")) {
+                    3
+                } else {
+                    0
+                }
+                list.add(a)
             }
-            a.articleFlag = if (it.contains("<img")) {
-                3
-            } else {
-                0
-            }
-            list.add(a)
+
+            // 分割条布局数据
+            val spliter = Article()
+            spliter.url = null
+            spliter.articleFlag = 2
+            list.add(spliter)
         }
 
-        // 分割条布局数据
-        val spliter = Article()
-        spliter.url = null
-        spliter.articleFlag = 2
-        list.add(spliter)
         // 评论布局数据
         for (comment in article.comments) {
             val temp = Article()
