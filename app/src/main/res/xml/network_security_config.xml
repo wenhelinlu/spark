@@ -1,0 +1,7 @@
+<?xml version ="1.0" encoding ="utf-8"?><!--  Learn More about how to use App Actions: https://developer.android.com/guide/actions/index.html -->
+<network-security-config>
+
+    <!-- 在Android P系统的设备上，默认都使用加密请求，即https，所以需要单独设置允许开启http请求，否则在进行http请求时会报异常 -->
+    <base-config cleartextTrafficPermitted="true" />
+
+</network-security-config>

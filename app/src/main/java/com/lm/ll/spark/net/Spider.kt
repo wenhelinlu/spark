@@ -42,7 +42,7 @@ class Spider {
          * @time 2018-06-11 19:40
          * @param url 网络地址
          */
-        private fun getDocument(url: String): Document {
+        fun getDocument(url: String): Document {
             try {
                 return Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIME_OUT).get()
             } catch (t: Throwable) {
