@@ -123,6 +123,7 @@ class EliteEroticaArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLa
                         }
                     }
                 }
+                adapter.backupData(ArrayList(articleList))
             }
 
             refreshData()

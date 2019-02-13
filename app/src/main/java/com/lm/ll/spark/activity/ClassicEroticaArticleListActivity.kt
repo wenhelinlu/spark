@@ -119,6 +119,7 @@ class ClassicEroticaArticleListActivity : CoroutineScopeActivity(), SwipeRefresh
                         }
                     }
                 }
+                adapter.backupData(ArrayList(articleList))
             }
 
             val intent = Intent(this@ClassicEroticaArticleListActivity, ArticleDisplayActivity::class.java)

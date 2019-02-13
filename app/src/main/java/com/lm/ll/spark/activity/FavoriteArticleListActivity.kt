@@ -74,6 +74,7 @@ class FavoriteArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout
                     val articles = ObjectBox.getArticleBox().query().orderDesc(Article_.insertTime).build().find()
                     articleList.clear()
                     articleList.addAll(ArrayList(articles))
+                    adapter.backupData(ArrayList(articles))
                 }
             } catch (e: Exception) {
                 toast("加载失败")
@@ -130,16 +131,19 @@ class FavoriteArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout
         return when (item.itemId) {
             R.id.action_sort_author -> {
                 articleList.sortBy { x -> x.author }
+                adapter.backupData(ArrayList(articleList))
                 refreshData()
                 return true
             }
             R.id.action_sort_title -> {
                 articleList.sortBy { x -> x.title }
+                adapter.backupData(ArrayList(articleList))
                 refreshData()
                 return true
             }
             R.id.action_sort_insertDate -> {
                 articleList.sortByDescending { x -> x.insertTime } //按插入时间降序排列
+                adapter.backupData(ArrayList(articleList))
                 refreshData()
                 return true
             }

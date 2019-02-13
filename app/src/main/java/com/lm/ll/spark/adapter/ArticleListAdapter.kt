@@ -22,7 +22,7 @@ import com.lm.ll.spark.util.GlobalConst.Companion.IS_CLASSIC_ARTICLE
  */
 class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : ListDelegationAdapter<ArrayList<Article>>() {
     //列表数据源备份（用于搜索）
-    private val listBackup = ArrayList(items)
+    var listBackup = ArrayList(items)
 
     init {
         val alaDelegate = ArticleListAdapterDelegate(activity)
@@ -74,5 +74,14 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
             items.addAll(listBackup.filter { x -> (x.title!!.contains(text, true) || x.author.contains(text, true)) })
         }
         notifyDataSetChanged()
+    }
+
+    /**
+     * @desc 备份完整数据，用于列表的筛选数据源
+     * @author Luhui
+     * @time 2019-02-13 16:25
+     */
+    fun backupData(data: ArrayList<Article>) {
+        listBackup = data
     }
 }

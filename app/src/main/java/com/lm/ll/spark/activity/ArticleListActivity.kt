@@ -217,6 +217,7 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
                     }
                 }
             }
+            mAdapter.backupData(ArrayList(articleList))
             refreshData()
 
             //上拉加载后，默认将新获取的数据源的上一行显示在最上面位置
