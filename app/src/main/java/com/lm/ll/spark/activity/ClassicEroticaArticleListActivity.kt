@@ -2,10 +2,10 @@ package com.lm.ll.spark.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.db.Article

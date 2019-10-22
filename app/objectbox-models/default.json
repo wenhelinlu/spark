@@ -10,77 +10,104 @@
       "properties": [
         {
           "id": "1:2869380839076502765",
-          "name": "id"
+          "name": "id",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:4102579885750073836",
-          "name": "url"
+          "name": "url",
+          "type": 9
         },
         {
           "id": "3:739729639111012103",
-          "name": "title"
+          "name": "title",
+          "type": 9
         },
         {
           "id": "4:3432611627126844177",
-          "name": "author"
+          "name": "author",
+          "type": 9
         },
         {
           "id": "5:2742824205852875783",
-          "name": "date"
+          "name": "date",
+          "type": 9
         },
         {
           "id": "6:7284447227959992471",
-          "name": "textLength"
+          "name": "textLength",
+          "type": 9
         },
         {
           "id": "7:6200738788956336155",
-          "name": "readCount"
+          "name": "readCount",
+          "type": 9
         },
         {
           "id": "8:2952698715045154554",
-          "name": "text"
+          "name": "text",
+          "type": 9
         },
         {
           "id": "9:4702207196511403409",
-          "name": "insertTime"
+          "name": "insertTime",
+          "type": 9
         },
         {
           "id": "10:1653750524805413401",
-          "name": "favorite"
+          "name": "favorite",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "11:3715086654587267097",
-          "name": "articleFlag"
+          "name": "articleFlag",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "12:343405244504065544",
-          "name": "classicalFlag"
+          "name": "classicalFlag",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "13:2558134997653926844",
-          "name": "leavePosition"
+          "name": "leavePosition",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "14:5539203450262359330",
-          "name": "offset"
+          "name": "offset",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "15:3269112451254953653",
-          "name": "depth"
+          "name": "depth",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "16:3207121448295658709",
-          "name": "commentsCached"
+          "name": "commentsCached",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "17:2165048789104812445",
-          "name": "parentId"
+          "name": "parentId",
+          "type": 6,
+          "flags": 4
         }
       ],
       "relations": [
         {
           "id": "1:120272016332455052",
-          "name": "comments"
+          "name": "comments",
+          "targetId": "2:5916760128986399421"
         }
       ]
     },
@@ -91,43 +118,55 @@
       "properties": [
         {
           "id": "1:7822888640138408007",
-          "name": "id"
+          "name": "id",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:4563071083742721221",
-          "name": "url"
+          "name": "url",
+          "type": 9
         },
         {
           "id": "3:2017014544235122896",
-          "name": "title"
+          "name": "title",
+          "type": 9
         },
         {
           "id": "4:3169715114661051323",
-          "name": "author"
+          "name": "author",
+          "type": 9
         },
         {
           "id": "5:8156409950493304699",
-          "name": "date"
+          "name": "date",
+          "type": 9
         },
         {
           "id": "6:4024030596028383207",
-          "name": "textLength"
+          "name": "textLength",
+          "type": 9
         },
         {
           "id": "7:3756328340276928682",
-          "name": "readCount"
+          "name": "readCount",
+          "type": 9
         },
         {
           "id": "8:1722959095322602307",
-          "name": "text"
+          "name": "text",
+          "type": 9
         },
         {
           "id": "9:2438929001981270683",
-          "name": "depth"
+          "name": "depth",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "10:5637708671461158888",
-          "name": "insertTime"
+          "name": "insertTime",
+          "type": 9
         }
       ],
       "relations": []
@@ -139,19 +178,25 @@
       "properties": [
         {
           "id": "1:1366892905471894512",
-          "name": "id"
+          "name": "id",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:8990218613088183545",
-          "name": "keyword"
+          "name": "keyword",
+          "type": 9
         },
         {
           "id": "3:3915499655884979978",
-          "name": "queryType"
+          "name": "queryType",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "4:2910143538229743969",
-          "name": "insertTime"
+          "name": "insertTime",
+          "type": 9
         }
       ],
       "relations": []
@@ -163,19 +208,25 @@
       "properties": [
         {
           "id": "1:8513696056549173531",
-          "name": "id"
+          "name": "id",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:5067907888561732334",
-          "name": "url"
+          "name": "url",
+          "type": 9
         },
         {
           "id": "3:1348497115812461908",
-          "name": "title"
+          "name": "title",
+          "type": 9
         },
         {
           "id": "4:6969651136311692082",
-          "name": "favorite"
+          "name": "favorite",
+          "type": 5,
+          "flags": 4
         }
       ],
       "relations": []
@@ -185,8 +236,8 @@
   "lastIndexId": "0:0",
   "lastRelationId": "1:120272016332455052",
   "lastSequenceId": "0:0",
-  "modelVersion": 4,
-  "modelVersionParserMinimum": 4,
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
   "retiredEntityUids": [
     7510959739387852864
   ],

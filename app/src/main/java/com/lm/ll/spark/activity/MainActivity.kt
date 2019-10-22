@@ -3,15 +3,17 @@ package com.lm.ll.spark.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.NavigationView
-import android.support.v4.view.GravityCompat
-import android.support.v4.view.ViewPager
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import androidx.core.view.GravityCompat
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Switch
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ViewPagerAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
@@ -21,15 +23,28 @@ import com.lm.ll.spark.fragment.SubForumFragment
 import com.lm.ll.spark.fragment.VideoFragment
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.GlobalConst
+import com.lm.ll.spark.util.getExceptionDesc
 import com.lm.ll.spark.util.switchDayNightMode
+import com.lm.ll.spark.util.toast
+import com.uber.autodispose.AutoDispose.autoDisposable
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
+import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_rich_text.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import retrofit2.HttpException
+import java.net.ConnectException
+import java.util.concurrent.TimeoutException
+import javax.net.ssl.SSLHandshakeException
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private var menuItem: MenuItem? = null
+
+    //使用AutoDispose解除RxJava2订阅
+    private val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,21 +109,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @author lm
      * @time 2018-08-26 21:02
      */
-    @SuppressLint("CheckResult")
+    @SuppressLint("CheckResult", "AutoDispose")
     private fun initLoginStatus() {
         val repository = TabooArticlesRepository(TabooBooksApiService.create())
         repository.checkLoginStatus()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    //根据访问个人信息页面返回的文本中是否包含已登录状态标记文本，判断是否已登录，如果已登录，则不显示登录菜单，如果未登录，则不显示个人信息菜单
-                    val menuItem = if (it.contains(GlobalConst.LOGINING_STATUS)) {
-                        this.nav_view.menu.findItem(R.id.nav_login)
-                    } else {
-                        this.nav_view.menu.findItem(R.id.nav_profile)
-                    }
-                    menuItem.isVisible = false  // true 为显示，false 为隐藏
-                }
+                .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
+                .autoDispose(scopeProvider) //使用AutoDispose解除RxJava2订阅
+                .subscribe(
+                        { result ->
+                            //根据访问个人信息页面返回的文本中是否包含已登录状态标记文本，判断是否已登录，如果已登录，则不显示登录菜单，如果未登录，则不显示个人信息菜单
+                            val menuItem = if (result.contains(GlobalConst.LOGINING_STATUS)) {
+                                this.nav_view.menu.findItem(R.id.nav_login)
+                            } else {
+                                this.nav_view.menu.findItem(R.id.nav_profile)
+                            }
+                            menuItem.isVisible = false  // true 为显示，false 为隐藏
+                        },
+                        { error ->
+                            //异常处理
+                            val msg = getExceptionDesc(error)
+
+                            toast(msg)
+                        })
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.lm.ll.spark.activity
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.lm.ll.spark.R
 import com.lm.ll.spark.util.AppVersionUtils
 import mehdi.sakout.aboutpage.AboutPage

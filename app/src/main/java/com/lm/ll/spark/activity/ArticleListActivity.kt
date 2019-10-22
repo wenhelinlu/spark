@@ -2,11 +2,11 @@ package com.lm.ll.spark.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v4.widget.SimpleCursorAdapter
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.SearchView
 import android.view.Menu
+import androidx.appcompat.widget.SearchView
+import androidx.cursoradapter.widget.SimpleCursorAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
@@ -28,6 +28,8 @@ import com.lm.ll.spark.util.GlobalConst.Companion.SUB_FORUM_URL
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import com.lm.ll.spark.util.getQueryRecord
 import com.lm.ll.spark.util.getQueryRecordCursor
+import com.lm.ll.spark.util.toast
+import io.reactivex.exceptions.Exceptions
 import kotlinx.android.synthetic.main.activity_article_list.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -178,7 +180,7 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
                         val tmpList = download(pageIndex)
 
                         //如果没有更多数据，则不再继续
-                        if (tmpList == null || tmpList.size == 0) {
+                        if (tmpList.size == 0) {
                             break
                         }
                         list.addAll(tmpList)
@@ -209,7 +211,7 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
                             pageIndex = if (isQueryStatus) ++queryCurrentPage else ++currentPage
                             val tmpList = download(pageIndex)
                             //如果没有更多数据，则不再继续
-                            if (tmpList == null || tmpList.size == 0) {
+                            if (tmpList.size == 0) {
                                 break
                             }
                             articleList.addAll(tmpList)
@@ -237,14 +239,20 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
      */
     private fun getArticleList(pageIndex: Int): ArrayList<Article> {
 
-        //11页之前（不包含第11页）的url和第11页及之后的url不同
-        val url = if (pageIndex <= 10) {
-            "$baseUri$CURRENT_BASE_URL$pageIndex"
-        } else {
-            "$baseUri?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764"
-        }
+        return try {
+            //11页之前（不包含第11页）的url和第11页及之后的url不同
+            val url = if (pageIndex <= 10) {
+                "$baseUri$CURRENT_BASE_URL$pageIndex"
+            } else {
+                "$baseUri?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764"
+            }
 //        Log.d(LOG_TAG_COMMON, url)
-        return Spider.scratchArticleList(url)
+            Spider.scratchArticleList(url)
+
+        } catch (ex: Exception) {
+            //toast(ex.message!!)
+            ArrayList()
+        }
     }
 
     /**
@@ -254,8 +262,16 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
      * @param pageIndex 查询结果页码
      */
     private fun queryArticleList(pageIndex: Int): ArrayList<Article> {
-        val url = "$baseUri?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$encodedKeyword&submit=%B2%E9%D1%AF&p=$pageIndex"
-        return Spider.scratchQueryArticles(url)
+        return try {
+
+            val url = "$baseUri?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$encodedKeyword&submit=%B2%E9%D1%AF&p=$pageIndex"
+            Spider.scratchQueryArticles(url)
+        } catch (ex: Exception) {
+
+            //TODO 怎样在协程中显示toast
+            //toast(ex.message!!)
+            ArrayList()
+        }
     }
 
     /**
@@ -325,14 +341,14 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
      * @time 2018-08-14 15:52
      */
     private fun saveQueryRecord(keyword: String) {
-        //如果查询记录在数据库中不存在，则插入数据库中
+/*        //如果查询记录在数据库中不存在，则插入数据库中
         val f = getQueryRecordBox().find(QueryRecord_.keyword, keyword)
         if (f == null || f.count() == 0) {
             val record = QueryRecord()
             record.keyword = keyword
             record.queryType = ForumType.TABOO_BOOK.ordinal
             getQueryRecordBox().put(record)
-        }
+        }*/
     }
 
     @SuppressLint("RestrictedApi")

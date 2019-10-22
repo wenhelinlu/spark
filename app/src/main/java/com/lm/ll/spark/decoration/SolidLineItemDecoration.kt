@@ -2,7 +2,7 @@ package com.lm.ll.spark.decoration
 
 import android.content.Context
 import android.graphics.Canvas
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * 作者：Created by ll on 2018-06-01 11:27.

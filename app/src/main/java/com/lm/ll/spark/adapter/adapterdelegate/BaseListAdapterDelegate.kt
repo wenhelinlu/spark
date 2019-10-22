@@ -1,8 +1,8 @@
 package com.lm.ll.spark.adapter.adapterdelegate
 
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.listener.OnItemClickListener
 import com.lm.ll.spark.listener.OnItemLongClickListener

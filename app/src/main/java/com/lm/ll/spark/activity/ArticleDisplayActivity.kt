@@ -4,11 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
@@ -18,14 +18,11 @@ import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.decoration.DashLineItemDecoration
 import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.repository.TabooArticlesRepository
+import com.lm.ll.spark.util.*
 import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
-import com.lm.ll.spark.util.convertToSimplifiedChinese
-import com.lm.ll.spark.util.deepCopy
-import com.lm.ll.spark.util.getImgSrc
-import com.lm.ll.spark.util.toast
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.article_display.*
@@ -411,19 +408,13 @@ class ArticleDisplayActivity : CoroutineScopeActivity() {
                     showProgress(false)
                 }
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
+                .autoDispose(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
                     currentArticle = result
                     getReadingStatus()
                 }, { error ->
                     //异常处理
-                    val msg =
-                            when (error) {
-                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
-                                is TimeoutException -> "网络连接超时"
-                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
-                                else -> error.toString()
-                            }
+                    val msg = getExceptionDesc(error)
                     Snackbar.make(articleLayout, msg, Snackbar.LENGTH_LONG)
                             .setAction("重试") { loadData() }.show()
                 })

@@ -1,8 +1,8 @@
 package com.lm.ll.spark.adapter
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.activity.ArticleListActivity
 import com.lm.ll.spark.adapter.adapterdelegate.SubForumItemListAdapterDelegate

@@ -1,10 +1,10 @@
 package com.lm.ll.spark.adapter
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.activity.ArticleDisplayActivity
 import com.lm.ll.spark.adapter.adapterdelegate.*
@@ -19,7 +19,7 @@ import com.lm.ll.spark.util.GlobalConst.Companion.IS_CLASSIC_ARTICLE
 class ArticleAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : ListDelegationAdapter<ArrayList<Article>>() {
 
     //RecyclerView内部item的自定义单击事件，用于通过点击正文显示或隐藏状态栏和底部工具栏
-    lateinit var mItemClickListener: ArticleAdapter.Companion.OnItemClickListener
+    lateinit var mItemClickListener: OnItemClickListener
 
     init {
 

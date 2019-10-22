@@ -3,14 +3,15 @@ package com.lm.ll.spark.fragment
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.db.Article
@@ -71,7 +72,7 @@ class VideoFragment : Fragment() {
      * @author ll
      * @time 2018-10-10 16:51
      */
-    private lateinit var mSwipeRefreshLayout:SwipeRefreshLayout
+    private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
 
     private var mActivity: AppCompatActivity? = null
 
@@ -193,16 +194,22 @@ class VideoFragment : Fragment() {
      */
     private fun getArticleList(pageIndex: Int): ArrayList<Article> {
 
-        //11页之前（不包含第11页）的url和第11页及之后的url不同
-        val url = if (pageIndex <= 10) {
-            "$baseUri${GlobalConst.CURRENT_BASE_URL}$pageIndex"
-        } else {
-            "$baseUri?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764"
-        }
+        return try {
+            //11页之前（不包含第11页）的url和第11页及之后的url不同
+            val url = if (pageIndex <= 10) {
+                "$baseUri${GlobalConst.CURRENT_BASE_URL}$pageIndex"
+            } else {
+                "$baseUri?app=forum&act=list&pre=55764&nowpage=$pageIndex&start=55764"
+            }
 //        Log.d(LOG_TAG_COMMON, url)
-        return Spider.scratchOnlineVideoList(url)
+            Spider.scratchOnlineVideoList(url)
+        } catch (ex: Exception) {
+            //toast(ex.message!!)
+            Snackbar.make(mSwipeRefreshLayout, ex.message!!, Snackbar.LENGTH_LONG)
+                    .setAction("确定") { }.show()
+            ArrayList()
+        }
     }
-
 
     /**
      * @desc 刷新数据

@@ -8,8 +8,9 @@ import io.reactivex.Observable
 import io.reactivex.exceptions.Exceptions
 import okhttp3.CookieJar
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.HttpLoggingInterceptor.Logger.*
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -117,10 +118,10 @@ interface TabooBooksApiService {
          */
         private fun genericClient(): OkHttpClient {
             return OkHttpClient.Builder().cookieJar(PersistentCookieJarHelper.getCookieJar() as CookieJar)
-                    .retryOnConnectionFailure(true)
                     .connectTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                     .readTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
                     .writeTimeout(TIMEOUT, TimeUnit.MILLISECONDS)
+                    .retryOnConnectionFailure(true)
                     .addInterceptor { chain ->
                         val request = chain.request()
                                 .newBuilder()
@@ -152,7 +153,7 @@ interface TabooBooksApiService {
                         val response = chain.proceed(chain.request())
 
                         //获取Response Headers中的ContentType信息
-                        val contentType = response.body()!!.contentType()
+                        val contentType = response.body!!.contentType()
                         //获取ContentType中的charset
                         val charset = contentType!!.charset()
                         //如果charset为null，即Response Headers中的Content-Type信息不包含字符编码信息，则以gbk解析
@@ -164,16 +165,17 @@ interface TabooBooksApiService {
                              * 而且此方法将响应报文中的主体全部都读到了内存中，如果响应报文主体较大，可能会导致 OOM 异常。
                              * 所以更推荐使用流的方式获取响应体的内容
                              */
-                            val source = response.body()!!.source()
+                            val source = response.body!!.source()
                             source.request(java.lang.Long.MAX_VALUE)
-                            val buffer = source.buffer()
+                            val buffer = source.buffer
                             val content = buffer.clone().readString(Charset.forName("gbk"))  //将ResponseBody中的字符以gbk编码解析，重新组装（解决经典文库中文章显示乱码的问题）
 
                             //重新生成ResponseBody
-                            val body = ResponseBody.create(contentType, content)
+                            val body = content.toResponseBody(contentType)
                             response.newBuilder().body(body).build()
                         } else {
                             try {
+                                response.close()
                                 chain.proceed(chain.request())
                             } catch (t: Throwable) {
                                 throw Exceptions.propagate(t)
@@ -190,15 +192,14 @@ interface TabooBooksApiService {
          * @time 2018-08-27 14:31
          */
         private fun getLoggingInterceptor(): HttpLoggingInterceptor {
-            val interceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
-                Log.d(LOG_TAG_OKHTTP3, it)
-            })
-            interceptor.level =
-                    if (BuildConfig.DEBUG) {
-                        HttpLoggingInterceptor.Level.HEADERS
-                    } else {
-                        HttpLoggingInterceptor.Level.NONE
-                    }
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.apply {
+                interceptor.level = if (BuildConfig.DEBUG) {
+                    HttpLoggingInterceptor.Level.HEADERS
+                } else {
+                    HttpLoggingInterceptor.Level.NONE
+                }
+            }
 
             return interceptor
         }

@@ -2,13 +2,13 @@ package com.lm.ll.spark.adapter.adapterdelegate
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -32,7 +32,7 @@ class ArticleImageAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate
     private var inflater: LayoutInflater = activity.layoutInflater
 
 
-    override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         return ArticleImageViewHolder(inflater.inflate(R.layout.article_item_image, parent, false))
     }
 

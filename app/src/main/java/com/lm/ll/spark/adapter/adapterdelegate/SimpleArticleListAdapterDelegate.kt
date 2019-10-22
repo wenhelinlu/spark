@@ -1,10 +1,10 @@
 package com.lm.ll.spark.adapter.adapterdelegate
 
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
 import kotlinx.android.synthetic.main.article_item_simple.view.*
@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.article_item_simple.view.*
  * 邮箱：wenhelinlu@gmail.com
  */
 class SimpleArticleListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterDelegate<ArrayList<Article>>(activity) {
-    override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         val view = inflater.inflate(R.layout.article_item_simple, parent, false)
         view.setOnClickListener(this)
         return ArticleListViewHolder(view)

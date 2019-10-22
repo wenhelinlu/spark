@@ -1,18 +1,20 @@
 package com.lm.ll.spark.activity
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import com.lm.ll.spark.R
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.repository.TabooArticlesRepository
+import com.lm.ll.spark.util.getExceptionDesc
 import com.lm.ll.spark.util.getImgSrc
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDisposable
+import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_rich_text.*
@@ -81,7 +83,7 @@ class RichTextActivity : AppCompatActivity() {
                     showProgress(false)
                 }
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
+                .autoDispose(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
                     val doc = Jsoup.parse(result)
                     val list = ArrayList<String>()
@@ -97,13 +99,7 @@ class RichTextActivity : AppCompatActivity() {
 
                 }, { error ->
                     //异常处理
-                    val msg =
-                            when (error) {
-                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
-                                is TimeoutException -> "网络连接超时"
-                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
-                                else -> error.toString()
-                            }
+                    val msg = getExceptionDesc(error)
 
                     Snackbar.make(richContentLayout, msg, Snackbar.LENGTH_LONG)
                             .setAction("重试") { loadData() }.show()

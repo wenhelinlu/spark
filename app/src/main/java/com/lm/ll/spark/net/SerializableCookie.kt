@@ -9,8 +9,8 @@ import java.io.Serializable
  * 邮箱：wenhelinlu@gmail.com
  */
 class SerializableCookie(cookie:Cookie) :Serializable{
-    private val name:String = cookie.name()
-    private val value:String = cookie.value()
+    private val name: String = cookie.name
+    private val value: String = cookie.value
     private val expiresAt:Long?
     private val domain:String
     private val path:String
@@ -19,12 +19,12 @@ class SerializableCookie(cookie:Cookie) :Serializable{
     private val hostOnly:Boolean?
 
     init {
-        expiresAt = cookie.expiresAt()
-        domain = cookie.domain()
-        path = cookie.path()
-        secure = cookie.secure()
-        httpOnly = cookie.httpOnly()
-        hostOnly = cookie.hostOnly()
+        expiresAt = cookie.expiresAt
+        domain = cookie.domain
+        path = cookie.path
+        secure = cookie.secure
+        httpOnly = cookie.httpOnly
+        hostOnly = cookie.hostOnly
     }
 
     /**

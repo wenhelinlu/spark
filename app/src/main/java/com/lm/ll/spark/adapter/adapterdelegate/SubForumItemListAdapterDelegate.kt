@@ -1,11 +1,11 @@
 package com.lm.ll.spark.adapter.adapterdelegate
 
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.SubForum
 import kotlinx.android.synthetic.main.sub_forum_item.view.*
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.sub_forum_item.view.*
  */
 class SubForumItemListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterDelegate<ArrayList<SubForum>>(activity) {
 
-    override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         val view = inflater.inflate(R.layout.sub_forum_item, parent, false)
         view.setOnClickListener(this)
         view.setOnLongClickListener(this)

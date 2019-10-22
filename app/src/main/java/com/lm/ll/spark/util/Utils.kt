@@ -7,8 +7,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.preference.PreferenceManager
-import android.support.v7.app.AppCompatDelegate
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
@@ -19,11 +19,16 @@ import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_END_HOUR
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_START_HOUR
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
+import retrofit2.HttpException
 import java.io.IOException
+import java.lang.Exception
+import java.net.ConnectException
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeoutException
 import java.util.regex.Pattern
+import javax.net.ssl.SSLHandshakeException
 
 //region 扩展方法
 
@@ -256,6 +261,18 @@ fun getImageSizeAhead(imageUrl: String): IntArray {
     val bitmap = BitmapFactory.decodeStream(URL(imageUrl).openStream(), null, options)
 
     return intArrayOf(options.outWidth, options.outHeight)
+}
+
+/**
+ * 将具体异常信息转成可读的提醒
+ */
+fun getExceptionDesc(error: Throwable): String {
+    return when (error) {
+        is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
+        is TimeoutException -> "网络连接超时"
+        is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
+        else -> error.toString()
+    }
 }
 
 //endregion

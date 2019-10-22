@@ -1,7 +1,8 @@
 package com.lm.ll.spark.listener
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
 
 abstract class MyRecyclerViewOnScrollListener(private var linearLayoutManager: LinearLayoutManager) : RecyclerView.OnScrollListener() {
     //屏幕上可见的item数量

@@ -1,6 +1,6 @@
 package com.lm.ll.spark.adapter
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.hannesdorfmann.adapterdelegates3.ListDelegationAdapter
 import com.lm.ll.spark.adapter.adapterdelegate.ProfileInfoDelegate
 import com.lm.ll.spark.db.ProfileInfo

@@ -1,7 +1,7 @@
 package com.lm.ll.spark.decoration
 
 import android.graphics.*
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * @Desc RecyclerView的虚线分隔线效果

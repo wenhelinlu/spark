@@ -3,23 +3,24 @@ package com.lm.ll.spark.fragment
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.SubForumItemListAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.db.SubForum
 import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
+import com.lm.ll.spark.util.getExceptionDesc
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
+import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_data_list.*
@@ -115,20 +116,14 @@ class NewsFragment : Fragment() {
                     showProgress(false)
                 }
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
-                .autoDisposable(scopeProvider) //使用AutoDispose解除RxJava2订阅
+                .autoDispose(scopeProvider) //使用AutoDispose解除RxJava2订阅
                 .subscribe({ result ->
                     subForumList.clear()
                     subForumList.addAll(result)
                     refreshData()
                 }, { error ->
                     //异常处理
-                    val msg =
-                            when (error) {
-                                is HttpException, is SSLHandshakeException, is ConnectException -> "网络连接异常"
-                                is TimeoutException -> "网络连接超时"
-                                is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
-                                else -> error.toString()
-                            }
+                    val msg = getExceptionDesc(error)
                     Snackbar.make(dataListLayout, msg, Snackbar.LENGTH_LONG)
                             .setAction("重试") { loadData() }.show()
                 })

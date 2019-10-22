@@ -1,10 +1,10 @@
 package com.lm.ll.spark.adapter.adapterdelegate
 
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.lm.ll.spark.R
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
@@ -26,8 +26,7 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterD
     //列表中未收藏文章标题颜色（区分日、夜间模式）
     private val unFavoriteColor = if (InitApplication.getInstance().isNightModeEnabled()) InitApplication.getInstance().getColor(R.color.colorTextNight) else InitApplication.getInstance().getColor(R.color.colorTextDay)
 
-
-    override fun onCreateViewHolder(parent: ViewGroup?): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         val view = inflater.inflate(R.layout.article_item, parent, false)
         view.setOnClickListener(this)
         return ArticleListViewHolder(view)
