@@ -28,8 +28,7 @@ import com.lm.ll.spark.util.GlobalConst.Companion.SUB_FORUM_URL
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import com.lm.ll.spark.util.getQueryRecord
 import com.lm.ll.spark.util.getQueryRecordCursor
-import com.lm.ll.spark.util.toast
-import io.reactivex.exceptions.Exceptions
+import io.objectbox.kotlin.query
 import kotlinx.android.synthetic.main.activity_article_list.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -341,14 +340,14 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
      * @time 2018-08-14 15:52
      */
     private fun saveQueryRecord(keyword: String) {
-/*        //如果查询记录在数据库中不存在，则插入数据库中
-        val f = getQueryRecordBox().find(QueryRecord_.keyword, keyword)
+        //如果查询记录在数据库中不存在，则插入数据库中
+        val f = getQueryRecordBox().query { equal(QueryRecord_.keyword, keyword) }.find()
         if (f == null || f.count() == 0) {
             val record = QueryRecord()
             record.keyword = keyword
             record.queryType = ForumType.TABOO_BOOK.ordinal
             getQueryRecordBox().put(record)
-        }*/
+        }
     }
 
     @SuppressLint("RestrictedApi")

@@ -19,9 +19,9 @@ import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_END_HOUR
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_START_HOUR
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
+import io.objectbox.kotlin.query
 import retrofit2.HttpException
 import java.io.IOException
-import java.lang.Exception
 import java.net.ConnectException
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -212,7 +212,13 @@ fun getQueryRecordCursor(records: List<QueryRecord>): MatrixCursor {
  * @param keyword 查询条件
  */
 fun getQueryRecord(keyword: String = "", forumType: ForumType = ForumType.TABOO_BOOK): List<QueryRecord> {
-    return if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query().equal(QueryRecord_.queryType, forumType.ordinal.toLong()).contains(QueryRecord_.keyword, keyword).orderDesc(QueryRecord_.insertTime).build().find()
+//    return if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query().equal(QueryRecord_.queryType, forumType.ordinal.toLong()).contains(QueryRecord_.keyword, keyword).orderDesc(QueryRecord_.insertTime).build().find()
+    return if (keyword.isBlank()) getQueryRecordBox().all else getQueryRecordBox().query {
+        equal(QueryRecord_.queryType, forumType.ordinal.toLong())
+        contains(QueryRecord_.keyword, keyword)
+        orderDesc(QueryRecord_.insertTime)
+    }.find()
+
 }
 
 /**

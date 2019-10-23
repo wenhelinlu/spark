@@ -10,6 +10,7 @@ import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Article_
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
+import io.objectbox.kotlin.query
 import kotlinx.android.synthetic.main.article_item.view.*
 
 /**
@@ -49,7 +50,7 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterD
                 articleReadCount.text = it.readCount
 
                 //如果文章已收藏，则单独设置颜色
-                val favorite = getArticleBox().query().equal(Article_.url, it.url!!).build().findFirst()
+                val favorite = getArticleBox().query { equal(Article_.url, it.url!!) }.findFirst()
                 if (favorite != null) {
                     articleTitle.setTextColor(favoriteColor)
                 } else {

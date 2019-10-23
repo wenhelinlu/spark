@@ -23,6 +23,7 @@ import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.autoDispose
+import io.objectbox.kotlin.query
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.article_display.*
@@ -31,10 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.util.concurrent.TimeoutException
-import javax.net.ssl.SSLHandshakeException
 
 /**
  * @desc 使用AdapterDelegates实现Recyclerview的高级布局的方式显示正文
@@ -356,8 +353,8 @@ class ArticleDisplayActivity : CoroutineScopeActivity() {
                 if (currentArticle.commentsCached == 1) {
                     currentArticle.commentsCached = 0
                     //从数据库中删除当前文章缓存的评论列表数据
-                    var commentIds = getArticleBox().query().equal(Article_.parentId, currentArticle.id).build().findIds().toList()
-                    getArticleBox().removeByKeys(commentIds)
+                    var commentIds = getArticleBox().query { equal(Article_.parentId, currentArticle.id) }.findIds().toList()
+                    getArticleBox().removeByIds(commentIds)
 
                 } else {
                     currentArticle.commentsCached = 1
@@ -430,7 +427,7 @@ class ArticleDisplayActivity : CoroutineScopeActivity() {
         //查询此文章是否已收藏（在数据库中存在）
         //注意：之所以这一步不在InitData中操作，是因为已收藏的文章的评论可能会有更新，如果在InitData中直接用数据库中的数据替换，
         //那么，就没有入口来获取最新的文章数据，放在这里，则从主列表打开文章时，会认为是没有收藏过的文章，这样可以加载最新的数据
-        val find = getArticleBox().query().equal(Article_.url, currentArticle.url!!).build().findFirst()
+        val find = getArticleBox().query { equal(Article_.url, currentArticle.url!!) }.findFirst()
         //如果存在，说明此文章已被收藏并存入数据库中
         if (find != null) {
             currentArticle.id = find.id  //id为Long类型，由ObjectBox自动生成

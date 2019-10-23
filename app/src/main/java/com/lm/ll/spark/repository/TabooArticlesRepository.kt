@@ -8,6 +8,7 @@ import com.lm.ll.spark.db.SubForum
 import com.lm.ll.spark.net.Spider
 import com.lm.ll.spark.util.ObjectBox.getArticleBox
 import com.lm.ll.spark.util.ObjectBox.getSubForumBox
+import io.objectbox.kotlin.query
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import org.jsoup.Jsoup
@@ -84,7 +85,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
      */
     fun getFavoriteArticleList(): Observable<List<Article>> {
         //注意：Article_.comments中的下划线，这个Article_是ObjectBox内部生成的properties class,即属性类，通过它可以直接获取Article类的各个属性
-        val articles = getArticleBox().query().orderDesc(Article_.insertTime).build().find()
+        val articles = getArticleBox().query { orderDesc(Article_.insertTime) }.find()
         return Observable.just(articles)
     }
 
@@ -122,7 +123,7 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
         //是否是已收藏的文章（即已保存到数据库中）
         val fromDb = Observable.create(ObservableOnSubscribe<Article> { emitter ->
 
-            val find = getArticleBox().query().equal(Article_.url, article.url!!).build().findFirst()
+            val find = getArticleBox().query { equal(Article_.url, article.url!!) }.findFirst()
             if (find == null) {
                 emitter.onComplete()
             } else {
