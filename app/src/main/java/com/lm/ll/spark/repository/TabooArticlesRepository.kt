@@ -45,6 +45,12 @@ class TabooArticlesRepository(private val tabooBooksApiService: TabooBooksApiSer
                 .flatMap {
                     val doc = Jsoup.parse(it)
                     val list = Spider.scratchSubForumList(doc)
+                    if (list.any()) {
+                        //先清空
+                        getSubForumBox().removeAll()
+                        //插入数据库中
+                        list.forEach { item -> getSubForumBox().put(item) }
+                    }
                     Observable.just(list)
                 }
 

@@ -9,7 +9,6 @@ import com.lm.ll.spark.util.GlobalConst.Companion.PARAGRAPH_FLAG_COUNT_LIMIT
 import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
 import com.lm.ll.spark.util.GlobalConst.Companion.TIME_OUT
 import com.lm.ll.spark.util.GlobalConst.Companion.USER_AGENT
-import com.lm.ll.spark.util.ObjectBox.getSubForumBox
 import com.lm.ll.spark.util.convertToSimplifiedChinese
 import io.reactivex.exceptions.Exceptions
 import org.jsoup.Jsoup
@@ -32,6 +31,8 @@ class Spider {
         private const val newlineFlagPattern = "\\s*?\\r\\n\\s*?" //匹配换行标记符的正则表达式的模式串，可匹配\r\n, \r\n ,\r\n 等\r\n两边有0到多个空格的情况
         private const val emptyLineFlagPattern = " (\\s*)\\n" //匹配空行标记符的正则表达式的模式串
         private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
+
+        private const val subForumTitlePattern = "(?<=\\[)\\S+(?=\\])"
 
         private var depth = 0
 
@@ -613,43 +614,35 @@ class Spider {
          */
         fun scratchSubForumList(doc: Document): ArrayList<SubForum> {
             try {
+                var hasParsedCool18Links = false
                 val list = ArrayList<SubForum>()
 
-                val tables = doc.getElementsByTag("table")
-                if (tables != null && tables.size > 4) {
-                    val tds = tables[3].getElementsByClass("td4")
-                    if (tds != null && tds.size > 1) {
-                        tds.removeAt(0)  //去除第一个元素，因为不是有效的子论坛
-                    }
+                var e = doc.getElementsByClass("tab-nav")
+                if (e != null) {
+                    val links = e.first().getElementsByTag("a").filter { x -> !x.attr("href").contains("home.6park.com") }
+                    for (link in links) {
 
-                    var hasParsedCool18Links = false
+                        //注意：这里得到的禁忌书屋的链接不是真正的禁忌书屋的链接地址，而是禁忌书屋所属页面的链接（固定为：https://www.cool18.com/parks.php）
+                        //需要解析这个页面，才能得到真正的链接
+                        if (link.attr("href") == "https://www.cool18.com/parks.php") {
 
-                    for (td in tds) {
-                        val links = td.getElementsByTag("a")
-                        for (link in links) {
-
-                            //注意：这里得到的禁忌书屋的链接不是真正的禁忌书屋的链接地址，而是禁忌书屋所属页面的链接（固定为：https://www.cool18.com/parks.php）
-                            //需要解析这个页面，才能得到真正的链接
-                            if (link.attr("href") == "https://www.cool18.com/parks.php") {
-
-                                //因为禁忌书屋、私房自拍等此时的链接（假）都指向相同的页面，所以做个标记，只需要解析一次
-                                if (hasParsedCool18Links) {
-                                    continue
-                                }
-
-                                hasParsedCool18Links = true
-                                list.addAll(parseCool18Links(link.attr("href")))
-                            } else {
-                                val item = SubForum()
-
-                                item.title = link.text().convertToSimplifiedChinese()
-                                item.url = link.attr("href")
-
-                                //插入数据库中
-                                getSubForumBox().put(item)
-
-                                list.add(item)
+                            //因为禁忌书屋、私房自拍等此时的链接（假）都指向相同的页面，所以做个标记，只需要解析一次
+                            if (hasParsedCool18Links) {
+                                continue
                             }
+
+                            hasParsedCool18Links = true
+                            list.addAll(parseCool18Links(link.attr("href")))
+                        } else {
+                            val item = SubForum()
+
+                            item.title = Regex(subForumTitlePattern).findAll(link.text()).firstOrNull()?.value
+                            item.url = link.attr("href")
+
+//                            //插入数据库中
+//                            getSubForumBox().put(item)
+
+                            list.add(item)
                         }
                     }
                 }
@@ -676,8 +669,8 @@ class Spider {
                 item.title = link.text().substringAfter("[-").substringBefore("-]").convertToSimplifiedChinese()
                 item.url = "$Cool18_BASE_URL${link.attr("href").substringAfter("./")}"
 
-                //插入数据库中
-                getSubForumBox().put(item)
+//                //插入数据库中
+//                getSubForumBox().put(item)
 
                 list.add(item)
             }
