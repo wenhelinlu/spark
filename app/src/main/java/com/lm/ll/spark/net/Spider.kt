@@ -17,6 +17,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 import org.jsoup.select.Elements
+import java.net.URL
 
 
 /**
@@ -43,13 +44,26 @@ class Spider {
          * @time 2018-06-11 19:40
          * @param url 网络地址
          */
-        fun getDocument(url: String): Document {
+        private fun getDocument(url: String): Document {
             try {
-                return Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIME_OUT).get()
+                //2019年10月31日 17点04分  直接使用get方法，会报java.io.IOException: Mark invalid异常，所以改用下面的代码
+                var execute = Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIME_OUT).execute()
+                return Jsoup.parse(execute.body())
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }
+        }
 
+        /**
+         * @description 某些网页（比如经典书库列表或其中的文章）HTTP响应Content-Type头缺少charset属性。解析HTML时，Jsoup将使用平台默认字符集（UTF-8），然后就会乱码，所以在此指定编码格式
+         * @date: 2019-10-31 18:44
+         * @author: LuHui
+         * @param
+         * @return
+         */
+        private fun getDocument(url: String, encoding: String): Document {
+            //将URL作为InputStream读取，并在Jsoup的parse()方法中手动指定字符集
+            return Jsoup.parse(URL(url).openStream(), encoding, url)
         }
 
         /**
@@ -319,7 +333,7 @@ class Spider {
         fun scratchClassicEroticaArticleList(webUrl: String): ArrayList<Article> {
             try {
                 val mList = ArrayList<Article>()
-                val doc = getDocument(webUrl)
+                val doc = getDocument(webUrl, "gb2312")
                 val children: Elements = doc.getElementsByClass("dc_bar")
 
                 val element = children[1].childNodes()[1]
@@ -639,9 +653,6 @@ class Spider {
                             item.title = Regex(subForumTitlePattern).findAll(link.text()).firstOrNull()?.value
                             item.url = link.attr("href")
 
-//                            //插入数据库中
-//                            getSubForumBox().put(item)
-
                             list.add(item)
                         }
                     }
@@ -668,9 +679,6 @@ class Spider {
 
                 item.title = link.text().substringAfter("[-").substringBefore("-]").convertToSimplifiedChinese()
                 item.url = "$Cool18_BASE_URL${link.attr("href").substringAfter("./")}"
-
-//                //插入数据库中
-//                getSubForumBox().put(item)
 
                 list.add(item)
             }
