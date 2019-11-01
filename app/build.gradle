@@ -142,6 +142,10 @@ dependencies {
     //关于消息页面
     implementation 'com.github.medyo:android-about-page:1.2.4'
     implementation files('libs/hanlp-portable-1.7.1.jar')
+
+    //moshi库，处理json
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 }
 
 //这个要放在dependencies块的后面，不然build时会报"More than one file was found with OS independent path 'lib/armeabi-v7a/libobjectbox.so'"错误

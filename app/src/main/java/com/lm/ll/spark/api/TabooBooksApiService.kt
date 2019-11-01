@@ -2,6 +2,7 @@ package com.lm.ll.spark.api
 
 import com.lm.ll.spark.BuildConfig
 import com.lm.ll.spark.net.PersistentCookieJarHelper
+import com.lm.ll.spark.util.GlobalConst.Companion.ChartsetList
 import io.reactivex.Observable
 import io.reactivex.exceptions.Exceptions
 import okhttp3.CookieJar
@@ -165,8 +166,27 @@ interface TabooBooksApiService {
                             val source = response.body!!.source()
                             source.request(java.lang.Long.MAX_VALUE)
                             val buffer = source.buffer
-                            val content = buffer.clone().readString(Charset.forName("gbk"))  //将ResponseBody中的字符以gbk编码解析，重新组装（解决经典文库中文章显示乱码的问题）
 
+                            /**
+                             *  2019年11月1日 15点51分
+                             *  因为某些网页的Headers中虽然是utf-8编码，但是没有指定charset，所以首先以utf-8解析，然后从解析后的内容中提取
+                             *  出字符集编码，如果不是utf-8，则重新以提取出的字符集解析网页
+                             */
+                            var content = buffer.clone().readString(Charset.forName("utf-8"))  //将ResponseBody中的字符以gbk编码解析，重新组装（解决经典文库中文章显示乱码的问题）
+
+                            if (content.contains("charset=")) {
+                                var charsetName = content.substringAfter("charset=").substringBefore(">")
+
+                                //因为某些页面可能是content="text/html; charset=utf-8"，某些可能是content='text/html; charset=utf-8'
+                                //所以要去掉末尾的'或"
+                                if (!charsetName.isNullOrEmpty() && charsetName.length > 2) {
+                                    charsetName = charsetName.substringBefore("'").substringBefore("\"").toLowerCase()
+                                }
+                                //如果不是utf-8编码，且在预定的字符集集合中，才重新解析
+                                if (!charsetName.isNullOrEmpty() && charsetName != "utf-8" && ChartsetList.contains(charsetName!!)) {
+                                    content = buffer.clone().readString(Charset.forName(charsetName))
+                                }
+                            }
                             //重新生成ResponseBody
                             val body = content.toResponseBody(contentType)
                             response.newBuilder().body(body).build()

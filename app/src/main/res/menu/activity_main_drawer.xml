@@ -22,6 +22,23 @@
     </group>
 
     <group
+        android:id="@+id/nav_group_import"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_import_articles"
+            android:icon="@drawable/ic_menu_import"
+            android:title="@string/action_import_articles" />
+        <item
+            android:id="@+id/nav_import_comments"
+            android:icon="@drawable/ic_menu_import"
+            android:title="@string/action_import_comments" />
+        <item
+            android:id="@+id/nav_import_keywords"
+            android:icon="@drawable/ic_menu_import"
+            android:title="@string/action_import_keywords" />
+    </group>
+
+    <group
         android:id="@+id/nav_group_tools"
         android:checkableBehavior="single">
         <item

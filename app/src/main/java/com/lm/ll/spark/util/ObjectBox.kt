@@ -1,10 +1,7 @@
 package com.lm.ll.spark.util
 
 import android.content.Context
-import com.lm.ll.spark.db.Article
-import com.lm.ll.spark.db.MyObjectBox
-import com.lm.ll.spark.db.QueryRecord
-import com.lm.ll.spark.db.SubForum
+import com.lm.ll.spark.db.*
 import io.objectbox.Box
 import io.objectbox.BoxStore
 import io.objectbox.kotlin.boxFor
@@ -30,6 +27,17 @@ object ObjectBox {
      * @time 2018-07-26 15:45
      */
     fun getArticleBox():Box<Article>{
+        return boxStore.boxFor()
+    }
+
+    /**
+     * @description Comment的Box实例，用于ObjectBox数据库中Comment表的相关操作
+     * @date: 2019-11-01 14:06
+     * @author: LuHui
+     * @param
+     * @return
+     */
+    fun getCommentBox(): Box<Comment> {
         return boxStore.boxFor()
     }
 

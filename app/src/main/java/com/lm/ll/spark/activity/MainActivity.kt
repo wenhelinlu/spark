@@ -1,43 +1,47 @@
 package com.lm.ll.spark.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.core.view.GravityCompat
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Switch
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ViewPagerAdapter
 import com.lm.ll.spark.api.TabooBooksApiService
 import com.lm.ll.spark.application.InitApplication
+import com.lm.ll.spark.db.Article_Json
+import com.lm.ll.spark.db.Comment_Json
+import com.lm.ll.spark.db.QueryRecord_Json
 import com.lm.ll.spark.fragment.NewsFragment
 import com.lm.ll.spark.fragment.SubForumFragment
 import com.lm.ll.spark.fragment.VideoFragment
 import com.lm.ll.spark.repository.TabooArticlesRepository
-import com.lm.ll.spark.util.GlobalConst
-import com.lm.ll.spark.util.getExceptionDesc
-import com.lm.ll.spark.util.switchDayNightMode
-import com.lm.ll.spark.util.toast
-import com.uber.autodispose.AutoDispose.autoDisposable
+import com.lm.ll.spark.util.*
+import com.lm.ll.spark.util.GlobalConst.Companion.LOG_TAG_COMMON
+import com.lm.ll.spark.util.GlobalConst.Companion.REQUEST_CODE_IMPORT_ARTICLE
+import com.lm.ll.spark.util.GlobalConst.Companion.REQUEST_CODE_IMPORT_COMMENT
+import com.lm.ll.spark.util.GlobalConst.Companion.REQUEST_CODE_IMPORT_KEYWORD
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_rich_text.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.util.concurrent.TimeoutException
-import javax.net.ssl.SSLHandshakeException
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -88,7 +92,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setupViewPager(viewPager)
     }
-    
+
     /**
      * @desc 设置ViewPager的Adapter
      * @author ll
@@ -197,9 +201,130 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 this@MainActivity.startActivity(Intent(this@MainActivity, AboutPageActivity::class.java))
 //                this@ArticleListActivity.startActivity(Intent(this@ArticleListActivity,RichTextActivity::class.java))
             }
+            R.id.nav_import_articles -> {
+                toast("导入文章")
+                performFileSearch(REQUEST_CODE_IMPORT_ARTICLE)
+            }
+            R.id.nav_import_comments -> {
+                toast("导入评论")
+                performFileSearch(REQUEST_CODE_IMPORT_COMMENT)
+            }
+            R.id.nav_import_keywords -> {
+                toast("导入查询历史")
+                performFileSearch(REQUEST_CODE_IMPORT_KEYWORD)
+            }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            data?.data?.also { uri ->
+                try {
+                    var jsonStr = readTextFromUri(uri)
+                    //注意必须是javaObjectType，要不会被擦除泛型
+//                    var keywords = Gson()?.fromJson(jsonStr, QueryRecord_Json::class.javaObjectType)
+//                    if(keywords != null){
+//                        var c = keywords.objects.count()
+//                    }
+                    val moshi: Moshi = Moshi.Builder().build()
+
+                    when (requestCode) {
+                        REQUEST_CODE_IMPORT_KEYWORD -> {
+                            val adapter: JsonAdapter<QueryRecord_Json> = moshi.adapter(QueryRecord_Json::class.java)
+                            val keywords = adapter.fromJson(jsonStr)
+                            if (keywords != null) {
+                                //先清空
+                                ObjectBox.getQueryRecordBox().removeAll()
+                                //插入数据库中
+                                keywords.objects.forEach { item ->
+                                    run {
+                                        //id默认为0，由ObjectBox自动赋值，否则会报错 java.lang.IllegalArgumentException: ID is higher or equal to internal ID sequence: 1 (vs. 1). Use ID 0 (zero) to insert new entities.
+                                        item.id = 0
+                                        ObjectBox.getQueryRecordBox().put(item)
+                                    }
+                                }
+                            }
+                        }
+                        REQUEST_CODE_IMPORT_ARTICLE -> {
+                            val adapter: JsonAdapter<Article_Json> = moshi.adapter(Article_Json::class.java)
+                            val articles = adapter.fromJson(jsonStr)
+                            if (articles != null) {
+                                //先清空
+                                ObjectBox.getArticleBox().removeAll()
+                                //插入数据库中
+                                articles.objects.forEach { item ->
+                                    run {
+                                        //id默认为0，由ObjectBox自动赋值，否则会报错 java.lang.IllegalArgumentException: ID is higher or equal to internal ID sequence: 1 (vs. 1). Use ID 0 (zero) to insert new entities.
+                                        item.id = 0
+                                        ObjectBox.getArticleBox().put(item)
+                                    }
+                                }
+                            }
+                        }
+                        REQUEST_CODE_IMPORT_COMMENT -> {
+                            val adapter: JsonAdapter<Comment_Json> = moshi.adapter(Comment_Json::class.java)
+                            val comments = adapter.fromJson(jsonStr)
+                            if (comments != null) {
+                                //先清空
+                                ObjectBox.getCommentBox().removeAll()
+                                //插入数据库中
+                                comments.objects.forEach { item ->
+                                    run {
+                                        //id默认为0，由ObjectBox自动赋值，否则会报错 java.lang.IllegalArgumentException: ID is higher or equal to internal ID sequence: 1 (vs. 1). Use ID 0 (zero) to insert new entities.
+                                        item.id = 0
+                                        ObjectBox.getCommentBox().put(item)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                } catch (t: Throwable) {
+                    Log.e(LOG_TAG_COMMON, t.message!!)
+                    toast(t.message!!)
+                }
+            }
+        }
+    }
+
+    private fun performFileSearch(requestCode: Int) {
+
+        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+        // browser.
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            // Filter to only show results that can be "opened", such as a
+            // file (as opposed to a list of contacts or timezones)
+            addCategory(Intent.CATEGORY_OPENABLE)
+
+            // Filter to show only images, using the image MIME data type.
+            // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+            // To search for all documents available via installed storage providers,
+            // it would be "*/*".
+            type = "*/*"
+        }
+
+        startActivityForResult(intent, requestCode)
+    }
+
+    @Throws(IOException::class)
+    private fun readTextFromUri(uri: Uri): String {
+        val stringBuilder = StringBuilder()
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                var line: String? = reader.readLine()
+                while (line != null) {
+                    stringBuilder.append(line)
+                    line = reader.readLine()
+                }
+            }
+        }
+        return stringBuilder.toString()
     }
 }

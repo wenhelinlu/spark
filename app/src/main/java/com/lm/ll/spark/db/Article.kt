@@ -1,5 +1,6 @@
 package com.lm.ll.spark.db
 
+import com.squareup.moshi.JsonClass
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.relation.ToMany
@@ -11,6 +12,7 @@ import java.time.format.DateTimeFormatter
  * Created by ll on 2018-05-24 17:23.
  */
 @Entity
+@JsonClass(generateAdapter = true)
 data class Article(
         @Id var id: Long = 0, //ObjectBox内部主键
         var url: String? = null, //url链接
@@ -33,3 +35,9 @@ data class Article(
 ){
     lateinit var comments: ToMany<Comment> //此文章的评论列表
 }
+
+
+@JsonClass(generateAdapter = true)
+data class Article_Json(
+        val objects: List<Article>
+)

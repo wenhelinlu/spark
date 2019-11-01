@@ -4,6 +4,7 @@ import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
 import com.lm.ll.spark.db.ProfileInfo
 import com.lm.ll.spark.db.SubForum
+import com.lm.ll.spark.util.GlobalConst
 import com.lm.ll.spark.util.GlobalConst.Companion.Cool18_BASE_URL
 import com.lm.ll.spark.util.GlobalConst.Companion.PARAGRAPH_FLAG_COUNT_LIMIT
 import com.lm.ll.spark.util.GlobalConst.Companion.TEXT_IMAGE_SPLITER
@@ -55,15 +56,34 @@ class Spider {
         }
 
         /**
-         * @description 某些网页（比如经典书库列表或其中的文章）HTTP响应Content-Type头缺少charset属性。解析HTML时，Jsoup将使用平台默认字符集（UTF-8），然后就会乱码，所以在此指定编码格式
+         * @description 某些网页（比如经典书库列表或其中的文章）HTTP响应Content-Type头缺少charset属性。解析HTML时，使用平台默认字符集（UTF-8），
+         * 然后根据提取出的charset值，如果不是utf-8，则重新解析
          * @date: 2019-10-31 18:44
          * @author: LuHui
          * @param
          * @return
          */
-        private fun getDocument(url: String, encoding: String): Document {
-            //将URL作为InputStream读取，并在Jsoup的parse()方法中手动指定字符集
-            return Jsoup.parse(URL(url).openStream(), encoding, url)
+        private fun getDocumentAutoCharset(url: String): Document {
+            //将URL作为InputStream读取，并在Jsoup的parse()方法中手动指定字符集,默认以utf-8编码解析
+            var doc = Jsoup.parse(URL(url).openStream(), "utf-8", url)
+
+            //然后判断解析的结果中的charset值，如果不是utf-8，则使用charset值重新解析（因为此时可能为乱码）
+            var str = doc.head().outerHtml()!!
+            if (!str.isNullOrEmpty() && str.contains("charset=")) {
+                var charsetName = str.substringAfter("charset=").substringBefore(">")
+
+                //因为某些页面可能是content="text/html; charset=utf-8"，某些可能是content='text/html; charset=utf-8'
+                //所以要去掉末尾的'或"
+                if (!charsetName.isNullOrEmpty() && charsetName.length > 2) {
+                    charsetName = charsetName.substringBefore("'").substringBefore("\"").toLowerCase()
+                }
+                //如果不是utf-8编码，且在预定的字符集集合中，才重新解析
+                if (!charsetName.isNullOrEmpty() && charsetName != "utf-8" && GlobalConst.ChartsetList.contains(charsetName!!)) {
+                    doc = Jsoup.parse(URL(url).openStream(), charsetName, url)
+                }
+            }
+
+            return doc
         }
 
         /**
@@ -333,7 +353,8 @@ class Spider {
         fun scratchClassicEroticaArticleList(webUrl: String): ArrayList<Article> {
             try {
                 val mList = ArrayList<Article>()
-                val doc = getDocument(webUrl, "gb2312")
+                val doc = getDocumentAutoCharset(webUrl)
+
                 val children: Elements = doc.getElementsByClass("dc_bar")
 
                 val element = children[1].childNodes()[1]

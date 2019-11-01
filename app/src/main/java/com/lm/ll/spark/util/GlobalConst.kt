@@ -71,5 +71,17 @@ class GlobalConst {
 
         //文章正文中文本和图片之间分隔符
         const val TEXT_IMAGE_SPLITER = "@@@"
+
+        //导入查询历史
+        const val REQUEST_CODE_IMPORT_KEYWORD: Int = 40
+
+        //导入文章
+        const val REQUEST_CODE_IMPORT_ARTICLE: Int = 41
+
+        //导入评论
+        const val REQUEST_CODE_IMPORT_COMMENT: Int = 42
+
+        //预置的字符集
+        val ChartsetList = listOf("gbk", "gb2312", "iso-8859-1", "big5")
     }
 }

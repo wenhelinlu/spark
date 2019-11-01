@@ -139,4 +139,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_import_articles">导入文章</string>
+    <string name="action_import_comments">导入评论</string>
+    <string name="action_import_keywords">导入查询历史</string>
 </resources>
