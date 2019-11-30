@@ -14,6 +14,7 @@ import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.util.GlobalConst.Companion.PULL_REFRESH_DISTANCE
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.toast
+import io.objectbox.kotlin.query
 import kotlinx.android.synthetic.main.elite_erotica_article_list.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,7 +72,8 @@ class FavoriteArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout
             try {
                 withContext(Dispatchers.IO) {
                     //注意：Article_.comments中的下划线，这个Article_是ObjectBox内部生成的properties class,即属性类，通过它可以直接获取Article类的各个属性
-                    val articles = ObjectBox.getArticleBox().query().orderDesc(Article_.insertTime).build().find()
+                    val articles = ObjectBox.getArticleBox().query { orderDesc(Article_.insertTime) }.find()
+
                     articleList.clear()
                     articleList.addAll(ArrayList(articles))
                     adapter.backupData(ArrayList(articles))
@@ -79,6 +81,11 @@ class FavoriteArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout
             } catch (e: Exception) {
                 toast("加载失败")
             }
+
+//            val moshi = Moshi.Builder().build()
+//            val adapter = moshi.adapter<Any>(Article::class.java)
+//
+//            var jsonStr = adapter.toJson(articleList.first())
 
             showProgress(false)
             refreshData()

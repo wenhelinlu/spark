@@ -1,6 +1,7 @@
 package com.lm.ll.spark.db
 
 import com.squareup.moshi.JsonClass
+import io.objectbox.annotation.Backlink
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
 import io.objectbox.relation.ToMany
@@ -33,6 +34,7 @@ data class Article(
         var depth: Int = 0 //列表层级，控制评论列表的缩进
 
 ){
+    @Backlink(to = "article")
     lateinit var comments: ToMany<Comment> //此文章的评论列表
 }
 

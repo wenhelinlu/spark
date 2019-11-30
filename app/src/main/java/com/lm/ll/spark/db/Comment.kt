@@ -3,6 +3,7 @@ package com.lm.ll.spark.db
 import com.squareup.moshi.JsonClass
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
+import io.objectbox.relation.ToOne
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -25,7 +26,9 @@ data class Comment(
         var text: String = "", //文章正文
         var depth: Int = 0, //评论深度（用于缩进显示）
         var insertTime: String? = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) //文章收藏入库时间
-)
+) {
+    lateinit var article: ToOne<Article>
+}
 
 
 @JsonClass(generateAdapter = true)

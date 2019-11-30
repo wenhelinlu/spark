@@ -103,17 +103,11 @@
           "flags": 4
         }
       ],
-      "relations": [
-        {
-          "id": "1:120272016332455052",
-          "name": "comments",
-          "targetId": "2:5916760128986399421"
-        }
-      ]
+      "relations": []
     },
     {
       "id": "2:5916760128986399421",
-      "lastPropertyId": "10:5637708671461158888",
+      "lastPropertyId": "11:2344148052833827072",
       "name": "Comment",
       "properties": [
         {
@@ -167,6 +161,14 @@
           "id": "10:5637708671461158888",
           "name": "insertTime",
           "type": 9
+        },
+        {
+          "id": "11:2344148052833827072",
+          "name": "articleId",
+          "indexId": "1:7946174916350177157",
+          "type": 11,
+          "flags": 1548,
+          "relationTarget": "Article"
         }
       ],
       "relations": []
@@ -233,7 +235,7 @@
     }
   ],
   "lastEntityId": "5:8274759648660604513",
-  "lastIndexId": "0:0",
+  "lastIndexId": "1:7946174916350177157",
   "lastRelationId": "1:120272016332455052",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -248,6 +250,8 @@
     8688571474501717396,
     1453616599602416182
   ],
-  "retiredRelationUids": [],
+  "retiredRelationUids": [
+    120272016332455052
+  ],
   "version": 1
 }
