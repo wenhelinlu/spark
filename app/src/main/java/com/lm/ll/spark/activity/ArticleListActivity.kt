@@ -263,7 +263,7 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
     private fun queryArticleList(pageIndex: Int): ArrayList<Article> {
         return try {
 
-            val url = "$baseUri?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$encodedKeyword&submit=%B2%E9%D1%AF&p=$pageIndex"
+            val url = "$baseUri?action=search&bbsdr=life6&act=threadsearch&app=forum&keywords=$encodedKeyword&submit=%E6%9F%A5%E8%AF%A2&p=$pageIndex"
             Spider.scratchQueryArticles(url)
         } catch (ex: Exception) {
 
@@ -315,7 +315,8 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
 
         articleList.clear()
         //get请求中，因留园网为gb2312编码，所以中文参数以gb2312字符集编码（okhttp默认为utf-8编码）
-        encodedKeyword = URLEncoder.encode(keyword, "gb2312")
+        //更新：2020年3月27日 禁忌书屋目前已改成utf-8编码
+        encodedKeyword = URLEncoder.encode(keyword, "utf-8")
         //查询结果页码重置为1
         queryCurrentPage = 1
         loadData(::queryArticleList)
