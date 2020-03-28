@@ -70,7 +70,26 @@ fun String.convertToSimplifiedChinese(forceConvert: Boolean = false): String {
     }
 }
 
-//简化的Toast方法
+/**
+ * @description 替换多个关键词
+ * @date: 2020-03-28 15:29
+ * @author: LuHui
+ * @param
+ * @return
+ */
+fun String.replace(vararg replacements: Pair<String, String>): String {
+    var result = this
+    replacements.forEach { (l, r) -> result = result.replace(l, r) }
+    return result
+}
+
+/**
+ * @description 简化的Toast方法
+ * @date: 2020-03-28 15:33
+ * @author: LuHui
+ * @param
+ * @return
+ */
 fun Context.toast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, message, duration).show()
 }
