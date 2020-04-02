@@ -49,8 +49,8 @@ class Spider {
         private fun getDocument(url: String): Document {
             try {
                 //2019年10月31日 17点04分  直接使用get方法，会报java.io.IOException: Mark invalid异常，所以改用下面的代码
-                var execute = Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIME_OUT).execute()
-                return Jsoup.parse(execute.body())
+                var body = Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIME_OUT).execute().bufferUp().body()
+                return Jsoup.parse(body)
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }

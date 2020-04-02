@@ -69,14 +69,16 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    implementation 'org.jsoup:jsoup:1.12.2'
+    implementation "org.jsoup:jsoup:$jsoup_version"
 
     //注意：如果是Java工程则使用kotlinx-coroutines-core
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     //HanLP库 繁简转换
     //因为从maven中加载的jar中，某些字会被不正确的转换（如猛转换成勐，富豪转换成沃尔沃），所以不再通过gradle加载，而是导入修改词库后的jar包
-    //implementation 'com.hankcs:hanlp:portable-1.7.1'
+    //更新：2020年4月2日，1.7.7版本已解决某些字不正确转换的问题， 重新使用gradle库，不再加载本地jar包
+    implementation 'com.hankcs:hanlp:portable-1.7.7'
+    //implementation files('libs/hanlp-portable-1.7.1.jar')
 
     //opencc-android 繁简转换库 （此库转换效果比较满意，但是有时会导致程序FC）
     //implementation 'com.zqc.opencc.android.lib:lib-opencc-android:0.8.0@aar'
@@ -99,10 +101,10 @@ dependencies {
 
     //ReactiveX series
     implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation "io.reactivex.rxjava2:rxandroid:${rxandroid_version}"
 
     //okhttp3 interceptor
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
 
     //Retrofit series
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
@@ -141,7 +143,6 @@ dependencies {
 
     //关于消息页面
     implementation 'com.github.medyo:android-about-page:1.2.4'
-    implementation files('libs/hanlp-portable-1.7.1.jar')
 
     //moshi库，处理json
     implementation "com.squareup.moshi:moshi:$moshi_version"

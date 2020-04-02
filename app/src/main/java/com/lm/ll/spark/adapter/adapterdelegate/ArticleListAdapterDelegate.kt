@@ -34,7 +34,11 @@ class ArticleListAdapterDelegate(activity: AppCompatActivity) : BaseListAdapterD
     }
 
     override fun isForViewType(items: ArrayList<Article>, position: Int): Boolean {
-        return !items[position].author.isEmpty()
+        return try {
+            items[position].author.isNotEmpty()
+        } catch (t: Throwable) {
+            false
+        }
     }
 
     override fun onBindViewHolder(items: ArrayList<Article>, position: Int, holder: RecyclerView.ViewHolder, payloads: MutableList<Any>) {
