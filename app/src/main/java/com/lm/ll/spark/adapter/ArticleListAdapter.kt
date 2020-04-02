@@ -22,7 +22,7 @@ import com.lm.ll.spark.util.GlobalConst.Companion.IS_CLASSIC_ARTICLE
  */
 class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>) : ListDelegationAdapter<ArrayList<Article>>() {
     //列表数据源备份（用于搜索）
-    var listBackup = ArrayList(items)
+    private var listBackup = ArrayList(items)
 
     init {
         val alaDelegate = ArticleListAdapterDelegate(activity)
@@ -34,6 +34,7 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
                 if (items[position].classicalFlag == 1) {
                     intent.putExtra(IS_CLASSIC_ARTICLE, true)
                 }
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 activity.startActivity(intent)
 
             }
@@ -48,6 +49,7 @@ class ArticleListAdapter(activity: AppCompatActivity, items: ArrayList<Article>)
                 if (items[position].classicalFlag == 1) {
                     intent.putExtra(IS_CLASSIC_ARTICLE, true)
                 }
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 activity.startActivity(intent)
             }
         })

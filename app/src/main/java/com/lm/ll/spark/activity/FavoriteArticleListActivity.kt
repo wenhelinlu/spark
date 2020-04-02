@@ -56,11 +56,6 @@ class FavoriteArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout
         loadData()
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadData()
-    }
-
     /**
      * @desc 从数据库中读取数据
      * @author Administrator
