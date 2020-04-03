@@ -77,11 +77,12 @@ dependencies {
     //HanLP库 繁简转换
     //因为从maven中加载的jar中，某些字会被不正确的转换（如猛转换成勐，富豪转换成沃尔沃），所以不再通过gradle加载，而是导入修改词库后的jar包
     //更新：2020年4月2日，1.7.7版本已解决某些字不正确转换的问题， 重新使用gradle库，不再加载本地jar包
-    implementation 'com.hankcs:hanlp:portable-1.7.7'
+    //更新：2020年4月3日，未解决某些字不正确转换的问题，使用新版opencc库
+    //implementation 'com.hankcs:hanlp:portable-1.7.7'
     //implementation files('libs/hanlp-portable-1.7.1.jar')
 
     //opencc-android 繁简转换库 （此库转换效果比较满意，但是有时会导致程序FC）
-    //implementation 'com.zqc.opencc.android.lib:lib-opencc-android:0.8.0@aar'
+    implementation 'com.zqc.opencc.android.lib:lib-opencc-android:1.1.0'
 
     //图文混排库
     implementation('com.github.sendtion:XRichText:1.5') {

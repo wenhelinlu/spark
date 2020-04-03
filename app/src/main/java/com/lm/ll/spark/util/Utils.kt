@@ -9,7 +9,6 @@ import android.net.ConnectivityManager
 import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
-import com.hankcs.hanlp.HanLP
 import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.Comment
@@ -19,6 +18,8 @@ import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_END_HOUR
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE_START_HOUR
 import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
+import com.zqc.opencc.android.lib.ChineseConverter
+import com.zqc.opencc.android.lib.ConversionType
 import io.objectbox.kotlin.query
 import retrofit2.HttpException
 import java.io.IOException
@@ -62,8 +63,8 @@ fun String.convertToSimplifiedChinese(forceConvert: Boolean = false): String {
         //根据设置中是否启用自动繁简转换来操作
 //        Log.d(LOG_TAG_COMMON, " auto_t2s = $autoTranslate")
         if (autoTranslate || forceConvert) {
-            //        ChineseConverter.convert(this, ConversionType.T2S, InitApplication.getInstance())  //opencc-android转换库的用法
-            HanLP.convertToSimplifiedChinese(this)
+            ChineseConverter.convert(this, ConversionType.T2S, InitApplication.getInstance())  //opencc-android转换库的用法
+            //HanLP.convertToSimplifiedChinese(this)
         } else {
             this
         }
