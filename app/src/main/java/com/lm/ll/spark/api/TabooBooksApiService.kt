@@ -183,7 +183,7 @@ interface TabooBooksApiService {
                                     charsetName = charsetName.substringBefore("'").substringBefore("\"").toLowerCase()
                                 }
                                 //如果不是utf-8编码，且在预定的字符集集合中，才重新解析
-                                if (!charsetName.isNullOrEmpty() && charsetName != "utf-8" && ChartsetList.contains(charsetName!!)) {
+                                if (!charsetName.isNullOrEmpty() && charsetName != "utf-8" && ChartsetList.contains(charsetName)) {
                                     content = buffer.clone().readString(Charset.forName(charsetName))
                                 }
                             }

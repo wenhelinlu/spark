@@ -20,15 +20,10 @@ import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.getExceptionDesc
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.autoDisposable
 import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_data_list.*
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.util.concurrent.TimeoutException
-import javax.net.ssl.SSLHandshakeException
 
 class SubForumFragment : Fragment() {
     /**
@@ -59,7 +54,7 @@ class SubForumFragment : Fragment() {
 
     private var mActivity: AppCompatActivity? = null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is Activity) {
             mActivity = context as AppCompatActivity

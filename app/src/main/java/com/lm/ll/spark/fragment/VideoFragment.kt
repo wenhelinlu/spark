@@ -76,7 +76,7 @@ class VideoFragment : Fragment() {
 
     private var mActivity: AppCompatActivity? = null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is Activity) {
             mActivity = context as AppCompatActivity

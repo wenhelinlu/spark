@@ -24,10 +24,6 @@ import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_data_list.*
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.util.concurrent.TimeoutException
-import javax.net.ssl.SSLHandshakeException
 
 class NewsFragment : Fragment() {
     /**
@@ -58,7 +54,7 @@ class NewsFragment : Fragment() {
 
     private var mActivity: AppCompatActivity? = null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is Activity) {
             mActivity = context as AppCompatActivity

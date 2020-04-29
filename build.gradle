@@ -6,7 +6,7 @@ buildscript {
     ext.rxkotlin_version = '2.2.0'
     ext.rxandroid_version = '2.1.1'
     ext.uber_autodispose_version = '1.4.0'
-    ext.objectbox_version = '2.4.0'
+    ext.objectbox_version = '2.5.1'
     ext.supportLib_version = '28.0.0'
     ext.moshi_version = '1.9.2'
     ext.jsoup_version='1.13.1'
@@ -21,7 +21,7 @@ buildscript {
         maven { url 'https://dl.bintray.com/qichuan/maven/'}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.2'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
 
@@ -33,7 +33,7 @@ buildscript {
         classpath 'com.google.gms:google-services:4.0.1'
 
         //Firebase的Crashlytics依赖组件
-        classpath 'io.fabric.tools:gradle:1.25.4'
+        classpath 'io.fabric.tools:gradle:1.28.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

@@ -33,6 +33,7 @@ class Spider {
         private const val paragraphFlag = "\r\n\r\n" //段落标记符
         private const val newlineFlagPattern = "\\s*?\\r\\n\\s*?" //匹配换行标记符的正则表达式的模式串，可匹配\r\n, \r\n ,\r\n 等\r\n两边有0到多个空格的情况
         private const val emptyLineFlagPattern = " (\\s*)\\n" //匹配空行标记符的正则表达式的模式串
+        private const val spaceFlagPattern = "\\s{2,}|\t|\\p{Zs}" //匹配空格（包括全角空格）的正则表达式模式串
         private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
 
         private const val subForumTitlePattern = "(?<=\\[)\\S+(?=\\])"
@@ -50,7 +51,7 @@ class Spider {
             try {
                 //2019年10月31日 17点04分  直接使用get方法，会报java.io.IOException: Mark invalid异常，所以改用下面的代码
                 var body = Jsoup.connect(url).userAgent(USER_AGENT).timeout(TIME_OUT).execute().bufferUp().body()
-                return Jsoup.parse(body)
+                return Jsoup.parse(body.replace("<br />", "").replace("<br/>", ""))
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
             }
@@ -79,7 +80,7 @@ class Spider {
                     charsetName = charsetName.substringBefore("'").substringBefore("\"").toLowerCase()
                 }
                 //如果不是utf-8编码，且在预定的字符集集合中，才重新解析
-                if (!charsetName.isNullOrEmpty() && charsetName != "utf-8" && GlobalConst.ChartsetList.contains(charsetName!!)) {
+                if (!charsetName.isNullOrEmpty() && charsetName != "utf-8" && GlobalConst.ChartsetList.contains(charsetName)) {
                     doc = Jsoup.parse(URL(url).openStream(), charsetName, url)
                 }
             }
@@ -490,7 +491,9 @@ class Spider {
             //要注意替换的顺序，比如www.6park.com要放在6park.com的前面替换，不然会导致剩下www.无法被替换
             val puredText = originalText.replace("www.6park.com" to paragraphFlag, "6park.com" to paragraphFlag, "6parker.com" to paragraphFlag, "cool18.com" to paragraphFlag)
             //先去除空行标记（某些文章（如【只贴精品-马艳丽1-4）会因为空行标记导致误判断为含段落标记，从而清除换行标记后，排版混乱）
-            val removedEmptyLineText = Regex(emptyLineFlagPattern).replace(puredText, "")
+            var removedEmptyLineText = Regex(emptyLineFlagPattern).replace(puredText, "")
+            //某些文章网页源码中是以<p /><p />作为段落分割（如母上攻略4-1），解析文本后，这下标记会被替换为多个空格（包括全角空格），所以也要进行处理
+//            removedEmptyLineText = Regex(spaceFlagPattern).replace(removedEmptyLineText, paragraphFlag)
             //判断文本中段落标记（\r\n\r\n）个数，大于某个值，则处理，否则不处理
             val pCount = Regex(paragraphFlagPattern).findAll(removedEmptyLineText).count()
 //                Log.d(LOG_TAG_COMMON,"段落标记数量 = $pCount")

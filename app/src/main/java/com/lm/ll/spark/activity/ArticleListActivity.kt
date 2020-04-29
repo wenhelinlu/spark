@@ -343,7 +343,7 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
     private fun saveQueryRecord(keyword: String) {
         //如果查询记录在数据库中不存在，则插入数据库中
         val f = getQueryRecordBox().query { equal(QueryRecord_.keyword, keyword) }.find()
-        if (f == null || f.count() == 0) {
+        if (f.count() == 0) {
             val record = QueryRecord()
             record.keyword = keyword
             record.queryType = ForumType.TABOO_BOOK.ordinal

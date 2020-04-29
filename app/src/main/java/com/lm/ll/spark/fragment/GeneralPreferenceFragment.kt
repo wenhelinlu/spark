@@ -26,8 +26,10 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
         // to their values. When their values change, their summaries are
         // updated to reflect the new value, per the Android Design
         // guidelines.
-        bindPreferenceSummaryToValue(findPreference("example_text"))
-        bindPreferenceSummaryToValue(findPreference("font_size_list"),"18")
+
+
+        bindPreferenceSummaryToValue(findPreference("example_text")!!)
+        bindPreferenceSummaryToValue(findPreference("font_size_list")!!, "18")
     }
 
     companion object {
