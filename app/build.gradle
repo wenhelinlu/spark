@@ -105,7 +105,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:${rxandroid_version}"
 
     //okhttp3 interceptor
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
 
     //Retrofit series
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
@@ -134,7 +134,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha04'
 
     //Firebase核心组件（Analytics功能）
-    implementation 'com.google.firebase:firebase-core:17.4.0'
+    implementation 'com.google.firebase:firebase-core:17.4.2'
 
     //Firebase的Crashlytics组件
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
