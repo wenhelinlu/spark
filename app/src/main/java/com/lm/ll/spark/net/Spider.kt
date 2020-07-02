@@ -35,6 +35,9 @@ class Spider {
         private const val newlineFlagPattern = "\\s*?\\r\\n\\s*?" //匹配换行标记符的正则表达式的模式串，可匹配\r\n, \r\n ,\r\n 等\r\n两边有0到多个空格的情况
         private const val emptyLineFlagPattern = " (\\s*)\\n" //匹配空行标记符的正则表达式的模式串
         private const val replacerWord = "REPLACER_FLAG" //用于字符串替换的标记
+        private const val hiddenCharPattern = "<font[\\s\\S]*?</font>"  //匹配包括<font和</font>之间的所有字符，例如<font color=#E6E6DD>cool18.com</font>，其在网页上颜色和背景色相同，主页起到干扰复制文本的功能，在此将其替换成空字符
+
+        private const val specialParagraphPattern = "<br>\\s*?<br>" //匹配<br />　　<br />，两个br中间是全角空格，【母上攻略】5.2-5.4中以此作为分段标记，为了方便解析，将此替换为<p>
 
         private const val subForumTitlePattern = "(?<=\\[)\\S+(?=\\])"
 
@@ -241,7 +244,29 @@ class Spider {
          * @time 2018-05-29 18:44
          */
         private fun parseText(e: Element): String {
-            return formatText(e.text().convertToSimplifiedChinese())
+//            return formatText(e.text().convertToSimplifiedChinese())
+
+            //先将全角空格替换为空字符
+            var pureHtml = Regex(hiddenCharPattern).replace(e.outerHtml(), "").replace("\u3000" to "")
+            //因为个别文章分段是根据br标签分段（如枕上余温06-10章节，所以判断p标签的个数，如果较少则认为是根据br标签分段，将br替换为p标签
+            var pCount = Regex("<p>").findAll(pureHtml).count();
+            if (pCount < 10) {
+                pureHtml = pureHtml.replace("<br>" to "<p></p>", "<br/>" to "<p></p>", "<br >" to "<p></p>", "<br />" to "<p></p>")
+            }
+            //某些文章是根据两个相邻的br标签分段（例如母上攻略5.2-5.4章节），标签之间是全角空格，经过上面的全角空格替换处理，然后根据正则将两个相邻的br标签替换为p标签
+            pureHtml = Regex(specialParagraphPattern).replace(pureHtml, "<p></p>")
+            val document = Jsoup.parse(pureHtml)
+
+            return formatArticle(document.body())
+        }
+
+        private fun formatArticle(e: Element): String {
+            val formatter = HtmlToPlainText()
+            val plainText = formatter.getPlainText(e) // format that element to plain text
+            var list = plainText.split("\n\n")
+
+            var formated = list.asIterable().reduce { acc, s -> acc + ("        " + s.trimStart() + "\n\n") }
+            return formated.convertToSimplifiedChinese()
         }
 
         /**
@@ -467,7 +492,6 @@ class Spider {
                     commentList.addAll(scratchComments(doc, article.url!!.substringBefore("index")))
                     article.comments.addAll(commentList)
                 }
-
 
                 return article
             } catch (t: Throwable) {
