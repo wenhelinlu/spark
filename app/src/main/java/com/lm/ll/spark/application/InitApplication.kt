@@ -4,6 +4,7 @@ import android.app.Application
 import android.preference.PreferenceManager
 import com.lm.ll.spark.BuildConfig
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.util.GlobalConst
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.switchDayNightMode
@@ -20,9 +21,13 @@ class InitApplication : Application() {
         private var singleton: InitApplication? = null
 
         //用于不同Activity间数据的传递，这样不需要对Article和Comment进行Parcelable处理
-        var curArticle:Article? = null
+        var curArticle: Article? = null
 
-        var screenWidth:Int = 0
+        //不同的子论坛的baseuri不同，所以进入子论坛时，将对应的baseuri存入此变量中，比如禁忌书屋是https://www.cool18.com/bbs4/index.php，
+        //私房自拍是https://www.cool18.com/bbs6/index.php，所以在使用时，截取index.php之前的地址作为baseuri
+        var baseUri: String = GlobalConst.BASE_URL
+
+        var screenWidth: Int = 0
 
         fun getInstance(): InitApplication {
             if (singleton == null) {

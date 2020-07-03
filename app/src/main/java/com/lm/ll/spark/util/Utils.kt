@@ -1,11 +1,13 @@
 package com.lm.ll.spark.util
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.database.MatrixCursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
+import android.os.Build
 import android.preference.PreferenceManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
@@ -21,6 +23,7 @@ import com.lm.ll.spark.util.ObjectBox.getQueryRecordBox
 import com.zqc.opencc.android.lib.ChineseConverter
 import com.zqc.opencc.android.lib.ConversionType
 import io.objectbox.kotlin.query
+import io.reactivex.exceptions.Exceptions
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.ConnectException
@@ -280,13 +283,17 @@ fun getImgSrc(content: String): String? {
  * @return
  */
 fun getImageSizeAhead(imageUrl: String): IntArray {
-    val options = BitmapFactory.Options()
-    options.inPreferredConfig = Bitmap.Config.RGB_565 //压缩图片
-    options.inJustDecodeBounds = true //仅返回宽高，减少内存占用
-    //这里返回的Bitmap是null，因为options的inJustDecodeBounds属性设为true
-    val bitmap = BitmapFactory.decodeStream(URL(imageUrl).openStream(), null, options)
+    try {
+        val options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.RGB_565 //压缩图片
+        options.inJustDecodeBounds = true //仅返回宽高，减少内存占用
+        //这里返回的Bitmap是null，因为options的inJustDecodeBounds属性设为true
+        val bitmap = BitmapFactory.decodeStream(URL(imageUrl).openStream(), null, options)
 
-    return intArrayOf(options.outWidth, options.outHeight)
+        return intArrayOf(options.outWidth, options.outHeight)
+    } catch (t: Throwable) {
+        throw Exceptions.propagate(t)
+    }
 }
 
 /**
@@ -299,6 +306,15 @@ fun getExceptionDesc(error: Throwable): String {
         is IndexOutOfBoundsException, is ClassCastException -> "解析异常"
         else -> error.toString()
     }
+}
+
+/**
+ * 判断Activity是否Destroy
+ * @param activity
+ * @return
+ */
+fun isDestroy(mActivity: Activity?): Boolean {
+    return mActivity == null || mActivity.isFinishing || Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && mActivity.isDestroyed
 }
 
 //endregion

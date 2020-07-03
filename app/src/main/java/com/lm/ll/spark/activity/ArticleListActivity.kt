@@ -10,6 +10,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
+import com.lm.ll.spark.application.InitApplication
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.db.QueryRecord
 import com.lm.ll.spark.db.QueryRecord_
@@ -110,6 +111,7 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
 
         if (intent.hasExtra(SUB_FORUM_URL)) {
             baseUri = intent.getStringExtra(SUB_FORUM_URL)
+            InitApplication.baseUri = baseUri
         }
 
         if (intent.hasExtra(SUB_FORUM_TITLE)) {

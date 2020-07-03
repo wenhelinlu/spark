@@ -98,9 +98,9 @@ interface TabooBooksApiService {
          * @author ll
          * @time 2018-06-25 20:18
          */
-        fun create(): TabooBooksApiService {
+        fun create(baseUri: String = "https://www.cool18.com/bbs4/"): TabooBooksApiService {
             val retrofit = Retrofit.Builder()
-                    .baseUrl(API_SERVER_URL)
+                    .baseUrl(baseUri)
                     .client(genericClient())
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

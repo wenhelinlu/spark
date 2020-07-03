@@ -392,7 +392,7 @@ class ArticleDisplayActivity : CoroutineScopeActivity() {
      * @time 2018-07-01 17:21
      */
     private fun loadTextWithRx() {
-        val repository = TabooArticlesRepository(TabooBooksApiService.create())
+        val repository = TabooArticlesRepository(TabooBooksApiService.create(InitApplication.baseUri.substringBefore("index.php")))
         repository.getArticle(currentArticle, isClassic, isForceRefresh)
                 .firstElement() //如果数据库中有数据，则直接取数据库中数据
                 .subscribeOn(Schedulers.io())
