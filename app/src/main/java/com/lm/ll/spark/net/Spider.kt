@@ -248,13 +248,14 @@ class Spider {
 
             //先将全角空格替换为空字符
             var pureHtml = Regex(hiddenCharPattern).replace(e.outerHtml(), "").replace("\u3000" to "")
+            //某些文章是根据两个相邻的br标签分段（例如母上攻略5.2-5.4章节），标签之间是全角空格，经过上面的全角空格替换处理，然后根据正则将两个相邻的br标签替换为p标签
+            pureHtml = Regex(specialParagraphPattern).replace(pureHtml, "<p></p>")
             //因为个别文章分段是根据br标签分段（如枕上余温06-10章节，所以判断p标签的个数，如果较少则认为是根据br标签分段，将br替换为p标签
             var pCount = Regex("<p>").findAll(pureHtml).count();
             if (pCount < 10) {
                 pureHtml = pureHtml.replace("<br>" to "<p></p>", "<br/>" to "<p></p>", "<br >" to "<p></p>", "<br />" to "<p></p>")
             }
-            //某些文章是根据两个相邻的br标签分段（例如母上攻略5.2-5.4章节），标签之间是全角空格，经过上面的全角空格替换处理，然后根据正则将两个相邻的br标签替换为p标签
-            pureHtml = Regex(specialParagraphPattern).replace(pureHtml, "<p></p>")
+
             val document = Jsoup.parse(pureHtml)
 
             return formatArticle(document.body())
