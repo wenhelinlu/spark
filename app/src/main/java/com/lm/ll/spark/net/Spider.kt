@@ -266,7 +266,7 @@ class Spider {
             val plainText = formatter.getPlainText(e) // format that element to plain text
             var list = plainText.split("\n\n")
 
-            var formated = list.asIterable().reduce { acc, s -> acc + ("        " + s.trimStart() + "\n\n") }
+            var formated = list.asIterable().reduce { acc, s -> acc + ("\n        " + s.trimStart() + "\n") }
             return formated.convertToSimplifiedChinese()
         }
 
