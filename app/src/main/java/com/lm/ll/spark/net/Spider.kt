@@ -130,6 +130,9 @@ class Spider {
                     }
 
                     val childNodes = child.childNodes()
+                    if (!childNodes.any()) {
+                        continue
+                    }
                     val article = Article()
                     val link: Element = childNodes[0] as Element
                     val uri = link.attr("href")
@@ -268,6 +271,7 @@ class Spider {
 
             var formated = list.asIterable().reduce { acc, s -> acc + ("\n        " + s.trimStart() + "\n") }
             return formated.convertToSimplifiedChinese()
+//            return  plainText.convertToSimplifiedChinese()
         }
 
         /**
@@ -279,6 +283,9 @@ class Spider {
             try {
                 val doc: Document = Jsoup.connect(article.url).get()
                 val comments: Elements = doc.getElementsByTag("ul")
+                if (!comments.any()) {
+                    return ArrayList<Comment>()
+                }
                 return parseComments(comments[0])
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
@@ -323,6 +330,9 @@ class Spider {
 
             val childNodes = ul.childNodes()
             val comment = Comment()
+            if (!childNodes.any()) {
+                return
+            }
             val link: Element = childNodes[0] as Element
             val uri = link.attr("href")
             comment.url = "$baseUri$uri"
@@ -561,6 +571,9 @@ class Spider {
         private fun scratchComments(doc: Document, baseUri: String): ArrayList<Comment> {
             try {
                 val comments: Elements = doc.getElementsByTag("ul")
+                if (!comments.any()) {
+                    return ArrayList<Comment>()
+                }
                 return parseComments(comments[0], baseUri)
             } catch (t: Throwable) {
                 throw Exceptions.propagate(t)
@@ -603,6 +616,9 @@ class Spider {
             try {
                 val list = ArrayList<ProfileInfo>()
                 val masthead = doc.select("div.content_list")
+                if (!masthead.any()) {
+                    return list
+                }
                 val docTrs = masthead[0].selectFirst("tbody").select("tr")
                 for (e in docTrs) {
                     val info = ProfileInfo((e.childNode(1) as Element).text(), (e.childNode(2) as Element).text())
@@ -632,6 +648,9 @@ class Spider {
             try {
                 val list = ArrayList<String>()
                 val body: Elements = doc.getElementsByTag("pre")
+                if (!body.any()) {
+                    return ""
+                }
                 for (node in body[0].childNodes()) {
                     scratchRichTextDataRecursively(node, list)
                 }
