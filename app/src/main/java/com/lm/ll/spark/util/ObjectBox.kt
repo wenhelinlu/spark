@@ -24,16 +24,17 @@ object ObjectBox {
          * @description
          *
          * 问题背景：
-         * 因为之前都是直接调试安装apk，但是从方式安装的应用无法被覆盖安装，且钛备份也无法完整还原
-         * 程序和数据（只能通过Android Studio调试安装新的apk后，再用钛备份恢复数据），MIUI自身的备份好像可以完整恢复调试安装的
-         * 程序和数据，但是依然无法覆盖安装新版本，必须将原有应用卸载，所以考虑安装打包的release版本，但是如何将原有的数据转移到
-         * release版本呢？直接复制ObjectBox的data.mdb文件放在新的应用目录下是启动失败的。
+         * 因为之前都是直接调试安装apk，但是此方式安装的应用无法被覆盖安装，且钛备份也无法完整还原程序和数据（只能通过Android
+         * Studio调试安装新的apk后，再用钛备份恢复数据），MIUI自身的备份好像可以完整恢复调试安装的程序和数据，但是依然无法
+         * 覆盖安装新版本，必须将原有应用卸载，所以考虑安装打包的release版本，但是如何将原有的数据转移到release版本呢？如果
+         * 直接复制ObjectBox的data.mdb文件放在新的应用目录下是启动失败的。
          *
          * 解决方式：
-         * ObjectBox文件存储路径为/data/data/packagename/files/objectbox/objectbox/data.mdb，在Android Studio项目里
-         * 的main目录下新建一个assets目录（ New->Folder-> Assets Folder），然后把data.mdb文件粘贴在assets目录里，并把
-         * ObjectBox的初始化代码修改为下面注释的部分（主要是多了调用initialDbFile方法，打开assets里的data.db文件）。
-         * 该方法在初始化的时候，会去读取该目录下的文件就行数据填充。但是要注意一点，数据模型实体必须和原来的一样，不然会有问题，运行直接崩溃。
+         * debug版本的数据库文件存储路径为/data/data/com.ll.spark.debug/files/objectbox/objectbox/data.mdb，如果手机
+         * 已root，可以用root explorer等获取root权限的应用将此文件复制出来，在Android Studio项目里的main目录下新建一个assets
+         * 目录（ New->Folder-> Assets Folder），然后把data.mdb文件粘贴在assets目录里，并把ObjectBox的初始化代码修改为
+         * 下面注释的部分（主要是多了调用initialDbFile方法，打开assets里的data.db文件）。该方法在初始化的时候，会去读取该目录下
+         * 的文件就行数据填充。但是要注意一点，数据模型实体必须和原来的一样，不然会有问题，运行直接崩溃。
          *
          * @date: 2021-01-29 13:47
          * @author: LuHui
