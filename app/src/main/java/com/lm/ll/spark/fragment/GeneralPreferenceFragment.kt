@@ -3,9 +3,9 @@ package com.lm.ll.spark.fragment
 import android.annotation.TargetApi
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.lm.ll.spark.R
 
 /**

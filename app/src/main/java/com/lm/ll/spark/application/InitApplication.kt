@@ -1,14 +1,12 @@
 package com.lm.ll.spark.application
 
 import android.app.Application
-import android.preference.PreferenceManager
-import com.lm.ll.spark.BuildConfig
+import androidx.preference.PreferenceManager
 import com.lm.ll.spark.db.Article
 import com.lm.ll.spark.util.GlobalConst
 import com.lm.ll.spark.util.GlobalConst.Companion.NIGHT_MODE
 import com.lm.ll.spark.util.ObjectBox
 import com.lm.ll.spark.util.switchDayNightMode
-import io.objectbox.android.AndroidObjectBrowser
 
 /**
  * 作者：Created by ll on 2018-06-15 14:40.
@@ -41,11 +39,7 @@ class InitApplication : Application() {
         super.onCreate()
 
         //初始化ObjectBox
-        ObjectBox.build(this)
-        //如果是DEBUG模式，则app运行时在状态栏显示data browser提示，可以通过手机浏览器查看数据库数据
-        if (BuildConfig.DEBUG) {
-            AndroidObjectBrowser(ObjectBox.boxStore).start(this)
-        }
+        ObjectBox.init(this)
 
         singleton = this
         val mPrefs = PreferenceManager.getDefaultSharedPreferences(this)

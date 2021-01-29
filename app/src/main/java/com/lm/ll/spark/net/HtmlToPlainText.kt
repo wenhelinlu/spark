@@ -46,7 +46,7 @@ class HtmlToPlainText {
         override fun head(node: Node, depth: Int) {
             val name: String = node.nodeName()
             when {
-                node is TextNode -> append((node as TextNode).text()) // TextNodes carry all user-readable text in the DOM.
+                node is TextNode -> append(node.text()) // TextNodes carry all user-readable text in the DOM.
                 name == "li" -> append("\n * ")
                 name == "dt" -> append("  ")
                 StringUtil.`in`(name, "p", "h1", "h2", "h3", "h4", "h5", "tr") -> append("\n")

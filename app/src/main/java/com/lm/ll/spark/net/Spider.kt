@@ -551,7 +551,7 @@ class Spider {
             try {
                 val stringBuilder = StringBuilder()
                 doc.getElementsByTag("p").filter { e -> e.childNodeSize() == 2 && e.childNode(0) is TextNode }.forEach { e ->
-                    stringBuilder.appendln((e.childNodes()[0] as TextNode).text())
+                    stringBuilder.appendLine((e.childNodes()[0] as TextNode).text())
                 }
 //                for (e in elements) {
 //                    stringBuilder.appendln((e.childNodes()[0] as TextNode).text())
@@ -662,7 +662,7 @@ class Spider {
                     if (it.contains("<img")) {
                         composedText.append("$TEXT_IMAGE_SPLITER$it$TEXT_IMAGE_SPLITER")
                     } else {
-                        composedText.appendln(it)
+                        composedText.appendLine(it)
                     }
                 }
                 return composedText.toString()

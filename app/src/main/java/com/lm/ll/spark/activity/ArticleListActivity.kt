@@ -7,7 +7,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.lm.ll.spark.R
 import com.lm.ll.spark.adapter.ArticleListAdapter
 import com.lm.ll.spark.application.InitApplication
@@ -18,7 +17,6 @@ import com.lm.ll.spark.decoration.SolidLineItemDecoration
 import com.lm.ll.spark.enum.ForumType
 import com.lm.ll.spark.listener.MyRecyclerViewOnScrollListener
 import com.lm.ll.spark.net.Spider
-import com.lm.ll.spark.util.FirebaseLogUtils
 import com.lm.ll.spark.util.GlobalConst.Companion.BASE_URL
 import com.lm.ll.spark.util.GlobalConst.Companion.CURRENT_BASE_URL
 import com.lm.ll.spark.util.GlobalConst.Companion.LIST_MIN_COUNT
@@ -305,10 +303,10 @@ class ArticleListActivity : CoroutineScopeActivity(), SwipeRefreshLayout.OnRefre
      * @time 2018-08-16 10:33
      */
     private fun queryArticle(keyword: String) {
-        //添加统计信息
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Event.SEARCH, keyword)
-        FirebaseLogUtils.log("查询文章", bundle)
+//        //添加统计信息
+//        val bundle = Bundle()
+//        bundle.putString(FirebaseAnalytics.Event.SEARCH, keyword)
+//        FirebaseLogUtils.log("查询文章", bundle)
 
         //初始化查询状态及备份原有数据
         isQueryStatus = true

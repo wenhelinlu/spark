@@ -13,16 +13,10 @@ import com.lm.ll.spark.repository.TabooArticlesRepository
 import com.lm.ll.spark.util.getExceptionDesc
 import com.lm.ll.spark.util.getImgSrc
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.autoDisposable
 import com.uber.autodispose.autoDispose
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_rich_text.*
-import org.jsoup.Jsoup
-import retrofit2.HttpException
-import java.net.ConnectException
-import java.util.concurrent.TimeoutException
-import javax.net.ssl.SSLHandshakeException
 
 
 /**
@@ -84,8 +78,8 @@ class RichTextActivity : AppCompatActivity() {
                 }
                 .doOnDispose { Log.i("AutoDispose", "Disposing subscription from onCreate()") }
                 .autoDispose(scopeProvider) //使用AutoDispose解除RxJava2订阅
-                .subscribe({ result ->
-                    val doc = Jsoup.parse(result)
+                .subscribe({
+//                    val doc = Jsoup.parse(result)
                     val list = ArrayList<String>()
                     for (text in list) {
                         if (text.contains("<img") && text.contains("src=")) {
