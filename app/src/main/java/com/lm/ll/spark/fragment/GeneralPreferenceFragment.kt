@@ -30,6 +30,7 @@ class GeneralPreferenceFragment : PreferenceFragmentCompat() {
 
         bindPreferenceSummaryToValue(findPreference("example_text")!!)
         bindPreferenceSummaryToValue(findPreference("font_size_list")!!, "18")
+        bindPreferenceSummaryToValue(findPreference("line_space_list")!!, "1.2")
     }
 
     companion object {

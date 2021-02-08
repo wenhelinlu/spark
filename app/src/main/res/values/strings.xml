@@ -72,16 +72,39 @@
 
     <string name="pref_title_text_font_size">正文字体大小</string>
     <string-array name="pref_font_size_list_titles">
+        <item>较小</item>
         <item>小</item>
         <item>中</item>
+        <item>较大</item>
         <item>大</item>
+        <item>超大</item>
     </string-array>
     <string-array name="pref_font_size_list_values">
-        <item>16</item>
+        <item>17</item>
         <item>18</item>
+        <item>19</item>
         <item>20</item>
+        <item>21</item>
+        <item>22</item>
     </string-array>
 
+    <string name="pref_title_text_line_space">正文行距</string>
+    <string-array name="pref_title_text_line_space_titles">
+        <item>较小</item>
+        <item>小</item>
+        <item>中</item>
+        <item>较大</item>
+        <item>大</item>
+        <item>超大</item>
+    </string-array>
+    <string-array name="pref_title_text_line_space_values">
+        <item>1.0</item>
+        <item>1.1</item>
+        <item>1.2</item>
+        <item>1.3</item>
+        <item>1.4</item>
+        <item>1.5</item>
+    </string-array>
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 

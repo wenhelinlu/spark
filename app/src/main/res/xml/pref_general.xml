@@ -40,4 +40,13 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_text_font_size" />
 
+    <ListPreference
+        android:defaultValue="-1"
+        android:entries="@array/pref_title_text_line_space_titles"
+        android:entryValues="@array/pref_title_text_line_space_values"
+        android:key="line_space_list"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_text_line_space" />
+
 </PreferenceScreen>

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import com.lm.ll.spark.R
 import com.lm.ll.spark.db.Article
+import com.lm.ll.spark.util.getArticleLineSpace
 import com.lm.ll.spark.util.getArticleTextSize
 import kotlinx.android.synthetic.main.article_item_text.view.*
 
@@ -36,6 +37,7 @@ class ArticleTextAdapterDelegate(activity: AppCompatActivity) : AdapterDelegate<
             items[position].let {
                 articleText.text = it.text
                 articleText.setTextSize(TypedValue.COMPLEX_UNIT_SP, getArticleTextSize()) //根据设置的字体大小显示
+                articleText.setLineSpacing(0F, getArticleLineSpace()) //根据设置的行距显示
             }
         }
     }

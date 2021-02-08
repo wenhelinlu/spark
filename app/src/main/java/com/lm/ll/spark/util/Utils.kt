@@ -187,6 +187,17 @@ fun getArticleTextSize(): Float {
 }
 
 /**
+ * @description 获取设置的正文行距
+ * @date: 2021-02-08 16:57
+ * @author: LuHui
+ * @param
+ * @return
+ */
+fun getArticleLineSpace(): Float {
+    return PreferenceManager.getDefaultSharedPreferences(InitApplication.getInstance()).getString("line_space_list", "1.2")!!.toFloat()
+}
+
+/**
  * @description 判断是否有网络连接
  * @date: 2021-01-28 19:00
  * @author: LuHui
