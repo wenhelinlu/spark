@@ -12,7 +12,7 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:background="?attr/bgColor"
+        android:background="@color/transparent"
         android:lineSpacingMultiplier="1.3"
         android:paddingBottom="8dp"
         android:textColor="?attr/textColor"

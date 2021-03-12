@@ -6,15 +6,15 @@
 
     <!--Day Mode-->
     <color name="colorText">@color/colorTextDay</color>
-    <color name="colorSecondaryText">#60000000</color>
-    <color name="colorBg">#f8f7f6</color>
+    <color name="colorSecondaryText">@color/colorTextDay</color>
+    <color name="colorBg">#EAEAEF</color>
     <color name="colorDivider">@color/md_grey_300</color>
 
     <!-- 自定义颜色-->
 
-    <color name="colorTextDay">#8C000000</color>
+    <color name="colorTextDay">#000000</color>
     <color name="colorTextNight">#B3FFFFFF</color>
-    <color name="black_overlay">#66000000</color>
+    <color name="black_overlay">@color/transparent</color>
     <color name="transparent">#00000000</color>
     <color name="blackBlur">#90000000</color>
     <array name="rainbow">
