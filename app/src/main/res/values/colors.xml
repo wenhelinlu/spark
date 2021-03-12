@@ -7,7 +7,7 @@
     <!--Day Mode-->
     <color name="colorText">@color/colorTextDay</color>
     <color name="colorSecondaryText">@color/colorTextDay</color>
-    <color name="colorBg">#EAEAEF</color>
+    <color name="colorBg">#F5F5F5</color>
     <color name="colorDivider">@color/md_grey_300</color>
 
     <!-- 自定义颜色-->
