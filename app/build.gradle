@@ -13,7 +13,7 @@ android {
         minSdkVersion 27
         targetSdkVersion 29
         versionCode 1
-        versionName '1.21.0313'
+        versionName '1.21.0326'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -71,7 +71,7 @@ dependencies {
     implementation 'androidx.drawerlayout:drawerlayout:1.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "org.jsoup:jsoup:$jsoup_version"
@@ -87,7 +87,10 @@ dependencies {
     //implementation files('libs/hanlp-portable-1.7.1.jar')
 
     //opencc-android 繁简转换库 （此库转换效果比较满意，但是有时会导致程序FC）
-    implementation 'com.zqc.opencc.android.lib:lib-opencc-android:1.1.0'
+    //implementation 'com.zqc.opencc.android.lib:lib-opencc-android:1.1.0'
+
+    //更新：2021年3月26日 09点09分 阅读App上使用了这个库，据说解决了猛转换成勐等不正确转换的问题
+    implementation 'com.github.liuyueyi.quick-chinese-transfer:quick-transfer-core:0.1.3'
 
     //图文混排库
     implementation('com.github.sendtion:XRichText:1.5') {
@@ -110,7 +113,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:${rxandroid_version}"
 
     //okhttp3 interceptor
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
 
     //Retrofit series
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
