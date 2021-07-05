@@ -21,7 +21,7 @@ buildscript {
         maven { url 'https://dl.bintray.com/qichuan/maven/'}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
 
@@ -30,7 +30,7 @@ buildscript {
 
         classpath "io.objectbox:objectbox-gradle-plugin:$objectbox_version"
 
-        classpath 'com.google.gms:google-services:4.0.1'
+        classpath 'com.google.gms:google-services:4.3.8'
 
         //Firebase的Crashlytics依赖组件
         classpath 'io.fabric.tools:gradle:1.28.0'
@@ -47,6 +47,7 @@ allprojects {
         //     url 'https://maven.google.com'
         // }
         //否则使用google()
+        mavenCentral()
         google()
         jcenter()
         maven { url "https://jitpack.io" }
